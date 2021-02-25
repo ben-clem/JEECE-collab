@@ -9,10 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### To add
 
-- DB schema
 - web
 
 ### To fix
+
+### Added
+
+- switched the ORM to TypeORM and described the schema => generating the postgres DB in sync mode for the moment
 
 ## [1.0.0](https://github.com/benzinho75/JEECE-collab/releases/tag/v1.0.0) - 2021-02-19
 

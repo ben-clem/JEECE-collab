@@ -9,7 +9,11 @@
     "dev2": "nodemon --exec ts-node src/index.ts",
     "start2": "ts-node src/index.ts"
   },
-  "keywords": ["JEECE", "web dev", "technical test"],
+  "keywords": [
+    "JEECE",
+    "web dev",
+    "technical test"
+  ],
   "author": "Benoît Clemenceau <b.clemenceau.pro@gmail.com> (https://github.com/benzinho75)",
   "license": "MIT",
   "devDependencies": {
@@ -19,16 +23,9 @@
     "typescript": "^4.1.5"
   },
   "dependencies": {
-    "@mikro-orm/cli": "^4.4.3",
-    "@mikro-orm/core": "^4.4.3",
-    "@mikro-orm/migrations": "^4.4.3",
-    "@mikro-orm/postgresql": "^4.4.3"
-  },
-  "mikro-orm": {
-    "useTsNode": true,
-    "configPaths": [
-      "./src/mikro-orm.config.ts",
-      "./dist/mikro-orm.config.js"
-    ]
+    "express": "^4.17.1",
+    "pg": "^8.5.1",
+    "reflect-metadata": "^0.1.13",
+    "typeorm": "^0.2.31"
   }
 }

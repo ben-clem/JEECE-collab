@@ -6,6 +6,19 @@ The goal is to develop a web platform for collaborative work. It will allow empl
 
 You can find the project instructions there: [instructions.pdf](../master/instructions.pdf)
 
+## Stack
+
+- server
+  - Node.js
+  - TypeScript
+  - Express
+  - PostgreSQL
+  - TypeORM: Object-Relational Mapping
+  - GraphQL w/ Apollo for API queries (client to server)
+- web
+  - React (w/ create-react-app or Next.js ?)
+  - TypeScript
+
 ## Changelog
 
 [CHANGELOG.md](../master/CHANGELOG.md) based on the [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) convention.
