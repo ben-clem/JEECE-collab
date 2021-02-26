@@ -13,12 +13,16 @@ export class ConvToUser {
   @Column()
   public userEmail!: string;
 
-  @Column({ default: false })
+  @Column({ default: true })
   public active!: boolean;
 
-  @ManyToOne(() => Conversation, (conversation) => conversation.convToUsers)
+  @ManyToOne(() => Conversation, (conversation) => conversation.convToUsers, {
+    cascade: false,
+  })
   public conversation!: Conversation;
 
-  @ManyToOne(() => User, (user) => user.convToUsers)
+  @ManyToOne(() => User, (user) => user.convToUsers, {
+    cascade: false,
+  })
   public user!: User;
 }

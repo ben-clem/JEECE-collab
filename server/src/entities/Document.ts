@@ -7,8 +7,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { Poste } from "./poste";
-import { Service } from "./service";
+import { Poste } from "./Poste";
+import { Service } from "./Service";
 
 @Entity()
 export class Document {
@@ -27,11 +27,17 @@ export class Document {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToMany(() => Poste, (poste) => poste.documents)
+  @ManyToMany(() => Poste, (poste) => poste.documents, {
+    nullable: true,
+    cascade: ["update", "soft-remove"],
+  })
   @JoinTable()
   postes: Poste[];
 
-  @ManyToMany(() => Service, (service) => service.documents)
+  @ManyToMany(() => Service, (service) => service.documents, {
+    nullable: true,
+    cascade: ["update", "soft-remove"],
+  })
   @JoinTable()
   services: Service[];
 }

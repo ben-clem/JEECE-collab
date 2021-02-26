@@ -15,7 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- switched the ORM to TypeORM and described the schema => generating the postgres DB in sync mode for the moment
+- Switched to TypeORM and described the schema => generating the postgres DB in sync mode for the moment
+- Set up Express and GraphQL w/ Apollo and type-grapql
+- Exposed Service and Poste entities to the GraphQL schema and made the corresponding resolvers w/ CRUD operations
 
 ## [1.0.0](https://github.com/benzinho75/JEECE-collab/releases/tag/v1.0.0) - 2021-02-19
 

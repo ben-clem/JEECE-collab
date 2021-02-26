@@ -12,9 +12,9 @@ You can find the project instructions there: [instructions.pdf](../master/instru
   - Node.js
   - TypeScript
   - Express
-  - PostgreSQL
-  - TypeORM: Object-Relational Mapping
-  - GraphQL w/ Apollo for API queries (client to server)
+  - PostgreSQL: relational DB
+  - TypeORM: Object-Relational Mapping (server to DB)
+  - GraphQL w/ Apollo & type-graphql for API queries (client to server)
 - web
   - React (w/ create-react-app or Next.js ?)
   - TypeScript

@@ -8,8 +8,8 @@ import {
   OneToMany,
 } from "typeorm";
 import { ConvToUser } from "./ConvToUser";
-import { Poste } from "./poste";
-import { Service } from "./service";
+import { Poste } from "./Poste";
+import { Service } from "./Service";
 
 @Entity()
 export class User {
@@ -37,12 +37,20 @@ export class User {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(() => Service, (service) => service.user, { nullable: true })
+  @ManyToOne(() => Service, (service) => service.user, {
+    nullable: true,
+    cascade: ["update", "soft-remove"],
+  })
   service: string;
 
-  @ManyToOne(() => Poste, (poste) => poste.user, { nullable: true })
+  @ManyToOne(() => Poste, (poste) => poste.user, {
+    nullable: true,
+    cascade: ["update", "soft-remove"],
+  })
   poste: string;
 
-  @OneToMany(() => ConvToUser, (convToUser) => convToUser.user)
+  @OneToMany(() => ConvToUser, (convToUser) => convToUser.user, {
+    cascade: false,
+  })
   public convToUsers!: ConvToUser[];
 }

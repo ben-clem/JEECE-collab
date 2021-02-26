@@ -22,6 +22,8 @@ export class Message {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(() => Conversation, (conversation) => conversation.messages)
+  @ManyToOne(() => Conversation, (conversation) => conversation.messages, {
+    cascade: false,
+  })
   conversation: Conversation;
 }

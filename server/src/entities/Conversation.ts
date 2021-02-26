@@ -23,9 +23,14 @@ export class Conversation {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @OneToMany(() => ConvToUser, (convToUser) => convToUser.conversation)
+  @OneToMany(() => ConvToUser, (convToUser) => convToUser.conversation, {
+    cascade: false,
+  })
   public convToUsers!: ConvToUser[];
 
-  @OneToMany(() => Message, (message) => message.conversation)
+  @OneToMany(() => Message, (message) => message.conversation, {
+    nullable: true,
+    cascade: false,
+  })
   public messages: Message[];
 }
