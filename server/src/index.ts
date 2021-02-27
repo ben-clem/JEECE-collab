@@ -14,6 +14,7 @@ import { HelloResolver } from "./resolvers/hello";
 import { ServiceResolver } from "./resolvers/service";
 import { getManager } from "typeorm";
 import { PosteResolver } from "./resolvers/poste";
+import { UserResolver } from "./resolvers/user";
 
 const main = async () => {
   const conn = await createConnection({
@@ -39,7 +40,7 @@ const main = async () => {
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [HelloResolver, ServiceResolver, PosteResolver],
+      resolvers: [HelloResolver, ServiceResolver, PosteResolver, UserResolver],
       validate: false,
     }),
     context: () => ({ em: em }),

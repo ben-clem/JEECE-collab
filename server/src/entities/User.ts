@@ -1,48 +1,64 @@
+import { Field, ObjectType } from "type-graphql";
 import {
-  Entity,
+  BaseEntity,
   Column,
-  PrimaryColumn,
   CreateDateColumn,
-  UpdateDateColumn,
+  Entity,
   ManyToOne,
   OneToMany,
+  PrimaryColumn,
+  UpdateDateColumn,
 } from "typeorm";
 import { ConvToUser } from "./ConvToUser";
 import { Poste } from "./Poste";
 import { Service } from "./Service";
 
+@ObjectType()
 @Entity()
-export class User {
+export class User extends BaseEntity {
+  @Field()
   @PrimaryColumn()
   email!: string;
 
   @Column()
-  firstname: string;
+  password!: string;
 
+  @Field()
   @Column()
-  lastname: string;
+  firstname!: string;
 
+  @Field()
   @Column()
-  password: string;
+  lastname!: string;
 
+  @Field()
   @Column({ default: false })
-  accepted: boolean;
+  accepted!: boolean;
 
-  @Column("bytea", { nullable: true })
-  profilePic: object;
+  @Field()
+  @Column({ default: false })
+  admin!: boolean;
 
+  @Field({nullable: true})
+  @Column({nullable: true})
+  profilePicPath: string;
+
+  @Field()
   @CreateDateColumn()
   createdAt: Date;
 
+  @Field()
   @UpdateDateColumn()
   updatedAt: Date;
 
+  @Field({nullable: true})
   @ManyToOne(() => Service, (service) => service.user, {
     nullable: true,
     cascade: ["update", "soft-remove"],
   })
   service: string;
 
+  @Field({nullable: true})
   @ManyToOne(() => Poste, (poste) => poste.user, {
     nullable: true,
     cascade: ["update", "soft-remove"],
@@ -52,5 +68,5 @@ export class User {
   @OneToMany(() => ConvToUser, (convToUser) => convToUser.user, {
     cascade: false,
   })
-  public convToUsers!: ConvToUser[];
+  convToUsers!: ConvToUser[];
 }
