@@ -1,17 +1,56 @@
-import { MikroORM } from "@mikro-orm/core";
-import { __prod__ } from "./constants";
-// import { Post } from "./entities/Post";
-import mikroConfig from "./mikro-orm.config";
+import { ApolloServer } from "apollo-server-express";
+import express from "express";
+import "reflect-metadata";
+import { buildSchema } from "type-graphql";
+import { createConnection } from "typeorm";
+import { Conversation } from "./entities/Conversation";
+import { ConvToUser } from "./entities/ConvToUser";
+import { Document } from "./entities/Document";
+import { Message } from "./entities/Message";
+import { Poste } from "./entities/Poste";
+import { Service } from "./entities/Service";
+import { User } from "./entities/User";
+import { HelloResolver } from "./resolvers/HelloResolver";
+import { ServiceResolver } from "./resolvers/ServiceResolver";
+import { getManager } from "typeorm";
+import { PosteResolver } from "./resolvers/PosteResolver";
+import { UserResolver } from "./resolvers/UserResolver";
 
 const main = async () => {
-  const orm = await MikroORM.init(mikroConfig); // init MikroORM with mikro-orm.config.ts
-  orm.getMigrator().up(); // runs migrations up to the latest
+  const conn = await createConnection({
+    type: "postgres",
+    database: "JEECE-collab",
+    username: "postgres",
+    password: "postgres",
+    logging: true,
+    synchronize: true,
+    entities: [
+      Conversation,
+      ConvToUser,
+      Document,
+      Message,
+      Poste,
+      Service,
+      User,
+    ],
+  });
+  const em = getManager();
 
-  // const post = orm.em.create(Post, { title: "my first post" });
-  // await orm.em.persistAndFlush(post);
+  const app = express();
 
-  // const posts = await orm.em.find(Post, {});
-  // console.log(posts);
+  const apolloServer = new ApolloServer({
+    schema: await buildSchema({
+      resolvers: [HelloResolver, ServiceResolver, PosteResolver, UserResolver],
+      validate: false,
+    }),
+    context: () => ({ em: em }),
+  });
+
+  apolloServer.applyMiddleware({ app });
+
+  app.listen(4000, () => {
+    console.log("server started on localhost:4000");
+  });
 };
 
 main().catch((err) => {
