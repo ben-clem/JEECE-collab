@@ -6,7 +6,7 @@ The goal is to develop a web platform for collaborative work. It will allow empl
 
 You can find the project instructions there: [instructions.pdf](instructions.pdf)
 
-## Stack
+## Tech Stack
 
 - server
   - Node.js
@@ -19,6 +19,8 @@ You can find the project instructions there: [instructions.pdf](instructions.pdf
   - React (w/ create-react-app or Next.js ?)
   - TypeScript
 
+
+
 ## Changelog
 
 [CHANGELOG.md](CHANGELOG.md) based on the [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) convention.
@@ -26,6 +28,10 @@ You can find the project instructions there: [instructions.pdf](instructions.pdf
 ## Install
 
 ## Usage
+
+## Sources
+
+[Ben Awad's Fullstack React GraphQL TypeScript Tutorial](https://www.youtube.com/watch?v=I6ypD7qv3Z8)
 
 ## Author
 
