@@ -1,9 +1,14 @@
 import argon2 from "argon2";
 import { validateRegister } from "../utils/validateRegister";
-import { Arg, Mutation, Resolver } from "type-graphql";
+import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import { getConnection } from "typeorm";
 import { User } from "../entities/User";
 import { UserResponse } from "./objectTypes";
+import jwt, { decode } from "jsonwebtoken";
+import { __secret__ } from "../constants";
+import { decodedToken } from "../decodedToken";
+import { Request } from "express";
+import { MyContext } from "../types";
 
 @Resolver()
 export class UserResolver {
@@ -49,7 +54,16 @@ export class UserResolver {
         };
       }
     }
-    return { user };
+
+    const userToken = jwt.sign(
+      {
+        email: user.email,
+        accepted: user.accepted,
+        admin: user.admin,
+      },
+      __secret__
+    );
+    return { user, token: userToken };
   }
 
   @Mutation(() => UserResponse)
@@ -57,7 +71,24 @@ export class UserResolver {
     @Arg("email") email: string,
     @Arg("password") password: string
   ): Promise<UserResponse> {
-    const user = await User.findOne({ email });
+    if (!email.includes("@")) {
+      return {
+        errors: [
+          {
+            field: "email",
+            message: "invalid email",
+          },
+        ],
+      };
+    }
+
+    const user = await getConnection()
+    .getRepository(User)
+    .createQueryBuilder("user")
+    .where("user.email = :email", { email })
+    .getOne();
+
+
     if (!user) {
       return {
         errors: [
@@ -80,6 +111,27 @@ export class UserResolver {
       };
     }
 
-    return { user };
+    const userToken = jwt.sign(
+      {
+        email: user.email,
+        accepted: user.accepted,
+        admin: user.admin,
+      },
+      __secret__
+    );
+    return { user, token: userToken };
+  }
+
+  @Query(() => User, { nullable: true })
+  async me(@Ctx() { req }: MyContext): Promise<User | undefined> {
+    const decoded = JSON.parse(JSON.stringify(decodedToken(req)));
+
+    const user = await getConnection()
+    .getRepository(User)
+    .createQueryBuilder("user")
+    .where("user.email = :email", { email: decoded.email })
+    .getOne();
+
+    return user;
   }
 }

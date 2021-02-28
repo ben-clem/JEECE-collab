@@ -10,11 +10,11 @@ import { Message } from "./entities/Message";
 import { Poste } from "./entities/Poste";
 import { Service } from "./entities/Service";
 import { User } from "./entities/User";
-import { HelloResolver } from "./resolvers/HelloResolver";
-import { ServiceResolver } from "./resolvers/ServiceResolver";
+import { HelloResolver } from "./resolvers/Hello";
+import { ServiceResolver } from "./resolvers/Service";
 import { getManager } from "typeorm";
-import { PosteResolver } from "./resolvers/PosteResolver";
-import { UserResolver } from "./resolvers/UserResolver";
+import { PosteResolver } from "./resolvers/Poste";
+import { UserResolver } from "./resolvers/User";
 
 const main = async () => {
   const conn = await createConnection({
@@ -43,7 +43,7 @@ const main = async () => {
       resolvers: [HelloResolver, ServiceResolver, PosteResolver, UserResolver],
       validate: false,
     }),
-    context: () => ({ em: em }),
+    context: ({req, res}) => ({ em, req, res }),
   });
 
   apolloServer.applyMiddleware({ app });
