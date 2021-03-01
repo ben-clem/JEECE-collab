@@ -16,7 +16,7 @@ You can find the project instructions there: [instructions.pdf](instructions.pdf
   - TypeORM: Object-Relational Mapping (server to DB)
   - GraphQL w/ Apollo & type-graphql for API queries (client to server)
 - web
-  - React (w/ create-react-app or Next.js ?)
+  - React w/ Next.js & Chakra UI
   - TypeScript
 
 
