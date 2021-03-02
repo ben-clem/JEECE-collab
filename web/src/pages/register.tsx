@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Formik, Form } from "formik";
 import { Box, Button, Center, Container } from "@chakra-ui/react";
 import { Wrapper } from "../components/Wrapper";
@@ -7,6 +7,8 @@ import { InputField } from "../components/InputField";
 // import { toErrorMap } from "../utils/toErrorMap";
 import { useRouter } from "next/router";
 import { DarkModeSwitch } from "../components/DarkModeSwitch";
+import { useMutation } from "urql";
+import { useRegisterMutation } from "../graphql/generated";
 // import { withUrqlClient } from "next-urql";
 // import { createUrqlClient } from "../utils/createUrqlClient";
 // import { withApollo } from "../utils/withApollo";
@@ -15,7 +17,9 @@ interface registerProps {}
 
 const Register: React.FC<registerProps> = ({}) => {
   const router = useRouter();
-  // const [register] = useRegisterMutation();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [, register] = useRegisterMutation();
+
   return (
     <Container height="100vh">
       <DarkModeSwitch />
@@ -29,9 +33,18 @@ const Register: React.FC<registerProps> = ({}) => {
             lastname: "",
           }}
           onSubmit={async (values, { setErrors }) => {
-            values.password === values.verifyPassword
-              ? console.log(values)
-              : alert("passwords are not the same");
+            if (values.password !== values.verifyPassword) {
+              alert("passwords are not the same");
+              setIsSubmitting(false);
+            }
+
+            const response = await register({
+              email: values.email,
+              password: values.password,
+              firstname: values.firstname,
+              lastname: values.lastname,
+            });
+
 
             // const response = await register({
             //   variables: { options: values },
@@ -53,67 +66,66 @@ const Register: React.FC<registerProps> = ({}) => {
             // }
           }}
         >
-          {({ isSubmitting }) => (
-            <Form>
-              <Box mt={16}>
-                <InputField
-                  name="email"
-                  placeholder="email"
-                  label="Email *"
-                  required
-                />
-              </Box>
-              <Box mt={4}>
-                <InputField
-                  name="firstname"
-                  placeholder="firstname"
-                  label="Firstname *"
-                  required
-                />
-              </Box>
-              <Box mt={4}>
-                <InputField
-                  name="lastname"
-                  placeholder="lastname"
-                  label="Lastname *"
-                  required
-                />
-              </Box>
-              <Box mt={8}>
-                <InputField
-                  name="password"
-                  placeholder="password"
-                  label="Password *"
-                  type="password"
-                  required
-                  showButton
-                />
-              </Box>
-              <Box mt={4}>
-                <InputField
-                  name="verifyPassword"
-                  placeholder="password"
-                  label="Verify password *"
-                  type="password"
-                  required
-                  showButton
-                />
-              </Box>
-              <Center>
-                
-                  <Button
-                    m={8}
-                    size="lg"
-                    type="submit"
-                    isLoading={isSubmitting}
-                    colorScheme="teal"
-                  >
-                    register
-                  </Button>
-                
-              </Center>
-            </Form>
-          )}
+          <Form>
+            <Box mt={16}>
+              <InputField
+                name="email"
+                placeholder="email"
+                label="Email *"
+                required
+              />
+            </Box>
+            <Box mt={4}>
+              <InputField
+                name="firstname"
+                placeholder="firstname"
+                label="Firstname *"
+                required
+              />
+            </Box>
+            <Box mt={4}>
+              <InputField
+                name="lastname"
+                placeholder="lastname"
+                label="Lastname *"
+                required
+              />
+            </Box>
+            <Box mt={8}>
+              <InputField
+                name="password"
+                placeholder="password"
+                label="Password *"
+                type="password"
+                required
+                showButton
+              />
+            </Box>
+            <Box mt={4}>
+              <InputField
+                name="verifyPassword"
+                placeholder="password"
+                label="Verify password *"
+                type="password"
+                required
+                showButton
+              />
+            </Box>
+            <Center>
+              <Button
+                m={12}
+                size="lg"
+                type="submit"
+                isLoading={isSubmitting}
+                onClick={() => {
+                  setIsSubmitting(true);
+                }}
+                colorScheme="teal"
+              >
+                register
+              </Button>
+            </Center>
+          </Form>
         </Formik>
       </Wrapper>
     </Container>

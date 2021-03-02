@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Token-based authentication w/ jsonwebtoken
 - Added front-end structure (React w/ Next.js & Chakra UI)
 - Built register page and corresponding components
+- Added urql client and installed graphql-codegen
+- Configured CORS globally
 
 ## [0.0.2](https://github.com/benzinho75/JEECE-collab/compare/v0.0.1...v0.0.2) - 2021-02-28
 

@@ -15,6 +15,7 @@ import { ServiceResolver } from "./resolvers/Service";
 import { getManager } from "typeorm";
 import { PosteResolver } from "./resolvers/Poste";
 import { UserResolver } from "./resolvers/User";
+import cors from "cors";
 
 const main = async () => {
   const conn = await createConnection({
@@ -37,16 +38,20 @@ const main = async () => {
   const em = getManager();
 
   const app = express();
+  app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
       resolvers: [HelloResolver, ServiceResolver, PosteResolver, UserResolver],
       validate: false,
     }),
-    context: ({req, res}) => ({ em, req, res }),
+    context: ({ req, res }) => ({ em, req, res }),
   });
 
-  apolloServer.applyMiddleware({ app });
+  apolloServer.applyMiddleware({
+    app,
+    cors: false, // we are not setting cors for the Apollo Server (/graphql route) but rather globally with the cors module
+  });
 
   app.listen(4000, () => {
     console.log("server started on localhost:4000");

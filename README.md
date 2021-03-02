@@ -11,15 +11,14 @@ You can find the project instructions there: [instructions.pdf](instructions.pdf
 - server
   - Node.js
   - TypeScript
-  - Express
   - PostgreSQL: relational DB
   - TypeORM: Object-Relational Mapping (server to DB)
-  - GraphQL w/ Apollo & type-graphql for API queries (client to server)
+  - Express
+  - GraphQL w/ type-graphql & Apollo Server for API queries (client to server)
 - web
   - React w/ Next.js & Chakra UI
   - TypeScript
-
-
+  - urql: GraphQL client
 
 ## Changelog
 
