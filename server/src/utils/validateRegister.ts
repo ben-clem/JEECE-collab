@@ -30,7 +30,7 @@ export const validateRegister = (
     errors.push({
       field: "password",
       message:
-        "password must be at least 8 characters long and contain: an uppercase letter, a lowercase letter, a digit number, and a special character",
+        "password must be at least 8 characters long and contain an uppercase letter, a lowercase letter, a digit number, and a special character",
     });
   }
 

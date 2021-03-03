@@ -1,14 +1,13 @@
 import argon2 from "argon2";
-import { validateRegister } from "../utils/validateRegister";
+import jwt from "jsonwebtoken";
 import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import { getConnection } from "typeorm";
-import { User } from "../entities/User";
-import { UserResponse } from "./objectTypes";
-import jwt, { decode } from "jsonwebtoken";
 import { __secret__ } from "../constants";
 import { decodedToken } from "../decodedToken";
-import { Request } from "express";
+import { User } from "../entities/User";
 import { MyContext } from "../types";
+import { validateRegister } from "../utils/validateRegister";
+import { FieldError, UserResponse } from "./objectTypes";
 
 @Resolver()
 export class UserResolver {
@@ -68,54 +67,52 @@ export class UserResolver {
     @Arg("email") email: string,
     @Arg("password") password: string
   ): Promise<UserResponse> {
+    let errors: FieldError[] = [];
+    let user;
+    let userToken;
+
     if (!email.includes("@")) {
-      return {
-        errors: [
-          {
-            field: "email",
-            message: "invalid email",
-          },
-        ],
-      };
+      errors.push({
+        field: "email",
+        message: "invalid email",
+      });
     }
 
-    const user = await getConnection()
-      .getRepository(User)
-      .createQueryBuilder("user")
-      .where("user.email = :email", { email })
-      .getOne();
+    if (errors.length === 0) {
+      user = await getConnection()
+        .getRepository(User)
+        .createQueryBuilder("user")
+        .where("user.email = :email", { email })
+        .getOne();
 
-    if (!user) {
-      return {
-        errors: [
-          {
-            field: "email",
-            message: "that email doesn't exist",
-          },
-        ],
-      };
-    }
-    const valid = await argon2.verify(user.password, password);
-    if (!valid) {
-      return {
-        errors: [
-          {
+      if (!user) {
+        errors.push({
+          field: "email",
+          message: "that email doesn't exist",
+        });
+      } else {
+        const valid = await argon2.verify(user.password, password);
+        if (!valid) {
+          errors.push({
             field: "password",
             message: "incorrect password",
-          },
-        ],
-      };
+          });
+        } else {
+          userToken = jwt.sign(
+            {
+              email: user.email,
+              accepted: user.accepted,
+              admin: user.admin,
+            },
+            __secret__
+          );
+
+          return { errors, user, token: userToken };
+        }
+      }
     }
 
-    const userToken = jwt.sign(
-      {
-        email: user.email,
-        accepted: user.accepted,
-        admin: user.admin,
-      },
-      __secret__
-    );
-    return { user, token: userToken };
+    return { errors };
   }
 
   @Query(() => User, { nullable: true })
