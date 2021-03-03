@@ -8,7 +8,8 @@ import { InputField } from "../components/InputField";
 import { useRouter } from "next/router";
 import { DarkModeSwitch } from "../components/DarkModeSwitch";
 import { useMutation } from "urql";
-import { useRegisterMutation } from "../graphql/generated";
+import { FieldError, useRegisterMutation } from "../graphql/generated";
+import { toErrorMap } from "../utils/toErrorMap";
 // import { withUrqlClient } from "next-urql";
 // import { createUrqlClient } from "../utils/createUrqlClient";
 // import { withApollo } from "../utils/withApollo";
@@ -34,37 +35,32 @@ const Register: React.FC<registerProps> = ({}) => {
           }}
           onSubmit={async (values, { setErrors }) => {
             if (values.password !== values.verifyPassword) {
-              alert("passwords are not the same");
+              setErrors(
+                toErrorMap([
+                  {
+                    field: "password",
+                    message: "passwords are not the same",
+                  },
+                ])
+              );
               setIsSubmitting(false);
+            } else {
+              const response = await register({
+                email: values.email,
+                password: values.password,
+                firstname: values.firstname,
+                lastname: values.lastname,
+              });
+              if (response.data?.register.errors?.length !== 0) {
+                if (response.data?.register.errors) {
+                  setErrors(toErrorMap(response.data.register.errors)); // Formik hook to handle each field errors + utility function to map the errors from GraphQL
+                  setIsSubmitting(false);
+                }
+              } else if (response.data?.register.user) {
+                //worked
+                router.push("/");
+              }
             }
-
-            const response = await register({
-              email: values.email,
-              password: values.password,
-              firstname: values.firstname,
-              lastname: values.lastname,
-            });
-            console.log(response.data?.register.errors)
-
-
-            // const response = await register({
-            //   variables: { options: values },
-            // update: (cache, { data }) => {
-            //   cache.writeQuery<MeQuery>({
-            //     query: MeDocument,
-            //     data: {
-            //       __typename: "Query",
-            //       me: data?.register.user,
-            //     },
-            //   });
-            // },
-            // });
-            // if (response.data?.register.errors) {
-            //   setErrors(toErrorMap(response.data.register.errors));
-            // } else if (response.data?.register.user) {
-            //   // worked
-            //   router.push("/");
-            // }
           }}
         >
           <Form>

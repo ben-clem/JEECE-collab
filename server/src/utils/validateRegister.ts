@@ -1,13 +1,16 @@
-export const validateRegister = (email: string, password: string) => {
+import { FieldError } from "src/resolvers/objectTypes";
+
+export const validateRegister = (
+  email: string,
+  password: string
+): FieldError[] => {
+  let errors: FieldError[] = [];
+
   if (!email.includes("@")) {
-    return {
-      errors: [
-        {
-          field: "email",
-          message: "invalid email",
-        },
-      ],
-    };
+    errors.push({
+      field: "email",
+      message: "invalid email",
+    });
   }
 
   const regexLength = /^.{8,}$/;
@@ -17,66 +20,26 @@ export const validateRegister = (email: string, password: string) => {
   const regexSpecialChar = /^(?=.*?[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]).{8,}$/;
   const regexSpace = /[\s]+/;
 
-  if (regexLength.test(password) === false) {
-    return {
-      errors: [
-        {
-          field: "password",
-          message: "password must be at least 8 characters long",
-        },
-      ],
-    };
-  }
-  if (regexUppercase.test(password) === false) {
-    return {
-      errors: [
-        {
-          field: "password",
-          message: "password must contain an uppercase letter",
-        },
-      ],
-    };
-  }
-  if (regexLowercase.test(password) === false) {
-    return {
-      errors: [
-        {
-          field: "password",
-          message: "password must contain a lowercase letter",
-        },
-      ],
-    };
-  }
-  if (regexDigit.test(password) === false) {
-    return {
-      errors: [
-        {
-          field: "password",
-          message: "password must contain a digit number",
-        },
-      ],
-    };
-  }
-  if (regexSpecialChar.test(password) === false) {
-    return {
-      errors: [
-        {
-          field: "password",
-          message: "password must contain a special character",
-        },
-      ],
-    };
-  }
-  if (regexSpace.test(password) === true) {
-    return {
-      errors: [
-        {
-          field: "password",
-          message: "password can't contain space characters",
-        },
-      ],
-    };
+  if (
+    !regexLength.test(password) ||
+    !regexUppercase.test(password) ||
+    !regexLowercase.test(password) ||
+    !regexDigit.test(password) ||
+    !regexSpecialChar.test(password)
+  ) {
+    errors.push({
+      field: "password",
+      message:
+        "password must be at least 8 characters long and contain: an uppercase letter, a lowercase letter, a digit number, and a special character",
+    });
   }
 
-  return null;
+  if (regexSpace.test(password) === true) {
+    errors.push({
+      field: "password",
+      message: "password can't contain space characters",
+    });
+  }
+
+  return errors;
 };

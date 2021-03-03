@@ -19,51 +19,48 @@ export class UserResolver {
     @Arg("firstname") firstname: string,
     @Arg("lastname") lastname: string
   ): Promise<UserResponse> {
-    const errors = validateRegister(email, password);
-    if (errors) {
-      return errors;
-    }
+    let errors = validateRegister(email, password);
 
-    // hashing the password w/ argon2 to prevent crack in case of hacking
-    const hashedPassword = await argon2.hash(password);
-    // creating the user w/ the QueryBuilder to take full advantage of TypeORM entities description power
     let user;
-    try {
-      const result = await getConnection()
-        .createQueryBuilder()
-        .insert()
-        .into(User)
-        .values({
-          email,
-          password: hashedPassword,
-          firstname,
-          lastname,
-        })
-        .returning("*")
-        .execute();
-      user = result.raw[0];
-    } catch (err) {
-      if (err.code === "23505") {
-        return {
-          errors: [
-            {
-              field: "email",
-              message: "an account with this email already exists",
-            },
-          ],
-        };
+    let userToken;
+    if (errors.length === 0) {
+      // hashing the password w/ argon2 to prevent crack in case of hacking
+      const hashedPassword = await argon2.hash(password);
+      // creating the user w/ the QueryBuilder to take full advantage of TypeORM entities description power
+      try {
+        const result = await getConnection()
+          .createQueryBuilder()
+          .insert()
+          .into(User)
+          .values({
+            email,
+            password: hashedPassword,
+            firstname,
+            lastname,
+          })
+          .returning("*")
+          .execute();
+        user = result.raw[0];
+
+        userToken = jwt.sign(
+          {
+            email: user.email,
+            accepted: user.accepted,
+            admin: user.admin,
+          },
+          __secret__
+        );
+      } catch (err) {
+        if (err.code === "23505") {
+          errors.push({
+            field: "email",
+            message: "an account with this email already exists",
+          });
+        }
       }
     }
 
-    const userToken = jwt.sign(
-      {
-        email: user.email,
-        accepted: user.accepted,
-        admin: user.admin,
-      },
-      __secret__
-    );
-    return { user, token: userToken };
+    return { errors, user, token: userToken };
   }
 
   @Mutation(() => UserResponse)
@@ -83,11 +80,10 @@ export class UserResolver {
     }
 
     const user = await getConnection()
-    .getRepository(User)
-    .createQueryBuilder("user")
-    .where("user.email = :email", { email })
-    .getOne();
-
+      .getRepository(User)
+      .createQueryBuilder("user")
+      .where("user.email = :email", { email })
+      .getOne();
 
     if (!user) {
       return {
@@ -127,10 +123,10 @@ export class UserResolver {
     const decoded = JSON.parse(JSON.stringify(decodedToken(req)));
 
     const user = await getConnection()
-    .getRepository(User)
-    .createQueryBuilder("user")
-    .where("user.email = :email", { email: decoded.email })
-    .getOne();
+      .getRepository(User)
+      .createQueryBuilder("user")
+      .where("user.email = :email", { email: decoded.email })
+      .getOne();
 
     return user;
   }
