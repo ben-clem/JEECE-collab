@@ -15,17 +15,7 @@ mutation Register(
       message
     }
     user {
-      email
-      firstname
-      lastname
-      accepted
-      admin
-      profilePicPath
-      createdAt
-      updatedAt
-      service
-      poste
+      ...User
     }
-    token
   }
 }

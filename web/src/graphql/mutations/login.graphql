@@ -5,17 +5,7 @@ mutation Login($email: String!, $password: String!) {
       message
     }
     user {
-      email
-      firstname
-      lastname
-      accepted
-      admin
-      profilePicPath
-      createdAt
-      updatedAt
-      service
-      poste
+      ...User
     }
-    token
   }
 }

@@ -16,6 +16,7 @@ import { getManager } from "typeorm";
 import { PosteResolver } from "./resolvers/Poste";
 import { UserResolver } from "./resolvers/User";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 const main = async () => {
   const conn = await createConnection({
@@ -39,6 +40,7 @@ const main = async () => {
 
   const app = express();
   app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+  app.use(cookieParser());
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({

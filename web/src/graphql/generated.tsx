@@ -75,6 +75,7 @@ export type Mutation = {
   deletePoste: Scalars['Boolean'];
   register: UserResponse;
   login: UserResponse;
+  logout: Scalars['Boolean'];
 };
 
 
@@ -127,7 +128,6 @@ export type UserResponse = {
   __typename?: 'UserResponse';
   errors?: Maybe<Array<FieldError>>;
   user?: Maybe<User>;
-  token?: Maybe<Scalars['String']>;
 };
 
 export type FieldError = {
@@ -135,6 +135,11 @@ export type FieldError = {
   field: Scalars['String'];
   message: Scalars['String'];
 };
+
+export type UserFragment = (
+  { __typename?: 'User' }
+  & Pick<User, 'email' | 'firstname' | 'lastname' | 'accepted' | 'admin' | 'profilePicPath' | 'createdAt' | 'updatedAt' | 'service' | 'poste'>
+);
 
 export type LoginMutationVariables = Exact<{
   email: Scalars['String'];
@@ -146,15 +151,22 @@ export type LoginMutation = (
   { __typename?: 'Mutation' }
   & { login: (
     { __typename?: 'UserResponse' }
-    & Pick<UserResponse, 'token'>
     & { errors?: Maybe<Array<(
       { __typename?: 'FieldError' }
       & Pick<FieldError, 'field' | 'message'>
     )>>, user?: Maybe<(
       { __typename?: 'User' }
-      & Pick<User, 'email' | 'firstname' | 'lastname' | 'accepted' | 'admin' | 'profilePicPath' | 'createdAt' | 'updatedAt' | 'service' | 'poste'>
+      & UserFragment
     )> }
   ) }
+);
+
+export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type LogoutMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'logout'>
 );
 
 export type RegisterMutationVariables = Exact<{
@@ -169,13 +181,12 @@ export type RegisterMutation = (
   { __typename?: 'Mutation' }
   & { register: (
     { __typename?: 'UserResponse' }
-    & Pick<UserResponse, 'token'>
     & { errors?: Maybe<Array<(
       { __typename?: 'FieldError' }
       & Pick<FieldError, 'field' | 'message'>
     )>>, user?: Maybe<(
       { __typename?: 'User' }
-      & Pick<User, 'email' | 'firstname' | 'lastname' | 'accepted' | 'admin' | 'profilePicPath' | 'createdAt' | 'updatedAt' | 'service' | 'poste'>
+      & UserFragment
     )> }
   ) }
 );
@@ -187,11 +198,24 @@ export type MeQuery = (
   { __typename?: 'Query' }
   & { me?: Maybe<(
     { __typename?: 'User' }
-    & Pick<User, 'email' | 'firstname' | 'lastname' | 'accepted' | 'admin' | 'profilePicPath' | 'createdAt' | 'updatedAt' | 'service' | 'poste'>
+    & UserFragment
   )> }
 );
 
-
+export const UserFragmentDoc = gql`
+    fragment User on User {
+  email
+  firstname
+  lastname
+  accepted
+  admin
+  profilePicPath
+  createdAt
+  updatedAt
+  service
+  poste
+}
+    `;
 export const LoginDocument = gql`
     mutation Login($email: String!, $password: String!) {
   login(email: $email, password: $password) {
@@ -200,24 +224,23 @@ export const LoginDocument = gql`
       message
     }
     user {
-      email
-      firstname
-      lastname
-      accepted
-      admin
-      profilePicPath
-      createdAt
-      updatedAt
-      service
-      poste
+      ...User
     }
-    token
   }
 }
-    `;
+    ${UserFragmentDoc}`;
 
 export function useLoginMutation() {
   return Urql.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument);
+};
+export const LogoutDocument = gql`
+    mutation Logout {
+  logout
+}
+    `;
+
+export function useLogoutMutation() {
+  return Urql.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument);
 };
 export const RegisterDocument = gql`
     mutation Register($email: String!, $password: String!, $firstname: String!, $lastname: String!) {
@@ -232,21 +255,11 @@ export const RegisterDocument = gql`
       message
     }
     user {
-      email
-      firstname
-      lastname
-      accepted
-      admin
-      profilePicPath
-      createdAt
-      updatedAt
-      service
-      poste
+      ...User
     }
-    token
   }
 }
-    `;
+    ${UserFragmentDoc}`;
 
 export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
@@ -254,19 +267,10 @@ export function useRegisterMutation() {
 export const MeDocument = gql`
     query Me {
   me {
-    email
-    firstname
-    lastname
-    accepted
-    admin
-    profilePicPath
-    createdAt
-    updatedAt
-    service
-    poste
+    ...User
   }
 }
-    `;
+    ${UserFragmentDoc}`;
 
 export function useMeQuery(options: Omit<Urql.UseQueryArgs<MeQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<MeQuery>({ query: MeDocument, ...options });

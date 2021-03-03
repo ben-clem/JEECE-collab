@@ -2,8 +2,8 @@ import argon2 from "argon2";
 import jwt from "jsonwebtoken";
 import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import { getConnection } from "typeorm";
-import { __secret__ } from "../constants";
-import { decodedToken } from "../decodedToken";
+import { __prod__, __secret__ } from "../constants";
+import { decodeToken } from "../decodedToken";
 import { User } from "../entities/User";
 import { MyContext } from "../types";
 import { validateRegister } from "../utils/validateRegister";
@@ -16,7 +16,8 @@ export class UserResolver {
     @Arg("email") email: string,
     @Arg("password") password: string,
     @Arg("firstname") firstname: string,
-    @Arg("lastname") lastname: string
+    @Arg("lastname") lastname: string,
+    @Ctx() { res }: MyContext
   ): Promise<UserResponse> {
     let errors = validateRegister(email, password);
 
@@ -49,6 +50,15 @@ export class UserResolver {
           },
           __secret__
         );
+
+        // Set a cookie with the token
+        res.cookie("userToken", userToken, {
+          maxAge: 1000 * 60 * 60 * 24 * 365 * 10, // 10 years
+          httpOnly: true,
+          secure: __prod__, // https doesn't work in dev
+          sameSite: "strict", // ? "lax"
+          domain: __prod__ ? ".jeece-collab.fr" : undefined,
+        });
       } catch (err) {
         if (err.code === "23505") {
           errors.push({
@@ -59,13 +69,14 @@ export class UserResolver {
       }
     }
 
-    return { errors, user, token: userToken };
+    return { errors, user };
   }
 
   @Mutation(() => UserResponse)
   async login(
     @Arg("email") email: string,
-    @Arg("password") password: string
+    @Arg("password") password: string,
+    @Ctx() { res }: MyContext
   ): Promise<UserResponse> {
     let errors: FieldError[] = [];
     let user;
@@ -106,8 +117,16 @@ export class UserResolver {
             },
             __secret__
           );
+          // Set a cookie with the token
+          res.cookie("userToken", userToken, {
+            maxAge: 1000 * 60 * 60 * 24 * 365 * 10, // 10 years
+            httpOnly: true,
+            secure: __prod__, // https doesn't work in dev
+            sameSite: "strict", // ? "lax"
+            domain: __prod__ ? ".jeece-collab.fr" : undefined,
+          });
 
-          return { errors, user, token: userToken };
+          return { errors, user };
         }
       }
     }
@@ -117,7 +136,7 @@ export class UserResolver {
 
   @Query(() => User, { nullable: true })
   async me(@Ctx() { req }: MyContext): Promise<User | undefined> {
-    const decoded = JSON.parse(JSON.stringify(decodedToken(req)));
+    const decoded = JSON.parse(JSON.stringify(decodeToken(req)));
 
     const user = await getConnection()
       .getRepository(User)
@@ -126,5 +145,13 @@ export class UserResolver {
       .getOne();
 
     return user;
+  }
+
+  @Mutation(() => Boolean)
+  logout(@Ctx() { res }: MyContext) {
+    return new Promise((resolve) => {
+      res.clearCookie("userToken");
+      resolve(true);
+    });
   }
 }

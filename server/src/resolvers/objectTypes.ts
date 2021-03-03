@@ -1,6 +1,7 @@
 import { User } from "../entities/User";
 import { ObjectType, Field } from "type-graphql";
 
+
 @ObjectType()
 export class FieldError {
   @Field()
@@ -16,7 +17,4 @@ export class UserResponse {
 
   @Field(() => User, { nullable: true })
   user?: User;
-
-  @Field(() => String, { nullable: true })
-  token?: string;
 }

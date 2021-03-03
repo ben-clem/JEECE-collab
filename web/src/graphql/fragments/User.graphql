@@ -1,0 +1,12 @@
+fragment User on User {
+  email
+  firstname
+  lastname
+  accepted
+  admin
+  profilePicPath
+  createdAt
+  updatedAt
+  service
+  poste
+}
