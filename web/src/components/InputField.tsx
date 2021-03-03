@@ -1,14 +1,16 @@
-import React, { InputHTMLAttributes, useEffect, useState } from "react";
-import { useField } from "formik";
+import { WarningIcon } from "@chakra-ui/icons";
 import {
-  FormControl,
-  FormLabel,
-  Input,
-  FormErrorMessage,
   Button,
-  InputRightElement,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+  HStack,
+  Input,
   InputGroup,
+  InputRightElement,
 } from "@chakra-ui/react";
+import { useField } from "formik";
+import React, { InputHTMLAttributes, useEffect, useState } from "react";
 
 type InputFieldProps = InputHTMLAttributes<HTMLInputElement> & {
   label: string;
@@ -51,7 +53,12 @@ export const InputField: React.FC<InputFieldProps> = ({
           </InputRightElement>
         ) : null}
       </InputGroup>
-      {error ? <FormErrorMessage>{error}</FormErrorMessage> : null}
+      {error ? (
+        <HStack spacing="4px">
+          <WarningIcon w={4} h={4} color="red.500" />
+          <FormErrorMessage>{error}</FormErrorMessage>
+        </HStack>
+      ) : null}
     </FormControl>
   );
 };
