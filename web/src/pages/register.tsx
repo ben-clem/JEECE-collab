@@ -44,6 +44,7 @@ const Register: React.FC<registerProps> = ({}) => {
               firstname: values.firstname,
               lastname: values.lastname,
             });
+            console.log(response.data?.register.errors)
 
 
             // const response = await register({

@@ -6,6 +6,10 @@ The goal is to develop a web platform for collaborative work. It will allow empl
 
 You can find the project instructions there: [instructions.pdf](instructions.pdf)
 
+## Changelog
+
+[CHANGELOG.md](CHANGELOG.md) based on the [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) convention.
+
 ## Tech Stack
 
 - server
@@ -19,10 +23,6 @@ You can find the project instructions there: [instructions.pdf](instructions.pdf
   - React w/ Next.js & Chakra UI
   - TypeScript
   - urql: GraphQL client
-
-## Changelog
-
-[CHANGELOG.md](CHANGELOG.md) based on the [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) convention.
 
 ## Install
 
