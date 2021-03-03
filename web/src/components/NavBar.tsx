@@ -1,13 +1,25 @@
-import { Flex, Box, Link, Button, HStack } from "@chakra-ui/react";
-import React from "react";
+import {
+  Box,
+  Button,
+  Flex,
+  Grid,
+  GridItem,
+  HStack,
+  Spacer,
+  Text,
+} from "@chakra-ui/react";
 import NextLink from "next/link";
-import { DarkModeSwitch } from "./DarkModeSwitch";
+import React from "react";
 import { useLogoutMutation, useMeQuery } from "../graphql/generated";
+import { isServer } from "../utils/isServer";
+import { DarkModeSwitch } from "./DarkModeSwitch";
 
 interface NavBarProps {}
 
 export const NavBar: React.FC<NavBarProps> = ({}) => {
-  const [{ data, fetching }] = useMeQuery();
+  const [{ data, fetching }] = useMeQuery({
+    pause: isServer(), // pause this request anytime this page is rendered server-side (the server doesn't have access to the userToken cookie)
+  });
   const [{ fetching: logoutFetching }, logout] = useLogoutMutation();
   let body = null;
 
@@ -16,22 +28,29 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
     // user not logged in
   } else if (!data?.me) {
     body = (
-      <>
+      <HStack spacing={0}>
         <NextLink href="/login">
-          <Link mr={2}>login</Link>
+          <Button h={8} mr={2} backgroundColor="teal.500" color="white">
+            login
+          </Button>
         </NextLink>
+
         <NextLink href="/register">
-          <Link>register</Link>
+          <Button h={8} color="teal.500">
+            register
+          </Button>
         </NextLink>
-      </>
+      </HStack>
     );
 
     //user is logged in
   } else {
     body = (
       <HStack>
-        <Box>
-          {data.me.firstname} {data.me.lastname}
+        <Box maxH={6}>
+          <Text isTruncated>
+            Hello, {data.me.firstname} {data.me.lastname}!
+          </Text>
         </Box>
         <Button
           h={8}
@@ -47,17 +66,40 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
   }
 
   return (
-    <Flex p={4}>
-      <Box
-        ml={"auto"}
-        mr={2}
-        pr={2}
-        borderRight="1px"
-        borderColor="rgba(0, 0, 0,.3)"
-      >
-        {body}
-      </Box>
-      <DarkModeSwitch />
-    </Flex>
+    <Grid
+      templateColumns="repeat(5, 1fr)"
+      gap={2}
+      height={10}
+      maxW="100vw"
+      align="center"
+      px={2}
+      py={0}
+    >
+      <GridItem colSpan={2} h="10" />
+      <GridItem colSpan={1} h="10">
+        <Flex h="10" justify="center" align="center">
+          <NextLink href="/">
+            <Button size="lg" variant="link" color="teal.500">
+              JEECE Collab
+            </Button>
+          </NextLink>
+        </Flex>
+      </GridItem>
+
+      <GridItem colSpan={2} h="10">
+        <Flex h="10" align="center">
+          <Box
+            ml="auto"
+            mr={2}
+            pr={2}
+            borderRight="1px"
+            borderColor="rgba(0, 0, 0,.3)"
+          >
+            {body}
+          </Box>
+          <DarkModeSwitch />
+        </Flex>
+      </GridItem>
+    </Grid>
   );
 };

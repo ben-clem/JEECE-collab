@@ -1,12 +1,15 @@
-import { Box, Button, Center, Container } from "@chakra-ui/react";
+import { Box, Button, Center} from "@chakra-ui/react";
 import { Form, Formik } from "formik";
+import { withUrqlClient } from "next-urql";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
-import { DarkModeSwitch } from "../components/DarkModeSwitch";
+import { Container } from "../components/Container";
 import { InputField } from "../components/InputField";
 import { NavBar } from "../components/NavBar";
 import { Wrapper } from "../components/Wrapper";
+import { __containerHeight__ } from "../constants";
 import { useLoginMutation } from "../graphql/generated";
+import { createUrqlClient } from "../utils/createUrqlClient";
 import { toErrorMap } from "../utils/toErrorMap";
 
 interface loginProps {}
@@ -19,7 +22,7 @@ const Login: React.FC<loginProps> = ({}) => {
   return (
     <>
       <NavBar></NavBar>
-      <Container height="100vh">
+      <Container height={__containerHeight__}>
         <Wrapper variant="small">
           <Formik
             initialValues={{
@@ -42,7 +45,7 @@ const Login: React.FC<loginProps> = ({}) => {
             }}
           >
             <Form>
-              <Box mt={16}>
+              <Box mt={12}>
                 <InputField
                   name="email"
                   placeholder="email"
@@ -81,4 +84,4 @@ const Login: React.FC<loginProps> = ({}) => {
   );
 };
 
-export default Login;
+export default withUrqlClient(createUrqlClient, { ssr: false })(Login);

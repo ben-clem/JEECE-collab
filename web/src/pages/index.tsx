@@ -1,12 +1,14 @@
+import { withUrqlClient } from "next-urql";
 import { Container } from "../components/Container";
-import { DarkModeSwitch } from "../components/DarkModeSwitch";
 import { NavBar } from "../components/NavBar";
+import { __containerHeight__ } from "../constants";
+import { createUrqlClient } from "../utils/createUrqlClient";
 
 const Index = () => (
   <>
     <NavBar></NavBar>
-    <Container height="100vh"></Container>
+    <Container height={__containerHeight__}></Container>
   </>
 );
 
-export default Index;
+export default withUrqlClient(createUrqlClient, { ssr: true })(Index);

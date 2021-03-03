@@ -24,10 +24,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - authentication JWT stored in a cryptographically signed cookie for security reasons (no need to store user info in context thanks to the me query which can tell us the info knowing the cookie)
 - automatic login when registering correctly
 - logout
+- Set up server-side rendering w/ Next.js & urql (can choose which pages to render server-side)
+- link to home
 
 ## Fixed
 
 - homepage loads faster than the cookie so the user has to refresh to see he is well logged in: was actually caused by urql document caching. Fixed by implementing update cache policies for login and register mutations with @urql/exchange-graphcache.
+- fixed looks
 
 ## [0.0.2](https://github.com/benzinho75/JEECE-collab/compare/v0.0.1...v0.0.2) - 2021-02-28
 

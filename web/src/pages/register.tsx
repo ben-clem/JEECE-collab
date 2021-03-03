@@ -1,12 +1,15 @@
-import { Box, Button, Center, Container } from "@chakra-ui/react";
+import { Box, Button, Center} from "@chakra-ui/react";
 import { Form, Formik } from "formik";
+import { withUrqlClient } from "next-urql";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
-import { DarkModeSwitch } from "../components/DarkModeSwitch";
+import { Container } from "../components/Container";
 import { InputField } from "../components/InputField";
 import { NavBar } from "../components/NavBar";
 import { Wrapper } from "../components/Wrapper";
+import { __containerHeight__ } from "../constants";
 import { useRegisterMutation } from "../graphql/generated";
+import { createUrqlClient } from "../utils/createUrqlClient";
 import { toErrorMap } from "../utils/toErrorMap";
 
 interface registerProps {}
@@ -19,7 +22,7 @@ const Register: React.FC<registerProps> = ({}) => {
   return (
     <>
       <NavBar></NavBar>
-      <Container height="100vh">
+      <Container height={__containerHeight__}>
         <Wrapper variant="small">
           <Formik
             initialValues={{
@@ -61,7 +64,7 @@ const Register: React.FC<registerProps> = ({}) => {
             }}
           >
             <Form>
-              <Box mt={16}>
+              <Box mt={12}>
                 <InputField
                   name="email"
                   placeholder="email"
@@ -124,6 +127,4 @@ const Register: React.FC<registerProps> = ({}) => {
   );
 };
 
-// export default withApollo({ ssr: false })(Register);
-
-export default Register;
+export default withUrqlClient(createUrqlClient, { ssr: false })(Register);
