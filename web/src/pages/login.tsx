@@ -3,7 +3,7 @@ import { Form, Formik } from "formik";
 import { withUrqlClient } from "next-urql";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
-import { Container } from "../components/Container";
+import { MyContainer } from "../components/Container";
 import { InputField } from "../components/InputField";
 import { NavBar } from "../components/NavBar";
 import { Wrapper } from "../components/Wrapper";
@@ -22,7 +22,7 @@ const Login: React.FC<loginProps> = ({}) => {
   return (
     <>
       <NavBar></NavBar>
-      <Container minHeight={CONTAINER_HEIGHT}>
+      <MyContainer>
         <Heading mt={8} as="h1" size="lg">
           Login
         </Heading>
@@ -82,7 +82,7 @@ const Login: React.FC<loginProps> = ({}) => {
             </Form>
           </Formik>
         </Wrapper>
-      </Container>
+      </MyContainer>
     </>
   );
 };

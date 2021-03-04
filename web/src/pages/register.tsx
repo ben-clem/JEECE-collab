@@ -15,7 +15,7 @@ import { Form, Formik, useFormik } from "formik";
 import { withUrqlClient } from "next-urql";
 import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
-import { Container } from "../components/Container";
+import { MyContainer } from "../components/Container";
 import { InputField } from "../components/InputField";
 import { NavBar } from "../components/NavBar";
 import { SelectField } from "../components/SelectField";
@@ -61,7 +61,7 @@ const Register: React.FC<registerProps> = ({}) => {
       return (
         <>
           <NavBar></NavBar>
-          <Container>
+          <MyContainer>
             <Heading mt={8} as="h1" size="lg">
               Register
             </Heading>
@@ -188,7 +188,7 @@ const Register: React.FC<registerProps> = ({}) => {
                 </Form>
               </Formik>
             </Wrapper>
-          </Container>
+          </MyContainer>
         </>
       );
     }
