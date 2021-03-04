@@ -20,24 +20,37 @@ export type Query = {
   __typename?: 'Query';
   hello: Scalars['String'];
   services: Array<Service>;
-  service?: Maybe<Service>;
+  serviceByName?: Maybe<Service>;
+  serviceById?: Maybe<Service>;
   postes: Array<Poste>;
-  poste?: Maybe<Poste>;
+  posteByName?: Maybe<Poste>;
+  posteByID?: Maybe<Poste>;
   me?: Maybe<User>;
 };
 
 
-export type QueryServiceArgs = {
+export type QueryServiceByNameArgs = {
   name: Scalars['String'];
 };
 
 
-export type QueryPosteArgs = {
+export type QueryServiceByIdArgs = {
+  id?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryPosteByNameArgs = {
   name: Scalars['String'];
+};
+
+
+export type QueryPosteByIdArgs = {
+  id?: Maybe<Scalars['Int']>;
 };
 
 export type Service = {
   __typename?: 'Service';
+  id: Scalars['Int'];
   name: Scalars['String'];
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
@@ -46,6 +59,7 @@ export type Service = {
 
 export type Poste = {
   __typename?: 'Poste';
+  id: Scalars['Int'];
   name: Scalars['String'];
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
@@ -61,8 +75,8 @@ export type User = {
   profilePicPath?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
-  service?: Maybe<Scalars['String']>;
-  poste?: Maybe<Scalars['String']>;
+  serviceId?: Maybe<Scalars['Int']>;
+  posteId?: Maybe<Scalars['Int']>;
 };
 
 export type Mutation = {
@@ -86,12 +100,12 @@ export type MutationCreateServiceArgs = {
 
 export type MutationUpdateServiceArgs = {
   newName: Scalars['String'];
-  oldName: Scalars['String'];
+  id?: Maybe<Scalars['Int']>;
 };
 
 
 export type MutationDeleteServiceArgs = {
-  name: Scalars['String'];
+  id?: Maybe<Scalars['Int']>;
 };
 
 
@@ -102,16 +116,18 @@ export type MutationCreatePosteArgs = {
 
 export type MutationUpdatePosteArgs = {
   newName: Scalars['String'];
-  oldName: Scalars['String'];
+  id?: Maybe<Scalars['Int']>;
 };
 
 
 export type MutationDeletePosteArgs = {
-  name: Scalars['String'];
+  id?: Maybe<Scalars['Int']>;
 };
 
 
 export type MutationRegisterArgs = {
+  posteId?: Maybe<Scalars['Int']>;
+  serviceId?: Maybe<Scalars['Int']>;
   lastname: Scalars['String'];
   firstname: Scalars['String'];
   password: Scalars['String'];
@@ -138,7 +154,7 @@ export type FieldError = {
 
 export type UserFragment = (
   { __typename?: 'User' }
-  & Pick<User, 'email' | 'firstname' | 'lastname' | 'accepted' | 'admin' | 'profilePicPath' | 'createdAt' | 'updatedAt' | 'service' | 'poste'>
+  & Pick<User, 'email' | 'firstname' | 'lastname' | 'accepted' | 'admin' | 'profilePicPath' | 'createdAt' | 'updatedAt' | 'serviceId' | 'posteId'>
 );
 
 export type LoginMutationVariables = Exact<{
@@ -174,6 +190,8 @@ export type RegisterMutationVariables = Exact<{
   password: Scalars['String'];
   firstname: Scalars['String'];
   lastname: Scalars['String'];
+  serviceId?: Maybe<Scalars['Int']>;
+  posteId?: Maybe<Scalars['Int']>;
 }>;
 
 
@@ -202,6 +220,28 @@ export type MeQuery = (
   )> }
 );
 
+export type PostesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type PostesQuery = (
+  { __typename?: 'Query' }
+  & { postes: Array<(
+    { __typename?: 'Poste' }
+    & Pick<Poste, 'id' | 'name' | 'createdAt' | 'updatedAt'>
+  )> }
+);
+
+export type ServicesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ServicesQuery = (
+  { __typename?: 'Query' }
+  & { services: Array<(
+    { __typename?: 'Service' }
+    & Pick<Service, 'id' | 'name' | 'createdAt' | 'updatedAt'>
+  )> }
+);
+
 export const UserFragmentDoc = gql`
     fragment User on User {
   email
@@ -212,8 +252,8 @@ export const UserFragmentDoc = gql`
   profilePicPath
   createdAt
   updatedAt
-  service
-  poste
+  serviceId
+  posteId
 }
     `;
 export const LoginDocument = gql`
@@ -243,12 +283,14 @@ export function useLogoutMutation() {
   return Urql.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument);
 };
 export const RegisterDocument = gql`
-    mutation Register($email: String!, $password: String!, $firstname: String!, $lastname: String!) {
+    mutation Register($email: String!, $password: String!, $firstname: String!, $lastname: String!, $serviceId: Int, $posteId: Int) {
   register(
     email: $email
     password: $password
     firstname: $firstname
     lastname: $lastname
+    serviceId: $serviceId
+    posteId: $posteId
   ) {
     errors {
       field
@@ -274,4 +316,32 @@ export const MeDocument = gql`
 
 export function useMeQuery(options: Omit<Urql.UseQueryArgs<MeQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<MeQuery>({ query: MeDocument, ...options });
+};
+export const PostesDocument = gql`
+    query Postes {
+  postes {
+    id
+    name
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+export function usePostesQuery(options: Omit<Urql.UseQueryArgs<PostesQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<PostesQuery>({ query: PostesDocument, ...options });
+};
+export const ServicesDocument = gql`
+    query Services {
+  services {
+    id
+    name
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+export function useServicesQuery(options: Omit<Urql.UseQueryArgs<ServicesQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ServicesQuery>({ query: ServicesDocument, ...options });
 };

@@ -3,12 +3,16 @@ mutation Register(
   $password: String!
   $firstname: String!
   $lastname: String!
+  $serviceId: Int
+  $posteId: Int
 ) {
   register(
     email: $email
     password: $password
     firstname: $firstname
     lastname: $lastname
+    serviceId: $serviceId
+    posteId: $posteId
   ) {
     errors {
       field

@@ -27,7 +27,7 @@ export const InputField: React.FC<InputFieldProps> = ({
   showButton,
   ...props
 }) => {
-  const [field, { error }] = useField(props);
+  const [field, { error,  }] = useField(props);
   const [show, setShow] = useState(true);
   const handleClick = () => setShow(!show);
 
@@ -47,7 +47,7 @@ export const InputField: React.FC<InputFieldProps> = ({
         />
         {showButton ? (
           <InputRightElement width="4.5rem">
-            <Button h="1.75rem" size="sm" onClick={handleClick}>
+            <Button h="1.75rem" size="sm" tabIndex={-1} onClick={handleClick}>
               {show ? "Hide" : "Show"}
             </Button>
           </InputRightElement>

@@ -42,15 +42,12 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
         </NextLink>
       </HStack>
     );
-
     //user is logged in
   } else {
     body = (
       <HStack>
         <Box maxH={6}>
-          <Text isTruncated>
-            Hello, {data.me.firstname}!
-          </Text>
+          <Text isTruncated>Hello, {data.me.firstname}!</Text>
         </Box>
         <Button
           h={8}

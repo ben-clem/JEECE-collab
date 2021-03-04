@@ -1,4 +1,4 @@
-import { Field, ObjectType } from "type-graphql";
+import { Field, Int, ObjectType } from "type-graphql";
 import {
   BaseEntity,
   Column,
@@ -39,8 +39,8 @@ export class User extends BaseEntity {
   @Column({ default: false })
   admin!: boolean;
 
-  @Field({nullable: true})
-  @Column({nullable: true})
+  @Field({ nullable: true })
+  @Column({ nullable: true })
   profilePicPath: string;
 
   @Field()
@@ -51,19 +51,25 @@ export class User extends BaseEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @Field({nullable: true})
-  @ManyToOne(() => Service, (service) => service.user, {
-    nullable: true,
-    cascade: ["update", "soft-remove"],
-  })
-  service: string;
+  @Field((type) => Int, { nullable: true })
+  @Column({ type: "int", nullable: true })
+  serviceId: number;
 
-  @Field({nullable: true})
-  @ManyToOne(() => Poste, (poste) => poste.user, {
+  @Field((type) => Int, { nullable: true })
+  @Column({ type: "int", nullable: true })
+  posteId: number;
+
+  @ManyToOne(() => Service, (service) => service.users, {
     nullable: true,
-    cascade: ["update", "soft-remove"],
+    cascade: ["update", "soft-remove", "insert"],
   })
-  poste: string;
+  service: Service;
+
+  @ManyToOne(() => Poste, (poste) => poste.users, {
+    nullable: true,
+    cascade: ["update", "soft-remove", "insert"],
+  })
+  poste: Poste;
 
   @OneToMany(() => ConvToUser, (convToUser) => convToUser.user, {
     cascade: false,

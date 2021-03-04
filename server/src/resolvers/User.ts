@@ -1,6 +1,6 @@
 import argon2 from "argon2";
 import jwt from "jsonwebtoken";
-import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Ctx, Int, Mutation, Query, Resolver } from "type-graphql";
 import { getConnection } from "typeorm";
 import { __prod__, __secret__ } from "../constants";
 import { decodeToken } from "../decodedToken";
@@ -17,6 +17,8 @@ export class UserResolver {
     @Arg("password") password: string,
     @Arg("firstname") firstname: string,
     @Arg("lastname") lastname: string,
+    @Arg("serviceId", (type) => Int, { nullable: true }) serviceId: number,
+    @Arg("posteId", (type) => Int, { nullable: true }) posteId: number,
     @Ctx() { res }: MyContext
   ): Promise<UserResponse> {
     let errors = validateRegister(email, password);
@@ -37,6 +39,8 @@ export class UserResolver {
             password: hashedPassword,
             firstname,
             lastname,
+            serviceId,
+            posteId,
           })
           .returning("*")
           .execute();

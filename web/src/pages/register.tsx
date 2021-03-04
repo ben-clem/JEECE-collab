@@ -1,14 +1,30 @@
-import { Box, Button, Center} from "@chakra-ui/react";
-import { Form, Formik } from "formik";
+import { WarningIcon } from "@chakra-ui/icons";
+import {
+  Box,
+  Button,
+  Center,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+  HStack,
+  InputGroup,
+  Select,
+} from "@chakra-ui/react";
+import { Form, Formik, useFormik } from "formik";
 import { withUrqlClient } from "next-urql";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Container } from "../components/Container";
 import { InputField } from "../components/InputField";
 import { NavBar } from "../components/NavBar";
+import { SelectField } from "../components/SelectField";
 import { Wrapper } from "../components/Wrapper";
 import { __containerHeight__ } from "../constants";
-import { useRegisterMutation } from "../graphql/generated";
+import {
+  usePostesQuery,
+  useRegisterMutation,
+  useServicesQuery,
+} from "../graphql/generated";
 import { createUrqlClient } from "../utils/createUrqlClient";
 import { toErrorMap } from "../utils/toErrorMap";
 
@@ -18,6 +34,28 @@ const Register: React.FC<registerProps> = ({}) => {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [, register] = useRegisterMutation();
+
+  const [{ data: servicesData, fetching: servicesFetching }] = useServicesQuery({
+    pause: false, // this request can be executed server-side
+  });
+  let servicesOptions = null;
+  // data is loading
+  if (servicesFetching) {
+    //user is logged in
+  } else {
+    servicesOptions = servicesData?.services
+  }
+
+  const [{ data: postesData, fetching: postesFetching }] = usePostesQuery({
+    pause: false, // this request can be executed server-side
+  });
+  let postesOptions = null;
+  // data is loading
+  if (postesFetching) {
+    //user is logged in
+  } else {
+    postesOptions = postesData?.postes
+  }
 
   return (
     <>
@@ -31,8 +69,11 @@ const Register: React.FC<registerProps> = ({}) => {
               verifyPassword: "",
               firstname: "",
               lastname: "",
+              serviceId: 0,
+              posteId: 0
             }}
             onSubmit={async (values, { setErrors }) => {
+              console.log(values)
               setIsSubmitting(true);
               if (values.password !== values.verifyPassword) {
                 setErrors(
@@ -50,6 +91,8 @@ const Register: React.FC<registerProps> = ({}) => {
                   password: values.password,
                   firstname: values.firstname,
                   lastname: values.lastname,
+                  posteId: values.posteId,
+                  serviceId: values.serviceId,
                 });
                 if (response.data?.register.errors?.length !== 0) {
                   if (response.data?.register.errors) {
@@ -88,6 +131,24 @@ const Register: React.FC<registerProps> = ({}) => {
                   required
                 />
               </Box>
+
+              <Box mt={8}>
+                <SelectField
+                  name="serviceId"
+                  placeholder="Veuillez sélectionner votre service"
+                  label="Service"
+                  options={servicesOptions}
+                />
+              </Box>
+              <Box mt={4}>
+              <SelectField
+                  name="posteId"
+                  placeholder="Veuillez sélectionner votre poste"
+                  label="Poste"
+                  options={postesOptions}
+                />
+              </Box>
+
               <Box mt={8}>
                 <InputField
                   name="password"
@@ -108,6 +169,7 @@ const Register: React.FC<registerProps> = ({}) => {
                   showButton
                 />
               </Box>
+
               <Center>
                 <Button
                   m={12}
@@ -127,4 +189,4 @@ const Register: React.FC<registerProps> = ({}) => {
   );
 };
 
-export default withUrqlClient(createUrqlClient, { ssr: false })(Register);
+export default withUrqlClient(createUrqlClient, { ssr: true })(Register);

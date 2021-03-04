@@ -1,12 +1,13 @@
-import { Field, ObjectType } from "type-graphql";
+import { Field, Int, ObjectType } from "type-graphql";
 import {
   BaseEntity,
+  Column,
   CreateDateColumn,
   Entity,
   ManyToMany,
   OneToMany,
-  PrimaryColumn,
-  UpdateDateColumn
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from "typeorm";
 import { Document } from "./Document";
 import { User } from "./User";
@@ -14,9 +15,13 @@ import { User } from "./User";
 @ObjectType()
 @Entity()
 export class Poste extends BaseEntity {
+  @Field((type) => Int)
+  @PrimaryGeneratedColumn({ type: "int" })
+  id!: number;
+
   @Field()
-  @PrimaryColumn()
-  name: string;
+  @Column()
+  name!: string;
 
   @Field()
   @CreateDateColumn()
@@ -30,7 +35,7 @@ export class Poste extends BaseEntity {
     nullable: true,
     cascade: false,
   })
-  user: User[];
+  users: User[];
 
   @ManyToMany(() => Document, (document) => document.postes, {
     nullable: true,

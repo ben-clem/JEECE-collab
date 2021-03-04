@@ -1,0 +1,8 @@
+query Postes {
+  postes {
+    id
+    name
+    createdAt
+    updatedAt
+  }
+}
