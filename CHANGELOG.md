@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### To fix
 
-## [0.0.3](https://github.com/benzinho75/JEECE-collab/compare/v0.0.2...v0.0.3) - 2021-03-04
+## [v0.0.3](https://github.com/benzinho75/JEECE-collab/compare/v0.0.2...v0.0.3) - 2021-03-04
 
 ### Added
 
@@ -34,7 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - homepage loads faster than the cookie so the user has to refresh to see he is well logged in: was actually caused by urql document caching. Fixed by implementing update cache policies for login and register mutations with @urql/exchange-graphcache.
 - fixed looks
 
-## [0.0.2](https://github.com/benzinho75/JEECE-collab/compare/v0.0.1...v0.0.2) - 2021-02-28
+## [v0.0.2](https://github.com/benzinho75/JEECE-collab/compare/v0.0.1...v0.0.2) - 2021-02-28
 
 ### Added
 
@@ -46,7 +46,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - email and password testing when registering
 - proper error messages
 
-## [0.0.1](https://github.com/benzinho75/JEECE-collab/releases/tag/v0.0.1) - 2021-02-19
+## [v0.0.1](https://github.com/benzinho75/JEECE-collab/releases/tag/v0.0.1) - 2021-02-19
 
 ### Added
 

@@ -49,7 +49,7 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
       <HStack>
         <Box maxH={6}>
           <Text isTruncated>
-            Hello, {data.me.firstname} {data.me.lastname}!
+            Hello, {data.me.firstname}!
           </Text>
         </Box>
         <Button
