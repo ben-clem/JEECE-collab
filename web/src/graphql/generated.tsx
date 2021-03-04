@@ -67,6 +67,7 @@ export type Poste = {
 
 export type User = {
   __typename?: 'User';
+  id: Scalars['Int'];
   email: Scalars['String'];
   firstname: Scalars['String'];
   lastname: Scalars['String'];
@@ -154,7 +155,7 @@ export type FieldError = {
 
 export type UserFragment = (
   { __typename?: 'User' }
-  & Pick<User, 'email' | 'firstname' | 'lastname' | 'accepted' | 'admin' | 'profilePicPath' | 'createdAt' | 'updatedAt' | 'serviceId' | 'posteId'>
+  & Pick<User, 'id' | 'email' | 'firstname' | 'lastname' | 'accepted' | 'admin' | 'profilePicPath' | 'createdAt' | 'updatedAt' | 'serviceId' | 'posteId'>
 );
 
 export type LoginMutationVariables = Exact<{
@@ -244,6 +245,7 @@ export type ServicesQuery = (
 
 export const UserFragmentDoc = gql`
     fragment User on User {
+  id
   email
   firstname
   lastname

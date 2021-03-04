@@ -1,4 +1,5 @@
 fragment User on User {
+  id
   email
   firstname
   lastname

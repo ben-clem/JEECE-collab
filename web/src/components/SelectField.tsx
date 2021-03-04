@@ -6,6 +6,7 @@ import {
   HStack,
   InputGroup,
   Select,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { useField } from "formik";
 import React, { InputHTMLAttributes, useEffect, useRef, useState } from "react";
@@ -45,6 +46,8 @@ export const SelectField: React.FC<SelectFieldProps> = ({
   const wrapperRef = useRef(null);
   useOutsideAlerter(wrapperRef);
 
+  let color = useColorModeValue(selected || field.value ? "black" : "blackAlpha.300", selected || field.value ? "white" : "whiteAlpha.300")
+
   return (
     <FormControl isInvalid={!!meta.error}>
       <FormLabel htmlFor={field.name}>{label}</FormLabel>
@@ -59,7 +62,7 @@ export const SelectField: React.FC<SelectFieldProps> = ({
             setSelected(true);
           }}
           ref={wrapperRef}
-          color={selected || field.value ? "black" : "blackAlpha.300"}
+          color={color}
         >
           {options.map((option: { id: number; name: string }) => (
             <option key={option.id} value={option.id}>

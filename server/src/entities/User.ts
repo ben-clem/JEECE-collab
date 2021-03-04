@@ -7,6 +7,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryColumn,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 import { ConvToUser } from "./ConvToUser";
@@ -16,8 +17,12 @@ import { Service } from "./Service";
 @ObjectType()
 @Entity()
 export class User extends BaseEntity {
+  @Field((type) => Int)
+  @PrimaryGeneratedColumn({ type: "int" })
+  id!: number;
+
   @Field()
-  @PrimaryColumn()
+  @Column({unique: true, nullable: false})
   email!: string;
 
   @Column()
