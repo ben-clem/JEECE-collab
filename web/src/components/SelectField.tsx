@@ -66,7 +66,7 @@ export const SelectField: React.FC<SelectFieldProps> = ({
         >
           {options.map((option: { id: number; name: string }) => (
             <option key={option.id} value={option.id}>
-              {option.name} {option.id}
+              {option.name}
             </option>
           ))}
         </Select>

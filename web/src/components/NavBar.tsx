@@ -18,7 +18,7 @@ import { DarkModeSwitch } from "./DarkModeSwitch";
 interface NavBarProps {}
 
 export const NavBar: React.FC<NavBarProps> = ({}) => {
-  const { colorMode } = useColorMode()
+  const { colorMode } = useColorMode();
   const [{ data, fetching }] = useMeQuery({
     pause: isServer(), // pause this request anytime this page is rendered server-side (the server doesn't have access to the userToken cookie)
   });
@@ -49,7 +49,11 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
     body = (
       <HStack>
         <Box maxH={6}>
-          <Text isTruncated>Hello, {data.me.firstname}!</Text>
+          {data.me.admin ? (
+            <Text isTruncated>Hello, {data.me.firstname}! (admin) </Text>
+          ) : (
+            <Text isTruncated>Hello, {data.me.firstname}!</Text>
+          )}
         </Box>
         <Button
           h={8}
@@ -65,7 +69,12 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
   }
 
   return (
-    <Box position="sticky" top={0} zIndex={1} bg={theme.colors.headerBg[colorMode]}>
+    <Box
+      position="sticky"
+      top={0}
+      zIndex={1}
+      bg={theme.colors.headerBg[colorMode]}
+    >
       <Grid
         templateColumns="repeat(5, 1fr)"
         gap={2}
