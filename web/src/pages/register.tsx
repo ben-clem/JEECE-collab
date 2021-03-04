@@ -6,6 +6,7 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
+  Heading,
   HStack,
   InputGroup,
   Select,
@@ -19,7 +20,7 @@ import { InputField } from "../components/InputField";
 import { NavBar } from "../components/NavBar";
 import { SelectField } from "../components/SelectField";
 import { Wrapper } from "../components/Wrapper";
-import { __containerHeight__ } from "../constants";
+import { CONTAINER_HEIGHT } from "../constants";
 import {
   usePostesQuery,
   useRegisterMutation,
@@ -60,7 +61,10 @@ const Register: React.FC<registerProps> = ({}) => {
       return (
         <>
           <NavBar></NavBar>
-          <Container height={__containerHeight__}>
+          <Container>
+            <Heading mt={8} as="h1" size="lg">
+              Register
+            </Heading>
             <Wrapper variant="small">
               <Formik
                 initialValues={{
@@ -107,7 +111,7 @@ const Register: React.FC<registerProps> = ({}) => {
                 }}
               >
                 <Form>
-                  <Box mt={12}>
+                  <Box mt={0}>
                     <InputField
                       name="email"
                       placeholder="email"

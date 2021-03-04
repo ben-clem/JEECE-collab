@@ -28,6 +28,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - logout
 - Set up server-side rendering w/ Next.js & urql (can choose which pages to render server-side)
 - link to home
+- Added services & postes to register
+- Fixed bugs
 
 ## Fixed
 

@@ -1,4 +1,4 @@
-import { Box, Button, Center} from "@chakra-ui/react";
+import { Box, Button, Center, Heading } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import { withUrqlClient } from "next-urql";
 import { useRouter } from "next/router";
@@ -7,7 +7,7 @@ import { Container } from "../components/Container";
 import { InputField } from "../components/InputField";
 import { NavBar } from "../components/NavBar";
 import { Wrapper } from "../components/Wrapper";
-import { __containerHeight__ } from "../constants";
+import { CONTAINER_HEIGHT } from "../constants";
 import { useLoginMutation } from "../graphql/generated";
 import { createUrqlClient } from "../utils/createUrqlClient";
 import { toErrorMap } from "../utils/toErrorMap";
@@ -22,7 +22,10 @@ const Login: React.FC<loginProps> = ({}) => {
   return (
     <>
       <NavBar></NavBar>
-      <Container height={__containerHeight__}>
+      <Container minHeight={CONTAINER_HEIGHT}>
+        <Heading mt={8} as="h1" size="lg">
+          Login
+        </Heading>
         <Wrapper variant="small">
           <Formik
             initialValues={{
@@ -45,7 +48,7 @@ const Login: React.FC<loginProps> = ({}) => {
             }}
           >
             <Form>
-              <Box mt={12}>
+              <Box mt={0}>
                 <InputField
                   name="email"
                   placeholder="email"
