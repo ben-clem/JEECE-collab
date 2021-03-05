@@ -14,7 +14,7 @@ export class PosteResolver {
   }
 
   @Query(() => Poste, { nullable: true })
-  posteByID(
+  posteById(
     @Arg("id", (type) => Int, { nullable: true }) id: number
   ): Promise<Poste | undefined> {
     return Poste.findOne({ id });

@@ -10,6 +10,7 @@ import { withUrqlClient } from "next-urql";
 import React from "react";
 import { MyContainer } from "../components/Container";
 import { NavBar } from "../components/NavBar";
+import { UserInfo } from "../components/UserInfo";
 import { useMeQuery } from "../graphql/generated";
 import theme from "../theme";
 import { createUrqlClient } from "../utils/createUrqlClient";
@@ -46,25 +47,35 @@ const Index: React.FC<IndexProps> = ({}) => {
           <Grid
             h="85vh"
             w="95vw"
-            mt={10}
-            templateRows="repeat(5, 1fr)"
+            mt={6}
+            templateRows="repeat(12, 1fr)"
             templateColumns="repeat(2, 1fr)"
             gap={3}
           >
             <GridItem
               borderRadius="xl"
+              colSpan={2}
               rowSpan={1}
+              bg={theme.colors.transparent[colorMode]}
+            ></GridItem>
+            <GridItem
+              borderRadius="xl"
               colSpan={1}
+              rowSpan={3}
+              bg={theme.colors.transparent[colorMode]}
+            >
+              <UserInfo />
+            </GridItem>
+            <GridItem
+              borderRadius="xl"
+              colSpan={1}
+              rowSpan={11}
               bg={theme.colors.transparent[colorMode]}
             ></GridItem>
             <GridItem
               borderRadius="xl"
-              rowSpan={5}
-              bg={theme.colors.transparent[colorMode]}
-            ></GridItem>
-            <GridItem
-              borderRadius="xl"
-              rowSpan={4}
+              colSpan={1}
+              rowSpan={8}
               bg={theme.colors.transparent[colorMode]}
             ></GridItem>
           </Grid>

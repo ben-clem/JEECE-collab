@@ -1,0 +1,8 @@
+query PosteById($id: Int!) {
+  posteById(id: $id) {
+    id
+    name
+    createdAt
+    updatedAt
+  }
+}

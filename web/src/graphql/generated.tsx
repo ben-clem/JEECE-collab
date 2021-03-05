@@ -24,7 +24,7 @@ export type Query = {
   serviceById?: Maybe<Service>;
   postes: Array<Poste>;
   posteByName?: Maybe<Poste>;
-  posteByID?: Maybe<Poste>;
+  posteById?: Maybe<Poste>;
   me?: Maybe<User>;
 };
 
@@ -221,6 +221,19 @@ export type MeQuery = (
   )> }
 );
 
+export type PosteByIdQueryVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type PosteByIdQuery = (
+  { __typename?: 'Query' }
+  & { posteById?: Maybe<(
+    { __typename?: 'Poste' }
+    & Pick<Poste, 'id' | 'name' | 'createdAt' | 'updatedAt'>
+  )> }
+);
+
 export type PostesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -229,6 +242,19 @@ export type PostesQuery = (
   & { postes: Array<(
     { __typename?: 'Poste' }
     & Pick<Poste, 'id' | 'name' | 'createdAt' | 'updatedAt'>
+  )> }
+);
+
+export type ServiceByIdQueryVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type ServiceByIdQuery = (
+  { __typename?: 'Query' }
+  & { serviceById?: Maybe<(
+    { __typename?: 'Service' }
+    & Pick<Service, 'id' | 'name' | 'createdAt' | 'updatedAt'>
   )> }
 );
 
@@ -319,6 +345,20 @@ export const MeDocument = gql`
 export function useMeQuery(options: Omit<Urql.UseQueryArgs<MeQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<MeQuery>({ query: MeDocument, ...options });
 };
+export const PosteByIdDocument = gql`
+    query PosteById($id: Int!) {
+  posteById(id: $id) {
+    id
+    name
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+export function usePosteByIdQuery(options: Omit<Urql.UseQueryArgs<PosteByIdQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<PosteByIdQuery>({ query: PosteByIdDocument, ...options });
+};
 export const PostesDocument = gql`
     query Postes {
   postes {
@@ -332,6 +372,20 @@ export const PostesDocument = gql`
 
 export function usePostesQuery(options: Omit<Urql.UseQueryArgs<PostesQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<PostesQuery>({ query: PostesDocument, ...options });
+};
+export const ServiceByIdDocument = gql`
+    query ServiceById($id: Int!) {
+  serviceById(id: $id) {
+    id
+    name
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+export function useServiceByIdQuery(options: Omit<Urql.UseQueryArgs<ServiceByIdQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ServiceByIdQuery>({ query: ServiceByIdDocument, ...options });
 };
 export const ServicesDocument = gql`
     query Services {

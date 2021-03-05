@@ -1,0 +1,8 @@
+query ServiceById($id: Int!) {
+  serviceById(id: $id) {
+    id
+    name
+    createdAt
+    updatedAt
+  }
+}
