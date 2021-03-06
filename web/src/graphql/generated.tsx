@@ -26,7 +26,8 @@ export type Query = {
   posteByName?: Maybe<Poste>;
   posteById?: Maybe<Poste>;
   me?: Maybe<User>;
-  usersByFirstnameOrLastname?: Maybe<Array<User>>;
+  userById?: Maybe<User>;
+  usersByFnOrLnOrSnOrPnLikeWordsInString?: Maybe<Array<User>>;
 };
 
 
@@ -50,8 +51,13 @@ export type QueryPosteByIdArgs = {
 };
 
 
-export type QueryUsersByFirstnameOrLastnameArgs = {
-  name: Scalars['String'];
+export type QueryUserByIdArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type QueryUsersByFnOrLnOrSnOrPnLikeWordsInStringArgs = {
+  string: Scalars['String'];
 };
 
 export type Service = {
@@ -275,16 +281,29 @@ export type ServicesQuery = (
   )> }
 );
 
-export type UsersByFirstnameOrLastnameQueryVariables = Exact<{
-  name: Scalars['String'];
+export type UserByIdQueryVariables = Exact<{
+  id: Scalars['Int'];
 }>;
 
 
-export type UsersByFirstnameOrLastnameQuery = (
+export type UserByIdQuery = (
   { __typename?: 'Query' }
-  & { usersByFirstnameOrLastname?: Maybe<Array<(
+  & { userById?: Maybe<(
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'email' | 'firstname' | 'lastname' | 'accepted' | 'admin' | 'profilePicPath' | 'createdAt' | 'updatedAt' | 'serviceId' | 'posteId'>
+    & UserFragment
+  )> }
+);
+
+export type UsersByFnOrLnOrSnOrPnLikeWordsInStringQueryVariables = Exact<{
+  string: Scalars['String'];
+}>;
+
+
+export type UsersByFnOrLnOrSnOrPnLikeWordsInStringQuery = (
+  { __typename?: 'Query' }
+  & { usersByFnOrLnOrSnOrPnLikeWordsInString?: Maybe<Array<(
+    { __typename?: 'User' }
+    & UserFragment
   )>> }
 );
 
@@ -420,24 +439,25 @@ export const ServicesDocument = gql`
 export function useServicesQuery(options: Omit<Urql.UseQueryArgs<ServicesQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<ServicesQuery>({ query: ServicesDocument, ...options });
 };
-export const UsersByFirstnameOrLastnameDocument = gql`
-    query usersByFirstnameOrLastname($name: String!) {
-  usersByFirstnameOrLastname(name: $name) {
-    id
-    email
-    firstname
-    lastname
-    accepted
-    admin
-    profilePicPath
-    createdAt
-    updatedAt
-    serviceId
-    posteId
+export const UserByIdDocument = gql`
+    query userById($id: Int!) {
+  userById(id: $id) {
+    ...User
   }
 }
-    `;
+    ${UserFragmentDoc}`;
 
-export function useUsersByFirstnameOrLastnameQuery(options: Omit<Urql.UseQueryArgs<UsersByFirstnameOrLastnameQueryVariables>, 'query'> = {}) {
-  return Urql.useQuery<UsersByFirstnameOrLastnameQuery>({ query: UsersByFirstnameOrLastnameDocument, ...options });
+export function useUserByIdQuery(options: Omit<Urql.UseQueryArgs<UserByIdQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<UserByIdQuery>({ query: UserByIdDocument, ...options });
+};
+export const UsersByFnOrLnOrSnOrPnLikeWordsInStringDocument = gql`
+    query usersByFnOrLnOrSnOrPnLikeWordsInString($string: String!) {
+  usersByFnOrLnOrSnOrPnLikeWordsInString(string: $string) {
+    ...User
+  }
+}
+    ${UserFragmentDoc}`;
+
+export function useUsersByFnOrLnOrSnOrPnLikeWordsInStringQuery(options: Omit<Urql.UseQueryArgs<UsersByFnOrLnOrSnOrPnLikeWordsInStringQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<UsersByFnOrLnOrSnOrPnLikeWordsInStringQuery>({ query: UsersByFnOrLnOrSnOrPnLikeWordsInStringDocument, ...options });
 };

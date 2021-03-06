@@ -2,6 +2,7 @@ import {
   Avatar,
   Box,
   Center,
+  FlexProps,
   Grid,
   GridItem,
   Heading,
@@ -11,60 +12,43 @@ import {
   useColorMode,
   VStack,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React from "react";
 import {
+  useMeQuery,
   usePosteByIdQuery,
   useServiceByIdQuery,
-  useUserByIdQuery,
 } from "../graphql/generated";
 import theme from "../theme";
+import { isServer } from "../utils/isServer";
 
-type UserInfoProps = {
-  id: number;
-};
-
-export const UserInfo = (props: UserInfoProps) => {
+export const MeInfo = (props: FlexProps) => {
   const { colorMode } = useColorMode();
-  const [serviceId, setServiceId] = useState(0);
-  const [posteId, setPosteId] = useState(0);
-
-  const [{ data: userData, fetching: userFetching }] = useUserByIdQuery({
-    variables: {
-      id: props.id,
-    },
-    pause: false, // this request can be done server-side
-  });
-
-  const [
-    { data: serviceByIdData, fetching: serviceByIdFetching },
-  ] = useServiceByIdQuery({
-    variables: {
-      id: serviceId,
-    },
-    pause: false, // this request can be done server-side
-  });
-
-  const [
-    { data: posteByIdData, fetching: posteByIdFetching },
-  ] = usePosteByIdQuery({
-    variables: {
-      id: posteId,
-    },
-    pause: false, // this request can be done server-side
+  const [{ data: meData, fetching: meFetching }] = useMeQuery({
+    pause: isServer(), // pause this request anytime this page is rendered server-side (the server doesn't have access to the userToken cookie)
   });
 
   let body = null;
 
-  if (userFetching) {
-    // fetching: waiting
-  } else if (userData?.userById) {
+  // fetching: waiting
+  if (meFetching) {
     // logged in:
-    if (userData.userById.serviceId && serviceId === 0) {
-      setServiceId(userData.userById.serviceId);
-    }
-    if (userData.userById.posteId && posteId === 0) {
-      setPosteId(userData.userById.posteId);
-    }
+  } else if (meData?.me) {
+    const [
+      { data: serviceByIdData, fetching: serviceByIdFetching },
+    ] = useServiceByIdQuery({
+      variables: {
+        id: meData.me.serviceId as number,
+      },
+      pause: false, // this request can be done server-side
+    });
+    const [
+      { data: posteByIdData, fetching: posteByIdFetching },
+    ] = usePosteByIdQuery({
+      variables: {
+        id: meData.me.posteId as number,
+      },
+      pause: false, // this request can be done server-side
+    });
 
     body = (
       <Grid
@@ -80,13 +64,13 @@ export const UserInfo = (props: UserInfoProps) => {
         <GridItem colSpan={7} rowSpan={1}>
           <HStack boxSize="100%" ml={2}>
             <Box>
-              {userData.userById.firstname} {userData.userById.lastname}
+              {meData.me.firstname} {meData.me.lastname}
             </Box>
           </HStack>
         </GridItem>
         <GridItem colSpan={7} rowSpan={1}>
           <HStack boxSize="100%" ml={2}>
-            <Box>{userData.userById.email}</Box>
+            <Box>{meData.me.email}</Box>
           </HStack>
         </GridItem>
         <GridItem colSpan={4} rowSpan={2}>
@@ -115,24 +99,24 @@ export const UserInfo = (props: UserInfoProps) => {
               <Text>Accepted ?</Text>
               <Text
                 color={
-                  userData.userById.accepted
+                  meData.me.accepted
                     ? theme.colors.teal[500]
                     : theme.colors.red[500]
                 }
               >
-                {userData.userById.accepted.toString()}
+                {meData.me.accepted.toString()}
               </Text>
             </HStack>
             <HStack align="right" justify="right">
               <Text>Admin ?</Text>
               <Text
                 color={
-                  userData.userById.admin
+                  meData.me.admin
                     ? theme.colors.teal[500]
                     : theme.colors.gray[500]
                 }
               >
-                {userData.userById.admin.toString()}
+                {meData.me.admin.toString()}
               </Text>
             </HStack>
           </VStack>

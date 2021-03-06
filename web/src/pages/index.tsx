@@ -2,9 +2,18 @@ import {
   Center,
   Grid,
   GridItem,
+  Button,
   Heading,
   HStack,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   useColorMode,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import { withUrqlClient } from "next-urql";
@@ -12,50 +21,72 @@ import React, { useEffect, useState } from "react";
 import { MyContainer } from "../components/Container";
 import { NavBar } from "../components/NavBar";
 import { SearchField } from "../components/SearchField";
-import { UserInfo } from "../components/UserInfo";
+import { MeInfo } from "../components/MeInfo";
 import {
   useMeQuery,
-  useUsersByFirstnameOrLastnameQuery,
+  useUsersByFnOrLnOrSnOrPnLikeWordsInStringQuery,
 } from "../graphql/generated";
 import theme from "../theme";
 import { createUrqlClient } from "../utils/createUrqlClient";
 import { isServer } from "../utils/isServer";
+import { UserInfo } from "../components/UserInfo";
 
 interface IndexProps {}
 
 const Index: React.FC<IndexProps> = ({}) => {
   const { colorMode } = useColorMode();
-  const [meResult, executeMeQuery] = useMeQuery({
-    pause: isServer(), // pause this request anytime this page is rendered server-side (the server doesn't have access to the userToken cookie)
-  });
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [string, setString] = useState("");
 
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const [meResult] = useMeQuery({
+    pause: isServer(), // pause this request anytime this page is rendered server-side (the server doesn't have access to the userToken cookie)
+  });
   const [
-    usersByFirstnameOrLastnameResult,
-    executeUsersByFirstnameOrLastnameQuery,
-  ] = useUsersByFirstnameOrLastnameQuery({
+    usersByFnOrLnOrSnOrPnLikeWordsInStringQueryResults,
+  ] = useUsersByFnOrLnOrSnOrPnLikeWordsInStringQuery({
     variables: {
-      name: currentWord,
+      string,
     },
     pause: false, // this query can be done server-side
   });
 
-  if (usersByFirstnameOrLastnameResult.fetching) {
-    // waiting
-    console.log("--fetching")
-  } else if (usersByFirstnameOrLastnameResult.data) {
-    // users.push(
-    //   usersByFirstnameOrLastnameResult.data
-    //     .usersByFirstnameOrLastname
-    // );
-    console.log("--users:")
-    console.log(
-      usersByFirstnameOrLastnameResult.data.usersByFirstnameOrLastname
-    );
-  }
+  useEffect(() => {
+    if ((isSubmitting === true)) {
+      onOpen();
+      setIsSubmitting(false)
+    }
+  }, [usersByFnOrLnOrSnOrPnLikeWordsInStringQueryResults.data, isSubmitting]);
 
   let body = null;
+  let modal = null;
+
+  if (usersByFnOrLnOrSnOrPnLikeWordsInStringQueryResults.fetching) {
+    // waiting
+  } else if (usersByFnOrLnOrSnOrPnLikeWordsInStringQueryResults.error) {
+  } else if (usersByFnOrLnOrSnOrPnLikeWordsInStringQueryResults.data) {
+    // got users result array
+    // worked, need to diplay them + button to start convo (opening via useEffect hook)
+
+    // need to display users if result full or message if no results
+
+    modal = (
+      <Modal size="xl" isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Résultat</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <p>oui modal</p>
+          </ModalBody>
+
+          <ModalFooter />
+        </ModalContent>
+      </Modal>
+    );
+  }
 
   // fetching: waiting
   if (meResult.fetching) {
@@ -75,6 +106,7 @@ const Index: React.FC<IndexProps> = ({}) => {
     } else {
       body = (
         <Center maxW="95vw">
+          {modal}
           <Grid
             h="85vh"
             w="95vw"
@@ -93,25 +125,9 @@ const Index: React.FC<IndexProps> = ({}) => {
                 initialValues={{
                   input: "",
                 }}
-                onSubmit={async (values, { setErrors }) => {
+                onSubmit={async (values) => {
                   setIsSubmitting(true);
-
-                  console.log(values.input);
                   setString(values.input);
-
-                  //console.log(users);
-
-                  //const response = await search(values.input);
-                  // if (response.data?.register.errors?.length !== 0) {
-                  //   if (response.data?.register.errors) {
-                  //     setErrors(toErrorMap(response.data.register.errors)); // Formik hook to handle each field errors + utility function to map the errors from GraphQL
-                  //     setIsSubmitting(false);
-                  //   }
-                  // } else if (response.data?.register.user) {
-                  //   //worked
-                  //   router.push("/");
-
-                  //}
                 }}
               >
                 <HStack boxSize="100%" align="center" justify="center">
@@ -133,7 +149,7 @@ const Index: React.FC<IndexProps> = ({}) => {
               rowSpan={3}
               bg={theme.colors.transparent[colorMode]}
             >
-              <UserInfo />
+              <MeInfo />
             </GridItem>
             <GridItem
               borderRadius="xl"

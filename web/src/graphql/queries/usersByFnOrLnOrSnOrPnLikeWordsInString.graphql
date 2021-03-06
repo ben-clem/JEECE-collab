@@ -1,0 +1,5 @@
+query usersByFnOrLnOrSnOrPnLikeWordsInString($string: String!) {
+  usersByFnOrLnOrSnOrPnLikeWordsInString(string: $string) {
+    ...User
+  }
+}

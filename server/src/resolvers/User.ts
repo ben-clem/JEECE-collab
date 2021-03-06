@@ -151,6 +151,13 @@ export class UserResolver {
     return user;
   }
 
+  @Query(() => User, { nullable: true })
+  userById(
+    @Arg("id", (type) => Int) id: number
+  ): Promise<User | undefined> {
+    return User.findOne({ id });
+  }
+
   @Mutation(() => Boolean)
   logout(@Ctx() { res }: MyContext) {
     return new Promise((resolve) => {
@@ -160,7 +167,7 @@ export class UserResolver {
   }
 
   @Query(() => [User], { nullable: true })
-  async usersByFirstnameOrLastnameInString(
+  async usersByFnOrLnOrSnOrPnLikeWordsInString(
     @Arg("string", (type) => String) string: string
   ): Promise<User[] | undefined> {
     const words = string.split(" ");
@@ -171,12 +178,22 @@ export class UserResolver {
       const fetchedUsers = await getConnection()
         .getRepository(User)
         .createQueryBuilder("user")
+        .leftJoinAndSelect("user.service", "service")
+        .leftJoinAndSelect("user.poste", "poste")
         .where(
           "(LOWER(:word) = '') IS NOT TRUE AND LOWER(user.firstname) LIKE '%' || LOWER(:word) || '%'",
           { word }
         )
         .orWhere(
           "(LOWER(:word) = '') IS NOT TRUE AND LOWER(user.lastname) LIKE '%' || LOWER(:word) || '%'",
+          { word }
+        )
+        .orWhere(
+          "(LOWER(:word) = '') IS NOT TRUE AND LOWER(service.name) LIKE '%' || LOWER(:word) || '%'",
+          { word }
+        )
+        .orWhere(
+          "(LOWER(:word) = '') IS NOT TRUE AND LOWER(poste.name) LIKE '%' || LOWER(:word) || '%'",
           { word }
         )
         .getMany();
