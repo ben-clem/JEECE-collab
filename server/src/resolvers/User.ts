@@ -166,8 +166,8 @@ export class UserResolver {
     const words = string.split(" ");
     let users: User[] = [];
 
-    // for each word of the string
-    for (let word of words) {
+    // for each word of the string (doesn't work with the "forEach" syntax, apparently "modern for" syntax is often a better choice)
+    for (const word of words) {
       const fetchedUsers = await getConnection()
         .getRepository(User)
         .createQueryBuilder("user")
