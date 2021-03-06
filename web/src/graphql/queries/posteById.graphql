@@ -1,4 +1,4 @@
-query PosteById($id: Int!) {
+query posteById($id: Int!) {
   posteById(id: $id) {
     id
     name

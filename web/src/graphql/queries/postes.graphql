@@ -1,4 +1,4 @@
-query Postes {
+query postes {
   postes {
     id
     name

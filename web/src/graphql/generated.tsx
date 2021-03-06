@@ -26,6 +26,7 @@ export type Query = {
   posteByName?: Maybe<Poste>;
   posteById?: Maybe<Poste>;
   me?: Maybe<User>;
+  usersByFirstnameOrLastname?: Maybe<Array<User>>;
 };
 
 
@@ -35,7 +36,7 @@ export type QueryServiceByNameArgs = {
 
 
 export type QueryServiceByIdArgs = {
-  id?: Maybe<Scalars['Int']>;
+  id: Scalars['Int'];
 };
 
 
@@ -46,6 +47,11 @@ export type QueryPosteByNameArgs = {
 
 export type QueryPosteByIdArgs = {
   id?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryUsersByFirstnameOrLastnameArgs = {
+  name: Scalars['String'];
 };
 
 export type Service = {
@@ -101,7 +107,7 @@ export type MutationCreateServiceArgs = {
 
 export type MutationUpdateServiceArgs = {
   newName: Scalars['String'];
-  id?: Maybe<Scalars['Int']>;
+  id: Scalars['Int'];
 };
 
 
@@ -269,6 +275,19 @@ export type ServicesQuery = (
   )> }
 );
 
+export type UsersByFirstnameOrLastnameQueryVariables = Exact<{
+  name: Scalars['String'];
+}>;
+
+
+export type UsersByFirstnameOrLastnameQuery = (
+  { __typename?: 'Query' }
+  & { usersByFirstnameOrLastname?: Maybe<Array<(
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'email' | 'firstname' | 'lastname' | 'accepted' | 'admin' | 'profilePicPath' | 'createdAt' | 'updatedAt' | 'serviceId' | 'posteId'>
+  )>> }
+);
+
 export const UserFragmentDoc = gql`
     fragment User on User {
   id
@@ -285,7 +304,7 @@ export const UserFragmentDoc = gql`
 }
     `;
 export const LoginDocument = gql`
-    mutation Login($email: String!, $password: String!) {
+    mutation login($email: String!, $password: String!) {
   login(email: $email, password: $password) {
     errors {
       field
@@ -302,7 +321,7 @@ export function useLoginMutation() {
   return Urql.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument);
 };
 export const LogoutDocument = gql`
-    mutation Logout {
+    mutation logout {
   logout
 }
     `;
@@ -311,7 +330,7 @@ export function useLogoutMutation() {
   return Urql.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument);
 };
 export const RegisterDocument = gql`
-    mutation Register($email: String!, $password: String!, $firstname: String!, $lastname: String!, $serviceId: Int, $posteId: Int) {
+    mutation register($email: String!, $password: String!, $firstname: String!, $lastname: String!, $serviceId: Int, $posteId: Int) {
   register(
     email: $email
     password: $password
@@ -335,7 +354,7 @@ export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
 };
 export const MeDocument = gql`
-    query Me {
+    query me {
   me {
     ...User
   }
@@ -346,7 +365,7 @@ export function useMeQuery(options: Omit<Urql.UseQueryArgs<MeQueryVariables>, 'q
   return Urql.useQuery<MeQuery>({ query: MeDocument, ...options });
 };
 export const PosteByIdDocument = gql`
-    query PosteById($id: Int!) {
+    query posteById($id: Int!) {
   posteById(id: $id) {
     id
     name
@@ -360,7 +379,7 @@ export function usePosteByIdQuery(options: Omit<Urql.UseQueryArgs<PosteByIdQuery
   return Urql.useQuery<PosteByIdQuery>({ query: PosteByIdDocument, ...options });
 };
 export const PostesDocument = gql`
-    query Postes {
+    query postes {
   postes {
     id
     name
@@ -374,7 +393,7 @@ export function usePostesQuery(options: Omit<Urql.UseQueryArgs<PostesQueryVariab
   return Urql.useQuery<PostesQuery>({ query: PostesDocument, ...options });
 };
 export const ServiceByIdDocument = gql`
-    query ServiceById($id: Int!) {
+    query serviceById($id: Int!) {
   serviceById(id: $id) {
     id
     name
@@ -388,7 +407,7 @@ export function useServiceByIdQuery(options: Omit<Urql.UseQueryArgs<ServiceByIdQ
   return Urql.useQuery<ServiceByIdQuery>({ query: ServiceByIdDocument, ...options });
 };
 export const ServicesDocument = gql`
-    query Services {
+    query services {
   services {
     id
     name
@@ -400,4 +419,25 @@ export const ServicesDocument = gql`
 
 export function useServicesQuery(options: Omit<Urql.UseQueryArgs<ServicesQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<ServicesQuery>({ query: ServicesDocument, ...options });
+};
+export const UsersByFirstnameOrLastnameDocument = gql`
+    query usersByFirstnameOrLastname($name: String!) {
+  usersByFirstnameOrLastname(name: $name) {
+    id
+    email
+    firstname
+    lastname
+    accepted
+    admin
+    profilePicPath
+    createdAt
+    updatedAt
+    serviceId
+    posteId
+  }
+}
+    `;
+
+export function useUsersByFirstnameOrLastnameQuery(options: Omit<Urql.UseQueryArgs<UsersByFirstnameOrLastnameQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<UsersByFirstnameOrLastnameQuery>({ query: UsersByFirstnameOrLastnameDocument, ...options });
 };

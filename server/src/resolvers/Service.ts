@@ -15,7 +15,7 @@ export class ServiceResolver {
 
   @Query(() => Service, { nullable: true })
   serviceById(
-    @Arg("id", (type) => Int, { nullable: true }) id: number
+    @Arg("id", (type) => Int) id: number
   ): Promise<Service | undefined> {
     return Service.findOne({ id });
   }
@@ -27,7 +27,7 @@ export class ServiceResolver {
 
   @Mutation(() => Service)
   async updateService(
-    @Arg("id", (type) => Int, { nullable: true }) id: number,
+    @Arg("id", (type) => Int) id: number,
     @Arg("newName") newName: string
   ): Promise<Service | null> {
     const service = await Service.findOne({ id });

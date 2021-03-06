@@ -1,4 +1,4 @@
-query Services {
+query services {
   services {
     id
     name

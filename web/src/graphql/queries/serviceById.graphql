@@ -1,4 +1,4 @@
-query ServiceById($id: Int!) {
+query serviceById($id: Int!) {
   serviceById(id: $id) {
     id
     name

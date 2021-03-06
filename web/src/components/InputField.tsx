@@ -13,7 +13,7 @@ import { useField } from "formik";
 import React, { InputHTMLAttributes, useEffect, useState } from "react";
 
 type InputFieldProps = InputHTMLAttributes<HTMLInputElement> & {
-  label: string;
+  label?: string;
   name: string;
   showButton?: boolean;
 };

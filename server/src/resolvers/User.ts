@@ -158,4 +158,20 @@ export class UserResolver {
       resolve(true);
     });
   }
+
+  @Query(() => [User], { nullable: true })
+  async usersByFirstnameOrLastname(
+    @Arg("name", (type) => String) name: string
+  ): Promise<User[] | undefined> {
+    const users = await getConnection()
+      .getRepository(User)
+      .createQueryBuilder("user")
+      .where("LOWER(user.firstname) LIKE '%' || LOWER(:name) || '%'", { name })
+      .orWhere("LOWER(user.lastname) LIKE '%' || LOWER(:name) || '%'", {
+        name,
+      })
+      .getMany();
+
+    return users;
+  }
 }
