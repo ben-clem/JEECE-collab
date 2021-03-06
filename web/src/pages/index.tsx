@@ -1,49 +1,68 @@
 import {
-  Box,
-  Button,
   Center,
-  Flex,
   Grid,
   GridItem,
   Heading,
   HStack,
-  Input,
-  InputGroup,
-  InputRightElement,
   useColorMode,
-  useColorModeValue,
 } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import { withUrqlClient } from "next-urql";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MyContainer } from "../components/Container";
-import { InputField } from "../components/InputField";
 import { NavBar } from "../components/NavBar";
 import { SearchField } from "../components/SearchField";
 import { UserInfo } from "../components/UserInfo";
-import { useMeQuery } from "../graphql/generated";
+import {
+  useMeQuery,
+  useUsersByFirstnameOrLastnameQuery,
+} from "../graphql/generated";
 import theme from "../theme";
 import { createUrqlClient } from "../utils/createUrqlClient";
 import { isServer } from "../utils/isServer";
-import { search } from "../utils/search";
 
 interface IndexProps {}
 
 const Index: React.FC<IndexProps> = ({}) => {
   const { colorMode } = useColorMode();
-  const [{ data, fetching }] = useMeQuery({
+  const [meResult, executeMeQuery] = useMeQuery({
     pause: isServer(), // pause this request anytime this page is rendered server-side (the server doesn't have access to the userToken cookie)
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [string, setString] = useState("");
+
+  const [
+    usersByFirstnameOrLastnameResult,
+    executeUsersByFirstnameOrLastnameQuery,
+  ] = useUsersByFirstnameOrLastnameQuery({
+    variables: {
+      name: currentWord,
+    },
+    pause: false, // this query can be done server-side
+  });
+
+  if (usersByFirstnameOrLastnameResult.fetching) {
+    // waiting
+    console.log("--fetching")
+  } else if (usersByFirstnameOrLastnameResult.data) {
+    // users.push(
+    //   usersByFirstnameOrLastnameResult.data
+    //     .usersByFirstnameOrLastname
+    // );
+    console.log("--users:")
+    console.log(
+      usersByFirstnameOrLastnameResult.data.usersByFirstnameOrLastname
+    );
+  }
 
   let body = null;
 
   // fetching: waiting
-  if (fetching) {
+  if (meResult.fetching) {
     // logged in:
-  } else if (data?.me) {
+  } else if (meResult.data?.me) {
     // admin:
-    if (data?.me?.admin) {
+    if (meResult.data?.me?.admin) {
       body = (
         <Center maxW="75vw" mx="auto" mt="35vh">
           <Heading as="h1" size="xl">
@@ -78,7 +97,9 @@ const Index: React.FC<IndexProps> = ({}) => {
                   setIsSubmitting(true);
 
                   console.log(values.input);
-                  search(values.input);
+                  setString(values.input);
+
+                  //console.log(users);
 
                   //const response = await search(values.input);
                   // if (response.data?.register.errors?.length !== 0) {

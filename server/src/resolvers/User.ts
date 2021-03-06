@@ -160,17 +160,35 @@ export class UserResolver {
   }
 
   @Query(() => [User], { nullable: true })
-  async usersByFirstnameOrLastname(
-    @Arg("name", (type) => String) name: string
+  async usersByFirstnameOrLastnameInString(
+    @Arg("string", (type) => String) string: string
   ): Promise<User[] | undefined> {
-    const users = await getConnection()
-      .getRepository(User)
-      .createQueryBuilder("user")
-      .where("LOWER(user.firstname) LIKE '%' || LOWER(:name) || '%'", { name })
-      .orWhere("LOWER(user.lastname) LIKE '%' || LOWER(:name) || '%'", {
-        name,
-      })
-      .getMany();
+    const words = string.split(" ");
+    let users: User[] = [];
+
+    // for each word of the string
+    for (let word of words) {
+      const fetchedUsers = await getConnection()
+        .getRepository(User)
+        .createQueryBuilder("user")
+        .where(
+          "(LOWER(:word) = '') IS NOT TRUE AND LOWER(user.firstname) LIKE '%' || LOWER(:word) || '%'",
+          { word }
+        )
+        .orWhere(
+          "(LOWER(:word) = '') IS NOT TRUE AND LOWER(user.lastname) LIKE '%' || LOWER(:word) || '%'",
+          { word }
+        )
+        .getMany();
+
+      // merging the new results in
+      users = users.concat(fetchedUsers);
+    }
+
+    // removing duplicate entries based on id
+    users = Array.from(new Set(users.map((u) => u.id))).map((id) => {
+      return users.find((u) => u.id === id);
+    }) as User[];
 
     return users;
   }
