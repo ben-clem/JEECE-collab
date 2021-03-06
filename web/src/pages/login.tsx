@@ -7,7 +7,6 @@ import { MyContainer } from "../components/Container";
 import { InputField } from "../components/InputField";
 import { NavBar } from "../components/NavBar";
 import { Wrapper } from "../components/Wrapper";
-import { CONTAINER_HEIGHT } from "../constants";
 import { useLoginMutation } from "../graphql/generated";
 import { createUrqlClient } from "../utils/createUrqlClient";
 import { toErrorMap } from "../utils/toErrorMap";

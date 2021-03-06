@@ -11,6 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### To fix
 
+# Added
+
+- Home page with user info display
+- Search bar to search users by firstname, lastname, service name or poste name
+- corresponding queries
+- modal populated with results
+
 ## [v0.0.3](https://github.com/benzinho75/JEECE-collab/compare/v0.0.2...v0.0.3) - 2021-03-04
 
 ### Added

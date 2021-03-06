@@ -14,6 +14,9 @@ import {
   ModalOverlay,
   useColorMode,
   useDisclosure,
+  WrapItem,
+  Wrap,
+  VStack,
 } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import { withUrqlClient } from "next-urql";
@@ -30,10 +33,13 @@ import theme from "../theme";
 import { createUrqlClient } from "../utils/createUrqlClient";
 import { isServer } from "../utils/isServer";
 import { UserInfo } from "../components/UserInfo";
+import { ChatIcon } from "@chakra-ui/icons";
+import { useRouter } from "next/router";
 
 interface IndexProps {}
 
 const Index: React.FC<IndexProps> = ({}) => {
+  const router = useRouter();
   const { colorMode } = useColorMode();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -44,9 +50,7 @@ const Index: React.FC<IndexProps> = ({}) => {
   const [meResult] = useMeQuery({
     pause: isServer(), // pause this request anytime this page is rendered server-side (the server doesn't have access to the userToken cookie)
   });
-  const [
-    usersByFnOrLnOrSnOrPnLikeWordsInStringQueryResults,
-  ] = useUsersByFnOrLnOrSnOrPnLikeWordsInStringQuery({
+  const [usersResult] = useUsersByFnOrLnOrSnOrPnLikeWordsInStringQuery({
     variables: {
       string,
     },
@@ -54,38 +58,75 @@ const Index: React.FC<IndexProps> = ({}) => {
   });
 
   useEffect(() => {
-    if ((isSubmitting === true)) {
+    if (isSubmitting === true) {
       onOpen();
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }, [usersByFnOrLnOrSnOrPnLikeWordsInStringQueryResults.data, isSubmitting]);
+  }, [usersResult.data, isSubmitting]);
 
   let body = null;
   let modal = null;
 
-  if (usersByFnOrLnOrSnOrPnLikeWordsInStringQueryResults.fetching) {
+  if (usersResult.fetching) {
     // waiting
-  } else if (usersByFnOrLnOrSnOrPnLikeWordsInStringQueryResults.error) {
-  } else if (usersByFnOrLnOrSnOrPnLikeWordsInStringQueryResults.data) {
+  } else if (usersResult.error) {
+  } else if (usersResult.data?.usersByFnOrLnOrSnOrPnLikeWordsInString) {
     // got users result array
     // worked, need to diplay them + button to start convo (opening via useEffect hook)
 
     // need to display users if result full or message if no results
+    if (usersResult.data.usersByFnOrLnOrSnOrPnLikeWordsInString?.length === 0) {
+      modal = (
+        <Modal size="xl" isOpen={isOpen} onClose={onClose}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Résultat</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <p>Aucun utilisateur ne correspond à votre recherche...</p>
+            </ModalBody>
 
-    modal = (
-      <Modal size="xl" isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Résultat</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <p>oui modal</p>
-          </ModalBody>
+            <ModalFooter />
+          </ModalContent>
+        </Modal>
+      );
+    } else {
+      modal = (
+        <Modal size="6xl" isOpen={isOpen} onClose={onClose}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Résultat</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <Wrap justify="center" spacing={4}>
+                {usersResult.data.usersByFnOrLnOrSnOrPnLikeWordsInString.map(
+                  (user) => {
+                    if (user.id !== meResult.data?.me?.id)
+                      return (
+                        <WrapItem
+                          bg={theme.colors.transparent[colorMode]}
+                          borderRadius="lg"
+                        >
+                          <VStack w="22rem" h="13rem" spacing={0}>
+                            <UserInfo id={user.id} />
+                            <Button w="100%" onClick={() => {
+                              router.push("/convo");
+                            }}>
+                              <ChatIcon />
+                            </Button>
+                          </VStack>
+                        </WrapItem>
+                      );
+                  }
+                )}
+              </Wrap>
+            </ModalBody>
 
-          <ModalFooter />
-        </ModalContent>
-      </Modal>
-    );
+            <ModalFooter />
+          </ModalContent>
+        </Modal>
+      );
+    }
   }
 
   // fetching: waiting
@@ -115,12 +156,7 @@ const Index: React.FC<IndexProps> = ({}) => {
             templateColumns="repeat(2, 1fr)"
             gap={3}
           >
-            <GridItem
-              borderRadius="xl"
-              colSpan={2}
-              rowSpan={1}
-              bg={theme.colors.transparent[colorMode]}
-            >
+            <GridItem borderRadius="xl" colSpan={2} rowSpan={1}>
               <Formik
                 initialValues={{
                   input: "",
@@ -131,12 +167,10 @@ const Index: React.FC<IndexProps> = ({}) => {
                 }}
               >
                 <HStack boxSize="100%" align="center" justify="center">
-                  <Form
-                    style={{ width: "99.2%", height: "80%", margin: "auto" }}
-                  >
+                  <Form style={{ width: "98%", height: "98%", margin: "auto" }}>
                     <SearchField
                       name="input"
-                      placeholder="rechercher un autre utilisateur par nom, prénom, poste ou service..."
+                      placeholder="rechercher un utilisateur par nom, prénom, poste ou service... (plusieurs mots ? : les séparer d'un espace)"
                       isLoading={isSubmitting}
                     ></SearchField>
                   </Form>

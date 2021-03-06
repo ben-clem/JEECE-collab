@@ -144,7 +144,7 @@ export const UserInfo = (props: UserInfoProps) => {
   } else {
     body = (
       <Center>
-        <Heading as="h4">You're not logged in!</Heading>
+        <Heading as="h4">Need userId</Heading>
       </Center>
     );
   }

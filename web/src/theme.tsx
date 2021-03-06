@@ -18,6 +18,7 @@ const theme = extendTheme({
     contentBg: { light: "rgb(247, 250, 252)", dark: "rgb(23, 25, 35)" },
     content: { light: "black", dark: "white" },
     transparent: { light: "blackAlpha.50", dark: "whiteAlpha.50" },
+    placeholder: { light: "blackAlpha.300", dark: "whiteAlpha.300" },
   },
   fonts,
   breakpoints,
