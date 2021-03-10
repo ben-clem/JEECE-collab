@@ -28,6 +28,24 @@ export class ConversationResolver {
     }
   }
 
+  @Query(() => ConvsResponse)
+  async conversationsByUserId(@Arg("id") id: number): Promise<ConvsResponse> {
+    try {
+      const allConvos = await getRepository(Conversation)
+        .createQueryBuilder("conversation")
+        .leftJoinAndSelect("conversation.convToUsers", "convToUser")
+        .getMany();
+
+      const userConvos = allConvos.filter((conv) => {
+        conv.convToUsers[0].userId === id || conv.convToUsers[1].userId === id;
+      });
+
+      return { convs: userConvos };
+    } catch (err) {
+      return { error: err.toString() };
+    }
+  }
+
   // @Query(() => Conversation, { nullable: true })
   // conversationByTitle(
   //   @Arg("title") title: string
@@ -59,26 +77,15 @@ export class ConversationResolver {
       .leftJoinAndSelect("conversation.convToUsers", "convToUser")
       .getMany();
 
-    console.log(conversations);
-
     let exists: boolean = false;
-    let matched1,
-      matched2: boolean = false;
 
     for (const conv of conversations) {
-      matched1 = false;
-      matched2 = false;
-
-      for (const convToUser of conv.convToUsers) {
-        if (convToUser.userId === userId1) {
-          matched1 = true;
-        }
-        if (convToUser.userId === userId2) {
-          matched2 = true;
-        }
-      }
-
-      if (matched1 && matched2) {
+      if (
+        (conv.convToUsers[0].userId === userId1 &&
+          conv.convToUsers[1].userId === userId2) ||
+        (conv.convToUsers[0].userId === userId2 &&
+          conv.convToUsers[1].userId === userId1)
+      ) {
         exists = true;
         break;
       }
@@ -97,13 +104,21 @@ export class ConversationResolver {
           conversationUuid: newConv.uuid,
         });
         await ConvToUser.save(convToUser1);
+
         const convToUser2 = ConvToUser.create({
           userId: userId2,
           conversationUuid: newConv.uuid,
         });
         await ConvToUser.save(convToUser2);
 
-        return { conv: newConv };
+        // get the newly created conv with its convToUser array field
+        const conv = await getRepository(Conversation)
+          .createQueryBuilder("conversation")
+          .leftJoinAndSelect("conversation.convToUsers", "convToUser")
+          .where("conversation.uuid = :uuid", { uuid: newConv.uuid })
+          .getOneOrFail();
+
+        return { conv };
       } catch (err) {
         if (err.code === "23503") {
           return { error: "one of the provided user ids is not valid" };
