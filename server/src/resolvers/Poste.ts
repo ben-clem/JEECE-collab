@@ -15,7 +15,7 @@ export class PosteResolver {
 
   @Query(() => Poste, { nullable: true })
   posteById(
-    @Arg("id", (type) => Int, { nullable: true }) id: number
+    @Arg("id", (type) => Int) id: number
   ): Promise<Poste | undefined> {
     return Poste.findOne({ id });
   }
@@ -27,7 +27,7 @@ export class PosteResolver {
 
   @Mutation(() => Poste)
   async updatePoste(
-    @Arg("id", (type) => Int, { nullable: true }) id: number,
+    @Arg("id", (type) => Int) id: number,
     @Arg("newName") newName: string
   ): Promise<Poste | null> {
     const poste = await Poste.findOne({ id });

@@ -1,0 +1,15 @@
+query conversationByUuid($uuid: String!) {
+  conversationByUuid(uuid: $uuid) {
+    error
+    conv {
+      uuid
+      title
+      createdAt
+      updatedAt
+      convToUsers {
+        userId
+        active
+      }
+    }
+  }
+}

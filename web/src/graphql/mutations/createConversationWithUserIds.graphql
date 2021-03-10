@@ -1,0 +1,19 @@
+mutation createConversationWithUserIds(
+  $title: String!
+  $id1: Int!
+  $id2: Int!
+) {
+  createConversationWithUserIds(title: $title, id1: $id1, id2: $id2) {
+    error
+    conv {
+      uuid
+      title
+      createdAt
+      updatedAt
+      convToUsers {
+        userId
+        active
+      }
+    }
+  }
+}

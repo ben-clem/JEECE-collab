@@ -1,0 +1,12 @@
+query conversations {
+  conversations {
+    uuid
+    title
+    createdAt
+    updatedAt
+    convToUsers {
+      userId
+      active
+    }
+  }
+}

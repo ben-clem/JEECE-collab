@@ -28,6 +28,11 @@ export type Query = {
   me?: Maybe<User>;
   userById?: Maybe<User>;
   usersByFnOrLnOrSnOrPnLikeWordsInString?: Maybe<Array<User>>;
+  conversations: Array<Conversation>;
+  conversationByUuid: ConvResponse;
+  conversationsByUserId: ConvsResponse;
+  conversationWithUserIds: ConvResponse;
+  convToUsers: Array<ConvToUser>;
 };
 
 
@@ -47,7 +52,7 @@ export type QueryPosteByNameArgs = {
 
 
 export type QueryPosteByIdArgs = {
-  id?: Maybe<Scalars['Int']>;
+  id: Scalars['Int'];
 };
 
 
@@ -58,6 +63,22 @@ export type QueryUserByIdArgs = {
 
 export type QueryUsersByFnOrLnOrSnOrPnLikeWordsInStringArgs = {
   string: Scalars['String'];
+};
+
+
+export type QueryConversationByUuidArgs = {
+  uuid: Scalars['String'];
+};
+
+
+export type QueryConversationsByUserIdArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type QueryConversationWithUserIdsArgs = {
+  id2: Scalars['Int'];
+  id1: Scalars['Int'];
 };
 
 export type Service = {
@@ -92,6 +113,35 @@ export type User = {
   posteId?: Maybe<Scalars['Int']>;
 };
 
+export type Conversation = {
+  __typename?: 'Conversation';
+  uuid: Scalars['String'];
+  title: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  convToUsers: Array<ConvToUser>;
+};
+
+export type ConvToUser = {
+  __typename?: 'ConvToUser';
+  convToUserId: Scalars['Float'];
+  active: Scalars['Boolean'];
+  conversationUuid: Scalars['String'];
+  userId: Scalars['Float'];
+};
+
+export type ConvResponse = {
+  __typename?: 'ConvResponse';
+  error?: Maybe<Scalars['String']>;
+  conv?: Maybe<Conversation>;
+};
+
+export type ConvsResponse = {
+  __typename?: 'ConvsResponse';
+  error?: Maybe<Scalars['String']>;
+  convs?: Maybe<Array<Conversation>>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   createService: Service;
@@ -103,6 +153,7 @@ export type Mutation = {
   register: UserResponse;
   login: UserResponse;
   logout: Scalars['Boolean'];
+  createConversationWithUserIds: ConvResponse;
 };
 
 
@@ -129,7 +180,7 @@ export type MutationCreatePosteArgs = {
 
 export type MutationUpdatePosteArgs = {
   newName: Scalars['String'];
-  id?: Maybe<Scalars['Int']>;
+  id: Scalars['Int'];
 };
 
 
@@ -153,6 +204,13 @@ export type MutationLoginArgs = {
   email: Scalars['String'];
 };
 
+
+export type MutationCreateConversationWithUserIdsArgs = {
+  id2: Scalars['Int'];
+  id1: Scalars['Int'];
+  title: Scalars['String'];
+};
+
 export type UserResponse = {
   __typename?: 'UserResponse';
   errors?: Maybe<Array<FieldError>>;
@@ -168,6 +226,29 @@ export type FieldError = {
 export type UserFragment = (
   { __typename?: 'User' }
   & Pick<User, 'id' | 'email' | 'firstname' | 'lastname' | 'accepted' | 'admin' | 'profilePicPath' | 'createdAt' | 'updatedAt' | 'serviceId' | 'posteId'>
+);
+
+export type CreateConversationWithUserIdsMutationVariables = Exact<{
+  title: Scalars['String'];
+  id1: Scalars['Int'];
+  id2: Scalars['Int'];
+}>;
+
+
+export type CreateConversationWithUserIdsMutation = (
+  { __typename?: 'Mutation' }
+  & { createConversationWithUserIds: (
+    { __typename?: 'ConvResponse' }
+    & Pick<ConvResponse, 'error'>
+    & { conv?: Maybe<(
+      { __typename?: 'Conversation' }
+      & Pick<Conversation, 'uuid' | 'title' | 'createdAt' | 'updatedAt'>
+      & { convToUsers: Array<(
+        { __typename?: 'ConvToUser' }
+        & Pick<ConvToUser, 'userId' | 'active'>
+      )> }
+    )> }
+  ) }
 );
 
 export type LoginMutationVariables = Exact<{
@@ -219,6 +300,85 @@ export type RegisterMutation = (
       { __typename?: 'User' }
       & UserFragment
     )> }
+  ) }
+);
+
+export type ConversationByUuidQueryVariables = Exact<{
+  uuid: Scalars['String'];
+}>;
+
+
+export type ConversationByUuidQuery = (
+  { __typename?: 'Query' }
+  & { conversationByUuid: (
+    { __typename?: 'ConvResponse' }
+    & Pick<ConvResponse, 'error'>
+    & { conv?: Maybe<(
+      { __typename?: 'Conversation' }
+      & Pick<Conversation, 'uuid' | 'title' | 'createdAt' | 'updatedAt'>
+      & { convToUsers: Array<(
+        { __typename?: 'ConvToUser' }
+        & Pick<ConvToUser, 'userId' | 'active'>
+      )> }
+    )> }
+  ) }
+);
+
+export type ConversationWithUserIdsQueryVariables = Exact<{
+  id1: Scalars['Int'];
+  id2: Scalars['Int'];
+}>;
+
+
+export type ConversationWithUserIdsQuery = (
+  { __typename?: 'Query' }
+  & { conversationWithUserIds: (
+    { __typename?: 'ConvResponse' }
+    & Pick<ConvResponse, 'error'>
+    & { conv?: Maybe<(
+      { __typename?: 'Conversation' }
+      & Pick<Conversation, 'uuid' | 'title' | 'createdAt' | 'updatedAt'>
+      & { convToUsers: Array<(
+        { __typename?: 'ConvToUser' }
+        & Pick<ConvToUser, 'userId' | 'active'>
+      )> }
+    )> }
+  ) }
+);
+
+export type ConversationsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ConversationsQuery = (
+  { __typename?: 'Query' }
+  & { conversations: Array<(
+    { __typename?: 'Conversation' }
+    & Pick<Conversation, 'uuid' | 'title' | 'createdAt' | 'updatedAt'>
+    & { convToUsers: Array<(
+      { __typename?: 'ConvToUser' }
+      & Pick<ConvToUser, 'userId' | 'active'>
+    )> }
+  )> }
+);
+
+export type ConversationsByUserIdQueryVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type ConversationsByUserIdQuery = (
+  { __typename?: 'Query' }
+  & { conversationsByUserId: (
+    { __typename?: 'ConvsResponse' }
+    & Pick<ConvsResponse, 'error'>
+    & { convs?: Maybe<Array<(
+      { __typename?: 'Conversation' }
+      & Pick<Conversation, 'uuid' | 'title' | 'createdAt' | 'updatedAt'>
+      & { convToUsers: Array<(
+        { __typename?: 'ConvToUser' }
+        & Pick<ConvToUser, 'userId' | 'active'>
+      )> }
+    )>> }
   ) }
 );
 
@@ -322,6 +482,27 @@ export const UserFragmentDoc = gql`
   posteId
 }
     `;
+export const CreateConversationWithUserIdsDocument = gql`
+    mutation createConversationWithUserIds($title: String!, $id1: Int!, $id2: Int!) {
+  createConversationWithUserIds(title: $title, id1: $id1, id2: $id2) {
+    error
+    conv {
+      uuid
+      title
+      createdAt
+      updatedAt
+      convToUsers {
+        userId
+        active
+      }
+    }
+  }
+}
+    `;
+
+export function useCreateConversationWithUserIdsMutation() {
+  return Urql.useMutation<CreateConversationWithUserIdsMutation, CreateConversationWithUserIdsMutationVariables>(CreateConversationWithUserIdsDocument);
+};
 export const LoginDocument = gql`
     mutation login($email: String!, $password: String!) {
   login(email: $email, password: $password) {
@@ -371,6 +552,87 @@ export const RegisterDocument = gql`
 
 export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
+};
+export const ConversationByUuidDocument = gql`
+    query conversationByUuid($uuid: String!) {
+  conversationByUuid(uuid: $uuid) {
+    error
+    conv {
+      uuid
+      title
+      createdAt
+      updatedAt
+      convToUsers {
+        userId
+        active
+      }
+    }
+  }
+}
+    `;
+
+export function useConversationByUuidQuery(options: Omit<Urql.UseQueryArgs<ConversationByUuidQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ConversationByUuidQuery>({ query: ConversationByUuidDocument, ...options });
+};
+export const ConversationWithUserIdsDocument = gql`
+    query conversationWithUserIds($id1: Int!, $id2: Int!) {
+  conversationWithUserIds(id1: $id1, id2: $id2) {
+    error
+    conv {
+      uuid
+      title
+      createdAt
+      updatedAt
+      convToUsers {
+        userId
+        active
+      }
+    }
+  }
+}
+    `;
+
+export function useConversationWithUserIdsQuery(options: Omit<Urql.UseQueryArgs<ConversationWithUserIdsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ConversationWithUserIdsQuery>({ query: ConversationWithUserIdsDocument, ...options });
+};
+export const ConversationsDocument = gql`
+    query conversations {
+  conversations {
+    uuid
+    title
+    createdAt
+    updatedAt
+    convToUsers {
+      userId
+      active
+    }
+  }
+}
+    `;
+
+export function useConversationsQuery(options: Omit<Urql.UseQueryArgs<ConversationsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ConversationsQuery>({ query: ConversationsDocument, ...options });
+};
+export const ConversationsByUserIdDocument = gql`
+    query conversationsByUserId($id: Int!) {
+  conversationsByUserId(id: $id) {
+    error
+    convs {
+      uuid
+      title
+      createdAt
+      updatedAt
+      convToUsers {
+        userId
+        active
+      }
+    }
+  }
+}
+    `;
+
+export function useConversationsByUserIdQuery(options: Omit<Urql.UseQueryArgs<ConversationsByUserIdQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ConversationsByUserIdQuery>({ query: ConversationsByUserIdDocument, ...options });
 };
 export const MeDocument = gql`
     query me {

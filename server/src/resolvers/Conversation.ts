@@ -1,4 +1,4 @@
-import { Arg, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Int, Mutation, Query, Resolver } from "type-graphql";
 import { createQueryBuilder, getConnection, getRepository } from "typeorm";
 import { Conversation } from "../entities/Conversation";
 import { ConvToUser } from "../entities/ConvToUser";
@@ -29,7 +29,9 @@ export class ConversationResolver {
   }
 
   @Query(() => ConvsResponse)
-  async conversationsByUserId(@Arg("id") id: number): Promise<ConvsResponse> {
+  async conversationsByUserId(
+    @Arg("id", (type) => Int) id: number
+  ): Promise<ConvsResponse> {
     try {
       const allConvos = await getRepository(Conversation)
         .createQueryBuilder("conversation")
@@ -53,30 +55,49 @@ export class ConversationResolver {
     }
   }
 
-  // @Query(() => Conversation, { nullable: true })
-  // conversationByTitle(
-  //   @Arg("title") title: string
-  // ): Promise<Conversation | undefined> {
-  //   return Conversation.findOne({ title });
-  // }
+  @Query(() => ConvResponse)
+  async conversationWithUserIds(
+    @Arg("id1", (type) => Int) id1: number,
+    @Arg("id2", (type) => Int) id2: number
+  ): Promise<ConvResponse> {
+    try {
+      // check if that conversation already exists
+      const conversations = await getRepository(Conversation)
+        .createQueryBuilder("conversation")
+        .leftJoinAndSelect("conversation.convToUsers", "convToUser")
+        .getMany();
 
-  // @Query(() => Conversation, { nullable: true })
-  // conversationByUuid(
-  //   @Arg("uuid") uuid: string
-  // ): Promise<Conversation | undefined> {
-  //   return Conversation.findOne({ uuid });
-  // }
+      let exists: boolean = false;
+      let found: Conversation = new Conversation();
 
-  // @Mutation(() => Conversation)
-  // async createConversation(@Arg("title") title: string): Promise<Conversation> {
-  //   return Conversation.create({ title }).save();
-  // }
+      for (const conv of conversations) {
+        if (
+          (conv.convToUsers[0].userId === id1 &&
+            conv.convToUsers[1].userId === id2) ||
+          (conv.convToUsers[0].userId === id2 &&
+            conv.convToUsers[1].userId === id1)
+        ) {
+          exists = true;
+          found = conv;
+          break;
+        }
+      }
+
+      if (exists) {
+        return { conv: found };
+      } else {
+        return { conv: undefined };
+      }
+    } catch (err) {
+      return { error: err.toString() };
+    }
+  }
 
   @Mutation(() => ConvResponse)
   async createConversationWithUserIds(
     @Arg("title") title: string,
-    @Arg("userId1") userId1: number,
-    @Arg("userId2") userId2: number
+    @Arg("id1", (type) => Int) id1: number,
+    @Arg("id2", (type) => Int) id2: number
   ): Promise<ConvResponse> {
     // check if that conversation already exists
     const conversations = await getRepository(Conversation)
@@ -88,10 +109,10 @@ export class ConversationResolver {
 
     for (const conv of conversations) {
       if (
-        (conv.convToUsers[0].userId === userId1 &&
-          conv.convToUsers[1].userId === userId2) ||
-        (conv.convToUsers[0].userId === userId2 &&
-          conv.convToUsers[1].userId === userId1)
+        (conv.convToUsers[0].userId === id1 &&
+          conv.convToUsers[1].userId === id2) ||
+        (conv.convToUsers[0].userId === id2 &&
+          conv.convToUsers[1].userId === id1)
       ) {
         exists = true;
         break;
@@ -107,13 +128,13 @@ export class ConversationResolver {
         await Conversation.save(newConv);
 
         const convToUser1 = ConvToUser.create({
-          userId: userId1,
+          userId: id1,
           conversationUuid: newConv.uuid,
         });
         await ConvToUser.save(convToUser1);
 
         const convToUser2 = ConvToUser.create({
-          userId: userId2,
+          userId: id2,
           conversationUuid: newConv.uuid,
         });
         await ConvToUser.save(convToUser2);
@@ -137,30 +158,4 @@ export class ConversationResolver {
       return { error: "this conversation already exists" };
     }
   }
-
-  // @Mutation(() => Conversation)
-  // async updateConversation(
-  //   @Arg("uuid") uuid: string,
-  //   @Arg("newTitle") newTitle: string
-  // ): Promise<Conversation | null> {
-  //   const conversation = await Conversation.findOne({ uuid });
-  //   if (!conversation) {
-  //     return null;
-  //   } else if (typeof newTitle !== "undefined") {
-  //     conversation.title = newTitle;
-  //     conversation.updatedAt = new Date();
-  //     await Conversation.update(uuid, conversation);
-  //   }
-  //   return conversation;
-  // }
-
-  // @Mutation(() => Boolean)
-  // async deleteConversation(@Arg("uuid") uuid: string): Promise<boolean> {
-  //   try {
-  //     await Conversation.delete(uuid);
-  //   } catch {
-  //     return false;
-  //   }
-  //   return true;
-  // }
 }
