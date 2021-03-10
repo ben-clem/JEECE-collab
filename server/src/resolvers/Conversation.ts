@@ -37,7 +37,14 @@ export class ConversationResolver {
         .getMany();
 
       const userConvos = allConvos.filter((conv) => {
-        conv.convToUsers[0].userId === id || conv.convToUsers[1].userId === id;
+        if (
+          conv.convToUsers[0].userId === id ||
+          conv.convToUsers[1].userId === id
+        ) {
+          return true;
+        } else {
+          return false;
+        }
       });
 
       return { convs: userConvos };
