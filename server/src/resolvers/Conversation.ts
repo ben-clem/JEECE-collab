@@ -14,6 +14,20 @@ export class ConversationResolver {
       .getMany();
   }
 
+  @Query(() => ConvResponse)
+  async conversationByUuid(@Arg("uuid") uuid: string): Promise<ConvResponse> {
+    try {
+      const conv = await getRepository(Conversation)
+        .createQueryBuilder("conversation")
+        .leftJoinAndSelect("conversation.convToUsers", "convToUser")
+        .where("conversation.uuid = :uuid", { uuid })
+        .getOneOrFail();
+      return { conv };
+    } catch (err) {
+      return { error: err.toString() };
+    }
+  }
+
   // @Query(() => Conversation, { nullable: true })
   // conversationByTitle(
   //   @Arg("title") title: string
