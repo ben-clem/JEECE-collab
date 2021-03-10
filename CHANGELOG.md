@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### To add
 
+- get user's conversations
+- get selected user's conversations
+- find the one in common
+- if no match, create the convo
+- else, open page at this convo
+
 ### To fix
 
 # Added

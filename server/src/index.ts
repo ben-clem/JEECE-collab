@@ -17,6 +17,8 @@ import { PosteResolver } from "./resolvers/Poste";
 import { UserResolver } from "./resolvers/User";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import { ConversationResolver } from "./resolvers/Conversation";
+import { ConvToUserResolver } from "./resolvers/ConvToUser";
 
 const main = async () => {
   const conn = await createConnection({
@@ -44,7 +46,7 @@ const main = async () => {
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [HelloResolver, ServiceResolver, PosteResolver, UserResolver],
+      resolvers: [HelloResolver, ServiceResolver, PosteResolver, UserResolver, ConversationResolver, ConvToUserResolver],
       validate: false,
     }),
     context: ({ req, res }) => ({ em, req, res }),

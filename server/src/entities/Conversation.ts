@@ -1,4 +1,6 @@
+import { Field, ObjectType } from "type-graphql";
 import {
+  BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
@@ -9,28 +11,35 @@ import {
 import { ConvToUser } from "./ConvToUser";
 import { Message } from "./Message";
 
+
+@ObjectType()
 @Entity()
-export class Conversation {
+export class Conversation extends BaseEntity {
+  @Field()
   @PrimaryGeneratedColumn("uuid")
   uuid: string;
 
+  @Field()
   @Column({ nullable: true })
   title: string;
 
+  @Field()
   @CreateDateColumn()
   createdAt: Date;
 
+  @Field()
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @OneToMany(() => ConvToUser, (convToUser) => convToUser.conversation, {
+  @Field((type) => [ConvToUser])
+  @OneToMany((type) => ConvToUser, (convToUser) => convToUser.conversation, {
     cascade: false,
   })
-  public convToUsers!: ConvToUser[];
+  convToUsers!: ConvToUser[];
 
   @OneToMany(() => Message, (message) => message.conversation, {
     nullable: true,
     cascade: false,
   })
-  public messages: Message[];
+  messages: Message[];
 }

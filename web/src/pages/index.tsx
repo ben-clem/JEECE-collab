@@ -58,11 +58,11 @@ const Index: React.FC<IndexProps> = ({}) => {
   });
 
   useEffect(() => {
-    if (isSubmitting === true) {
+    if (isSubmitting && !usersResult.fetching) {
       onOpen();
       setIsSubmitting(false);
     }
-  }, [usersResult.data, isSubmitting]);
+  }, [isSubmitting, usersResult]);
 
   let body = null;
   let modal = null;
@@ -110,6 +110,9 @@ const Index: React.FC<IndexProps> = ({}) => {
                           <VStack w="22rem" h="13rem" spacing={0}>
                             <UserInfo id={user.id} />
                             <Button w="100%" onClick={() => {
+
+                              
+
                               router.push("/convo");
                             }}>
                               <ChatIcon />
