@@ -101,7 +101,6 @@ const Index: React.FC<IndexProps> = ({}) => {
               <Wrap justify="center" spacing={4}>
                 {usersResult.data.usersByFnOrLnOrSnOrPnLikeWordsInString.map(
                   (user) => {
-                    if (user.id !== meResult.data?.me?.id)
                       return (
                         <WrapItem
                           bg={theme.colors.transparent[colorMode]}
