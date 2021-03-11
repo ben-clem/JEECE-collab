@@ -9,9 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### To add
 
-- find the one in common (conversationWithUserIds mutation)
 - if no match, create the convo
-- else, open page at this convo
 
 ### To fix
 
@@ -22,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - corresponding queries
 - modal populated with results
 - Conversation resolver hooks
+- Going to a matching conversation if it exists
 
 ## [v0.0.3](https://github.com/benzinho75/JEECE-collab/compare/v0.0.2...v0.0.3) - 2021-03-04
 

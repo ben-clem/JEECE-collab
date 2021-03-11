@@ -26,6 +26,7 @@ import { NavBar } from "../components/NavBar";
 import { SearchField } from "../components/SearchField";
 import { MeInfo } from "../components/MeInfo";
 import {
+  useConversationWithUserIdsQuery,
   useMeQuery,
   useUsersByFnOrLnOrSnOrPnLikeWordsInStringQuery,
 } from "../graphql/generated";
@@ -44,6 +45,9 @@ const Index: React.FC<IndexProps> = ({}) => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [string, setString] = useState("");
+  const [id1, setId1] = useState<number>(0);
+  const [id2, setId2] = useState<number>(0);
+  const [isSwitching, setIsSwitching] = useState(false);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -56,6 +60,13 @@ const Index: React.FC<IndexProps> = ({}) => {
     },
     pause: false, // this query can be done server-side
   });
+  const [conversationResult] = useConversationWithUserIdsQuery({
+    variables: {
+      id1,
+      id2,
+    },
+    pause: false, // this query can be done server-side
+  });
 
   useEffect(() => {
     if (isSubmitting && !usersResult.fetching) {
@@ -63,6 +74,23 @@ const Index: React.FC<IndexProps> = ({}) => {
       setIsSubmitting(false);
     }
   }, [isSubmitting, usersResult]);
+
+  useEffect(() => {
+    if (isSwitching && conversationResult.data?.conversationWithUserIds.conv) {
+      console.log(conversationResult.data)
+      router.push({
+        pathname: "/conversation/[uuid]",
+        query: {
+          uuid: conversationResult.data?.conversationWithUserIds.conv?.uuid,
+        },
+      });
+      setIsSwitching(false);
+    } else {
+      // creating the inexisting convo
+
+
+    }
+  }, [isSwitching, conversationResult.data?.conversationWithUserIds.conv]);
 
   let body = null;
   let modal = null;
@@ -101,24 +129,28 @@ const Index: React.FC<IndexProps> = ({}) => {
               <Wrap justify="center" spacing={4}>
                 {usersResult.data.usersByFnOrLnOrSnOrPnLikeWordsInString.map(
                   (user) => {
-                      return (
-                        <WrapItem
-                          bg={theme.colors.transparent[colorMode]}
-                          borderRadius="lg"
-                        >
-                          <VStack w="22rem" h="13rem" spacing={0}>
-                            <UserInfo id={user.id} />
-                            <Button w="100%" onClick={() => {
-
-                              
-
-                              router.push("/convo");
-                            }}>
-                              <ChatIcon />
-                            </Button>
-                          </VStack>
-                        </WrapItem>
-                      );
+                    return (
+                      <WrapItem
+                        bg={theme.colors.transparent[colorMode]}
+                        borderRadius="lg"
+                      >
+                        <VStack w="22rem" h="13rem" spacing={0}>
+                          <UserInfo id={user.id} />
+                          <Button
+                            w="100%"
+                            onClick={() => {
+                              if (!meResult.fetching && meResult.data?.me) {
+                                setId1(meResult.data?.me?.id);
+                              }
+                              setId2(user.id);
+                              setIsSwitching(true);
+                            }}
+                          >
+                            <ChatIcon />
+                          </Button>
+                        </VStack>
+                      </WrapItem>
+                    );
                   }
                 )}
               </Wrap>
