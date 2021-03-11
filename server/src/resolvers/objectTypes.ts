@@ -21,6 +21,9 @@ export class UserResponse {
 
 @ObjectType()
 export class ConvResponse {
+  @Field(() => String)
+  _id: string;
+
   @Field(() => String, { nullable: true })
   error?: string;
 

@@ -1,39 +1,68 @@
-import React from "react";
+import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  AlertTitle,
+  Box,
+  CloseButton,
+  Heading,
+  Spinner,
+} from "@chakra-ui/react";
 import { withUrqlClient } from "next-urql";
+import React from "react";
+import { MyContainer } from "../../components/Container";
+import { NavBar } from "../../components/NavBar";
 import { createUrqlClient } from "../../utils/createUrqlClient";
+import { useGetConversationFromUrl } from "../../utils/useGetConversationFromUrl";
 
 const Conversation = ({}) => {
-  const { data, error, loading } = useGetPostFromUrl();
+  const [{ fetching, error, data }] = useGetConversationFromUrl();
 
-  if (loading) {
-    return (
-      <Layout>
-        <div>loading...</div>
-      </Layout>
+  // console.log("fetching");
+  // console.log(fetching);
+  // console.log("error");
+  // console.log(error);
+  // console.log("data");
+  // console.log(data);
+
+  let body = null;
+
+  if (fetching) {
+    body = <Spinner size="xl" />;
+  } else if (error || data?.conversationByUuid.error) {
+    body = (
+      <Alert
+        status="error"
+        variant="subtle"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        textAlign="center"
+        height="200px"
+      >
+        <AlertIcon boxSize="40px" mr={0} />
+        <AlertTitle mt={4} mb={1} fontSize="lg">
+          {error ? error.name : null}
+        </AlertTitle>
+        <AlertDescription>
+          {error ? error.message : data?.conversationByUuid.error}
+        </AlertDescription>
+        <CloseButton position="absolute" right="8px" top="8px" />
+      </Alert>
     );
-  }
-
-  if (error) {
-    return <div>{error.message}</div>;
-  }
-
-  if (!data?.post) {
-    return (
-      <Layout>
-        <Box>could not find post</Box>
-      </Layout>
+  } else if (data?.conversationByUuid) {
+    body = (
+      <>
+        <Heading mb={4}>{data.conversationByUuid.conv?.uuid}</Heading>
+      </>
     );
   }
 
   return (
-    <Layout>
-      <Heading mb={4}>{data.post.title}</Heading>
-      <Box mb={4}>{data.post.text}</Box>
-      <EditDeletePostButtons
-        id={data.post.id}
-        creatorId={data.post.creator.id}
-      />
-    </Layout>
+    <>
+      <NavBar></NavBar>
+      <MyContainer>{body}</MyContainer>
+    </>
   );
 };
 

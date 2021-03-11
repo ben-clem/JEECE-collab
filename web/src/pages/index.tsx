@@ -1,8 +1,9 @@
+import { ChatIcon } from "@chakra-ui/icons";
 import {
+  Button,
   Center,
   Grid,
   GridItem,
-  Button,
   Heading,
   HStack,
   Modal,
@@ -14,28 +15,28 @@ import {
   ModalOverlay,
   useColorMode,
   useDisclosure,
-  WrapItem,
-  Wrap,
   VStack,
+  Wrap,
+  WrapItem,
 } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import { withUrqlClient } from "next-urql";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { MyContainer } from "../components/Container";
+import { MeInfo } from "../components/MeInfo";
 import { NavBar } from "../components/NavBar";
 import { SearchField } from "../components/SearchField";
-import { MeInfo } from "../components/MeInfo";
+import { UserInfo } from "../components/UserInfo";
 import {
   useConversationWithUserIdsQuery,
+  useCreateConversationWithUserIdsMutation,
   useMeQuery,
   useUsersByFnOrLnOrSnOrPnLikeWordsInStringQuery,
 } from "../graphql/generated";
 import theme from "../theme";
 import { createUrqlClient } from "../utils/createUrqlClient";
 import { isServer } from "../utils/isServer";
-import { UserInfo } from "../components/UserInfo";
-import { ChatIcon } from "@chakra-ui/icons";
-import { useRouter } from "next/router";
 
 interface IndexProps {}
 
@@ -51,6 +52,11 @@ const Index: React.FC<IndexProps> = ({}) => {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const [
+    ,
+    createConversationWithUserIds,
+  ] = useCreateConversationWithUserIdsMutation();
+
   const [meResult] = useMeQuery({
     pause: isServer(), // pause this request anytime this page is rendered server-side (the server doesn't have access to the userToken cookie)
   });
@@ -60,7 +66,10 @@ const Index: React.FC<IndexProps> = ({}) => {
     },
     pause: false, // this query can be done server-side
   });
-  const [conversationResult] = useConversationWithUserIdsQuery({
+  const [
+    conversationResult,
+    reexecuteConvQuery,
+  ] = useConversationWithUserIdsQuery({
     variables: {
       id1,
       id2,
@@ -76,21 +85,37 @@ const Index: React.FC<IndexProps> = ({}) => {
   }, [isSubmitting, usersResult]);
 
   useEffect(() => {
-    if (isSwitching && conversationResult.data?.conversationWithUserIds.conv) {
-      console.log(conversationResult.data)
-      router.push({
-        pathname: "/conversation/[uuid]",
-        query: {
-          uuid: conversationResult.data?.conversationWithUserIds.conv?.uuid,
-        },
-      });
-      setIsSwitching(false);
-    } else {
-      // creating the inexisting convo
+    if (isSwitching && !conversationResult.fetching) {
+      console.log("entering");
+      console.log(conversationResult);
 
+      if (conversationResult.data?.conversationWithUserIds.conv) {
+        console.log("found convo:");
+        console.log(conversationResult.data);
+        router.push({
+          pathname: "/conversation/[uuid]",
+          query: {
+            uuid: conversationResult.data?.conversationWithUserIds.conv?.uuid,
+          },
+        });
 
+        setIsSwitching(false);
+        
+      } else {
+        // creating the inexisting convo
+        console.log("no convo, creating one");
+
+        const creatingConvo = async () => {
+          await createConversationWithUserIds({
+            id1,
+            id2,
+          });
+        };
+        creatingConvo();
+        reexecuteConvQuery({ requestPolicy: "network-only" });
+      }
     }
-  }, [isSwitching, conversationResult.data?.conversationWithUserIds.conv]);
+  }, [isSwitching, conversationResult]);
 
   let body = null;
   let modal = null;

@@ -3,7 +3,6 @@ query conversationByUuid($uuid: String!) {
     error
     conv {
       uuid
-      title
       createdAt
       updatedAt
       convToUsers {

@@ -1,11 +1,14 @@
 import { cacheExchange } from "@urql/exchange-graphcache";
 import { createClient, dedupExchange, fetchExchange } from "urql";
 import {
+  ConversationWithUserIdsQuery,
   LoginMutation,
   LogoutMutation,
   MeDocument,
   MeQuery,
   RegisterMutation,
+  UsersByFnOrLnOrSnOrPnLikeWordsInStringDocument,
+  UsersByFnOrLnOrSnOrPnLikeWordsInStringQuery,
 } from "../graphql/generated";
 import { betterUpdateQuery } from "../utils/betterUpdateQuery";
 
@@ -17,6 +20,11 @@ export const createUrqlClient = (ssrExchange: any) => ({
   exchanges: [
     dedupExchange,
     cacheExchange({
+      keys: {
+        ConvResponse: (data) => data._id as string,
+        Conversation: (data) => data.uuid as string,
+        ConvToUser: (data) => data.convToUserId as string,
+      },
       updates: {
         Mutation: {
           logout: (_result, args, cache, info) => {
@@ -59,6 +67,13 @@ export const createUrqlClient = (ssrExchange: any) => ({
               }
             );
           },
+          // createConversationWithUserIds(_result, args, cache, info) {
+          //     cache.invalidate({
+          //       __typename: "Conversation",
+          //       id: args.uuid as string,
+          //     });
+            
+          // },
         },
       },
     }),

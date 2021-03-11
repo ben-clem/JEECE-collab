@@ -3,7 +3,6 @@ query conversationsByUserId($id: Int!) {
     error
     convs {
       uuid
-      title
       createdAt
       updatedAt
       convToUsers {

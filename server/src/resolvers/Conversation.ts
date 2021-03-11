@@ -22,9 +22,9 @@ export class ConversationResolver {
         .leftJoinAndSelect("conversation.convToUsers", "convToUser")
         .where("conversation.uuid = :uuid", { uuid })
         .getOneOrFail();
-      return { conv };
+      return { _id: uuid, conv };
     } catch (err) {
-      return { error: err.toString() };
+      return { _id: uuid, error: err.toString() };
     }
   }
 
@@ -84,18 +84,20 @@ export class ConversationResolver {
       }
 
       if (exists) {
-        return { conv: found };
+        return { _id: id1.toString() + "-" + id2.toString(), conv: found };
       } else {
-        return { conv: undefined };
+        return { _id: id1.toString() + "-" + id2.toString(), conv: undefined };
       }
     } catch (err) {
-      return { error: err.toString() };
+      return {
+        _id: id1.toString() + "-" + id2.toString(),
+        error: err.toString(),
+      };
     }
   }
 
   @Mutation(() => ConvResponse)
   async createConversationWithUserIds(
-    @Arg("title") title: string,
     @Arg("id1", (type) => Int) id1: number,
     @Arg("id2", (type) => Int) id2: number
   ): Promise<ConvResponse> {
@@ -122,9 +124,7 @@ export class ConversationResolver {
     if (!exists) {
       // create the conversation
       try {
-        const newConv = Conversation.create({
-          title: title,
-        });
+        const newConv = Conversation.create({});
         await Conversation.save(newConv);
 
         const convToUser1 = ConvToUser.create({
@@ -146,16 +146,25 @@ export class ConversationResolver {
           .where("conversation.uuid = :uuid", { uuid: newConv.uuid })
           .getOneOrFail();
 
-        return { conv };
+        return { _id: id1.toString() + "-" + id2.toString(), conv };
       } catch (err) {
         if (err.code === "23503") {
-          return { error: "one of the provided user ids is not valid" };
+          return {
+            _id: id1.toString() + "-" + id2.toString(),
+            error: "one of the provided user ids is not valid",
+          };
         } else {
-          return { error: err.toString() };
+          return {
+            _id: id1.toString() + "-" + id2.toString(),
+            error: err.toString(),
+          };
         }
       }
     } else {
-      return { error: "this conversation already exists" };
+      return {
+        _id: id1.toString() + "-" + id2.toString(),
+        error: "this conversation already exists",
+      };
     }
   }
 }

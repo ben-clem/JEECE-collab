@@ -1,4 +1,4 @@
-import { Field, ObjectType } from "type-graphql";
+import { Field, Int, ObjectType } from "type-graphql";
 import {
   BaseEntity,
   Column,
@@ -12,7 +12,7 @@ import { User } from "./User";
 @ObjectType()
 @Entity()
 export class ConvToUser extends BaseEntity {
-  @Field()
+  @Field((type) => Int)
   @PrimaryGeneratedColumn()
   convToUserId!: number;
 

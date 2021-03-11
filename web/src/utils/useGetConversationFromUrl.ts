@@ -1,13 +1,12 @@
-import { utimes } from "fs";
 import { useRouter } from "next/router";
-import { useGetUuid } from "./useGetUuid";
+import { useConversationByUuidQuery } from "../graphql/generated";
 
 export const useGetConversationFromUrl = () => {
-  const intId = useGetUuid();
-  return usePostQuery({
-    skip: intId === -1,
+  const router = useRouter();
+
+  return useConversationByUuidQuery({
     variables: {
-      id: intId,
+      uuid: router.query.uuid as string,
     },
   });
 };

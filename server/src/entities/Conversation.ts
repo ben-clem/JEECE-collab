@@ -20,10 +20,6 @@ export class Conversation extends BaseEntity {
   uuid: string;
 
   @Field()
-  @Column({ nullable: true })
-  title: string;
-
-  @Field()
   @CreateDateColumn()
   createdAt: Date;
 

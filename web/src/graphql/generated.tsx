@@ -32,7 +32,6 @@ export type Query = {
   conversationByUuid: ConvResponse;
   conversationsByUserId: ConvsResponse;
   conversationWithUserIds: ConvResponse;
-  convToUsers: Array<ConvToUser>;
 };
 
 
@@ -116,7 +115,6 @@ export type User = {
 export type Conversation = {
   __typename?: 'Conversation';
   uuid: Scalars['String'];
-  title: Scalars['String'];
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   convToUsers: Array<ConvToUser>;
@@ -124,7 +122,7 @@ export type Conversation = {
 
 export type ConvToUser = {
   __typename?: 'ConvToUser';
-  convToUserId: Scalars['Float'];
+  convToUserId: Scalars['Int'];
   active: Scalars['Boolean'];
   conversationUuid: Scalars['String'];
   userId: Scalars['Float'];
@@ -132,6 +130,7 @@ export type ConvToUser = {
 
 export type ConvResponse = {
   __typename?: 'ConvResponse';
+  _id: Scalars['String'];
   error?: Maybe<Scalars['String']>;
   conv?: Maybe<Conversation>;
 };
@@ -208,7 +207,6 @@ export type MutationLoginArgs = {
 export type MutationCreateConversationWithUserIdsArgs = {
   id2: Scalars['Int'];
   id1: Scalars['Int'];
-  title: Scalars['String'];
 };
 
 export type UserResponse = {
@@ -229,7 +227,6 @@ export type UserFragment = (
 );
 
 export type CreateConversationWithUserIdsMutationVariables = Exact<{
-  title: Scalars['String'];
   id1: Scalars['Int'];
   id2: Scalars['Int'];
 }>;
@@ -242,7 +239,7 @@ export type CreateConversationWithUserIdsMutation = (
     & Pick<ConvResponse, 'error'>
     & { conv?: Maybe<(
       { __typename?: 'Conversation' }
-      & Pick<Conversation, 'uuid' | 'title' | 'createdAt' | 'updatedAt'>
+      & Pick<Conversation, 'uuid' | 'createdAt' | 'updatedAt'>
       & { convToUsers: Array<(
         { __typename?: 'ConvToUser' }
         & Pick<ConvToUser, 'userId' | 'active'>
@@ -315,7 +312,7 @@ export type ConversationByUuidQuery = (
     & Pick<ConvResponse, 'error'>
     & { conv?: Maybe<(
       { __typename?: 'Conversation' }
-      & Pick<Conversation, 'uuid' | 'title' | 'createdAt' | 'updatedAt'>
+      & Pick<Conversation, 'uuid' | 'createdAt' | 'updatedAt'>
       & { convToUsers: Array<(
         { __typename?: 'ConvToUser' }
         & Pick<ConvToUser, 'userId' | 'active'>
@@ -334,13 +331,13 @@ export type ConversationWithUserIdsQuery = (
   { __typename?: 'Query' }
   & { conversationWithUserIds: (
     { __typename?: 'ConvResponse' }
-    & Pick<ConvResponse, 'error'>
+    & Pick<ConvResponse, '_id' | 'error'>
     & { conv?: Maybe<(
       { __typename?: 'Conversation' }
-      & Pick<Conversation, 'uuid' | 'title' | 'createdAt' | 'updatedAt'>
+      & Pick<Conversation, 'uuid' | 'createdAt' | 'updatedAt'>
       & { convToUsers: Array<(
         { __typename?: 'ConvToUser' }
-        & Pick<ConvToUser, 'userId' | 'active'>
+        & Pick<ConvToUser, 'convToUserId' | 'userId' | 'active'>
       )> }
     )> }
   ) }
@@ -353,7 +350,7 @@ export type ConversationsQuery = (
   { __typename?: 'Query' }
   & { conversations: Array<(
     { __typename?: 'Conversation' }
-    & Pick<Conversation, 'uuid' | 'title' | 'createdAt' | 'updatedAt'>
+    & Pick<Conversation, 'uuid' | 'createdAt' | 'updatedAt'>
     & { convToUsers: Array<(
       { __typename?: 'ConvToUser' }
       & Pick<ConvToUser, 'userId' | 'active'>
@@ -373,7 +370,7 @@ export type ConversationsByUserIdQuery = (
     & Pick<ConvsResponse, 'error'>
     & { convs?: Maybe<Array<(
       { __typename?: 'Conversation' }
-      & Pick<Conversation, 'uuid' | 'title' | 'createdAt' | 'updatedAt'>
+      & Pick<Conversation, 'uuid' | 'createdAt' | 'updatedAt'>
       & { convToUsers: Array<(
         { __typename?: 'ConvToUser' }
         & Pick<ConvToUser, 'userId' | 'active'>
@@ -483,12 +480,11 @@ export const UserFragmentDoc = gql`
 }
     `;
 export const CreateConversationWithUserIdsDocument = gql`
-    mutation createConversationWithUserIds($title: String!, $id1: Int!, $id2: Int!) {
-  createConversationWithUserIds(title: $title, id1: $id1, id2: $id2) {
+    mutation createConversationWithUserIds($id1: Int!, $id2: Int!) {
+  createConversationWithUserIds(id1: $id1, id2: $id2) {
     error
     conv {
       uuid
-      title
       createdAt
       updatedAt
       convToUsers {
@@ -559,7 +555,6 @@ export const ConversationByUuidDocument = gql`
     error
     conv {
       uuid
-      title
       createdAt
       updatedAt
       convToUsers {
@@ -577,13 +572,14 @@ export function useConversationByUuidQuery(options: Omit<Urql.UseQueryArgs<Conve
 export const ConversationWithUserIdsDocument = gql`
     query conversationWithUserIds($id1: Int!, $id2: Int!) {
   conversationWithUserIds(id1: $id1, id2: $id2) {
+    _id
     error
     conv {
       uuid
-      title
       createdAt
       updatedAt
       convToUsers {
+        convToUserId
         userId
         active
       }
@@ -599,7 +595,6 @@ export const ConversationsDocument = gql`
     query conversations {
   conversations {
     uuid
-    title
     createdAt
     updatedAt
     convToUsers {
@@ -619,7 +614,6 @@ export const ConversationsByUserIdDocument = gql`
     error
     convs {
       uuid
-      title
       createdAt
       updatedAt
       convToUsers {

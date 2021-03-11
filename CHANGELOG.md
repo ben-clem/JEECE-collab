@@ -9,9 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### To add
 
-- if no match, create the convo
-
 ### To fix
+
+- bug when switching to logout, login, register (might be because of where to call hooks)
 
 # Added
 
@@ -20,7 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - corresponding queries
 - modal populated with results
 - Conversation resolver hooks
-- Going to a matching conversation if it exists
+- Going to a matching conversation if it exists (/conversation/[uuid])
+- Creating the convo if it doesn't exist then redirecting
 
 ## [v0.0.3](https://github.com/benzinho75/JEECE-collab/compare/v0.0.2...v0.0.3) - 2021-03-04
 
