@@ -11,6 +11,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { ConvToUser } from "./ConvToUser";
+import { Message } from "./Message";
 import { Poste } from "./Poste";
 import { Service } from "./Service";
 
@@ -64,12 +65,14 @@ export class User extends BaseEntity {
   @Column({ type: "int", nullable: true })
   posteId: number;
 
+  @Field((type) => Service)
   @ManyToOne(() => Service, (service) => service.users, {
     nullable: true,
     cascade: ["update", "soft-remove", "insert"],
   })
   service: Service;
 
+  @Field((type) => Poste)
   @ManyToOne(() => Poste, (poste) => poste.users, {
     nullable: true,
     cascade: ["update", "soft-remove", "insert"],
@@ -80,4 +83,9 @@ export class User extends BaseEntity {
     cascade: false,
   })
   convToUsers!: ConvToUser[];
+
+  @OneToMany(() => Message, (message) => message.user, {
+    cascade: false,
+  })
+  messages: Message[];
 }

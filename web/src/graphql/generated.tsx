@@ -18,50 +18,21 @@ export type Scalars = {
 
 export type Query = {
   __typename?: 'Query';
-  hello: Scalars['String'];
-  services: Array<Service>;
-  serviceByName?: Maybe<Service>;
-  serviceById?: Maybe<Service>;
-  postes: Array<Poste>;
-  posteByName?: Maybe<Poste>;
-  posteById?: Maybe<Poste>;
-  me?: Maybe<User>;
-  userById?: Maybe<User>;
-  usersByFnOrLnOrSnOrPnLikeWordsInString?: Maybe<Array<User>>;
   conversations: Array<Conversation>;
   conversationByUuid: ConvResponse;
   conversationsByUserId: ConvsResponse;
   conversationWithUserIds: ConvResponse;
-};
-
-
-export type QueryServiceByNameArgs = {
-  name: Scalars['String'];
-};
-
-
-export type QueryServiceByIdArgs = {
-  id: Scalars['Int'];
-};
-
-
-export type QueryPosteByNameArgs = {
-  name: Scalars['String'];
-};
-
-
-export type QueryPosteByIdArgs = {
-  id: Scalars['Int'];
-};
-
-
-export type QueryUserByIdArgs = {
-  id: Scalars['Int'];
-};
-
-
-export type QueryUsersByFnOrLnOrSnOrPnLikeWordsInStringArgs = {
-  string: Scalars['String'];
+  hello: Scalars['String'];
+  messages: Array<Message>;
+  postes: Array<Poste>;
+  posteByName?: Maybe<Poste>;
+  posteById?: Maybe<Poste>;
+  services: Array<Service>;
+  serviceByName?: Maybe<Service>;
+  serviceById?: Maybe<Service>;
+  me?: Maybe<User>;
+  userById?: Maybe<User>;
+  usersByFnOrLnOrSnOrPnLikeWordsInString?: Maybe<Array<User>>;
 };
 
 
@@ -80,21 +51,69 @@ export type QueryConversationWithUserIdsArgs = {
   id1: Scalars['Int'];
 };
 
-export type Service = {
-  __typename?: 'Service';
-  id: Scalars['Int'];
-  name: Scalars['String'];
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
+
+export type QueryMessagesArgs = {
+  convUuid: Scalars['String'];
 };
 
 
-export type Poste = {
-  __typename?: 'Poste';
-  id: Scalars['Int'];
+export type QueryPosteByNameArgs = {
   name: Scalars['String'];
+};
+
+
+export type QueryPosteByIdArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type QueryServiceByNameArgs = {
+  name: Scalars['String'];
+};
+
+
+export type QueryServiceByIdArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type QueryUserByIdArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type QueryUsersByFnOrLnOrSnOrPnLikeWordsInStringArgs = {
+  string: Scalars['String'];
+};
+
+export type Conversation = {
+  __typename?: 'Conversation';
+  uuid: Scalars['String'];
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
+  convToUsers: Array<ConvToUser>;
+  messages: Array<Message>;
+};
+
+
+export type ConvToUser = {
+  __typename?: 'ConvToUser';
+  convToUserId: Scalars['Int'];
+  active: Scalars['Boolean'];
+  conversationUuid: Scalars['String'];
+  userId: Scalars['Float'];
+};
+
+export type Message = {
+  __typename?: 'Message';
+  uuid: Scalars['String'];
+  content: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  conversationUuid: Scalars['String'];
+  conversation: Conversation;
+  userId: Scalars['Float'];
+  user: User;
 };
 
 export type User = {
@@ -110,22 +129,24 @@ export type User = {
   updatedAt: Scalars['DateTime'];
   serviceId?: Maybe<Scalars['Int']>;
   posteId?: Maybe<Scalars['Int']>;
+  service: Service;
+  poste: Poste;
 };
 
-export type Conversation = {
-  __typename?: 'Conversation';
-  uuid: Scalars['String'];
+export type Service = {
+  __typename?: 'Service';
+  id: Scalars['Int'];
+  name: Scalars['String'];
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
-  convToUsers: Array<ConvToUser>;
 };
 
-export type ConvToUser = {
-  __typename?: 'ConvToUser';
-  convToUserId: Scalars['Int'];
-  active: Scalars['Boolean'];
-  conversationUuid: Scalars['String'];
-  userId: Scalars['Float'];
+export type Poste = {
+  __typename?: 'Poste';
+  id: Scalars['Int'];
+  name: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
 };
 
 export type ConvResponse = {
@@ -143,32 +164,30 @@ export type ConvsResponse = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  createService: Service;
-  updateService: Service;
-  deleteService: Scalars['Boolean'];
+  createConversationWithUserIds: ConvResponse;
+  addMessage: Message;
   createPoste: Poste;
   updatePoste: Poste;
   deletePoste: Scalars['Boolean'];
+  createService: Service;
+  updateService: Service;
+  deleteService: Scalars['Boolean'];
   register: UserResponse;
   login: UserResponse;
   logout: Scalars['Boolean'];
-  createConversationWithUserIds: ConvResponse;
 };
 
 
-export type MutationCreateServiceArgs = {
-  name: Scalars['String'];
+export type MutationCreateConversationWithUserIdsArgs = {
+  id2: Scalars['Int'];
+  id1: Scalars['Int'];
 };
 
 
-export type MutationUpdateServiceArgs = {
-  newName: Scalars['String'];
-  id: Scalars['Int'];
-};
-
-
-export type MutationDeleteServiceArgs = {
-  id?: Maybe<Scalars['Int']>;
+export type MutationAddMessageArgs = {
+  userId: Scalars['Int'];
+  convUuid: Scalars['String'];
+  message: Scalars['String'];
 };
 
 
@@ -188,6 +207,22 @@ export type MutationDeletePosteArgs = {
 };
 
 
+export type MutationCreateServiceArgs = {
+  name: Scalars['String'];
+};
+
+
+export type MutationUpdateServiceArgs = {
+  newName: Scalars['String'];
+  id: Scalars['Int'];
+};
+
+
+export type MutationDeleteServiceArgs = {
+  id?: Maybe<Scalars['Int']>;
+};
+
+
 export type MutationRegisterArgs = {
   posteId?: Maybe<Scalars['Int']>;
   serviceId?: Maybe<Scalars['Int']>;
@@ -201,12 +236,6 @@ export type MutationRegisterArgs = {
 export type MutationLoginArgs = {
   password: Scalars['String'];
   email: Scalars['String'];
-};
-
-
-export type MutationCreateConversationWithUserIdsArgs = {
-  id2: Scalars['Int'];
-  id1: Scalars['Int'];
 };
 
 export type UserResponse = {
@@ -224,6 +253,21 @@ export type FieldError = {
 export type UserFragment = (
   { __typename?: 'User' }
   & Pick<User, 'id' | 'email' | 'firstname' | 'lastname' | 'accepted' | 'admin' | 'profilePicPath' | 'createdAt' | 'updatedAt' | 'serviceId' | 'posteId'>
+);
+
+export type AddMessageMutationVariables = Exact<{
+  message: Scalars['String'];
+  convUuid: Scalars['String'];
+  userId: Scalars['Int'];
+}>;
+
+
+export type AddMessageMutation = (
+  { __typename?: 'Mutation' }
+  & { addMessage: (
+    { __typename?: 'Message' }
+    & Pick<Message, 'uuid'>
+  ) }
 );
 
 export type CreateConversationWithUserIdsMutationVariables = Exact<{
@@ -390,6 +434,30 @@ export type MeQuery = (
   )> }
 );
 
+export type MessagesQueryVariables = Exact<{
+  convUuid: Scalars['String'];
+}>;
+
+
+export type MessagesQuery = (
+  { __typename?: 'Query' }
+  & { messages: Array<(
+    { __typename?: 'Message' }
+    & Pick<Message, 'uuid' | 'content' | 'createdAt' | 'updatedAt'>
+    & { user: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'email' | 'firstname' | 'lastname' | 'profilePicPath'>
+      & { service: (
+        { __typename?: 'Service' }
+        & Pick<Service, 'name'>
+      ), poste: (
+        { __typename?: 'Poste' }
+        & Pick<Poste, 'name'>
+      ) }
+    ) }
+  )> }
+);
+
 export type PosteByIdQueryVariables = Exact<{
   id: Scalars['Int'];
 }>;
@@ -447,7 +515,14 @@ export type UserByIdQuery = (
   { __typename?: 'Query' }
   & { userById?: Maybe<(
     { __typename?: 'User' }
-    & UserFragment
+    & Pick<User, 'id' | 'email' | 'firstname' | 'lastname' | 'accepted' | 'admin' | 'profilePicPath' | 'createdAt' | 'updatedAt'>
+    & { service: (
+      { __typename?: 'Service' }
+      & Pick<Service, 'id' | 'name'>
+    ), poste: (
+      { __typename?: 'Poste' }
+      & Pick<Poste, 'id' | 'name'>
+    ) }
   )> }
 );
 
@@ -479,6 +554,17 @@ export const UserFragmentDoc = gql`
   posteId
 }
     `;
+export const AddMessageDocument = gql`
+    mutation addMessage($message: String!, $convUuid: String!, $userId: Int!) {
+  addMessage(message: $message, convUuid: $convUuid, userId: $userId) {
+    uuid
+  }
+}
+    `;
+
+export function useAddMessageMutation() {
+  return Urql.useMutation<AddMessageMutation, AddMessageMutationVariables>(AddMessageDocument);
+};
 export const CreateConversationWithUserIdsDocument = gql`
     mutation createConversationWithUserIds($id1: Int!, $id2: Int!) {
   createConversationWithUserIds(id1: $id1, id2: $id2) {
@@ -639,6 +725,33 @@ export const MeDocument = gql`
 export function useMeQuery(options: Omit<Urql.UseQueryArgs<MeQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<MeQuery>({ query: MeDocument, ...options });
 };
+export const MessagesDocument = gql`
+    query messages($convUuid: String!) {
+  messages(convUuid: $convUuid) {
+    uuid
+    content
+    createdAt
+    updatedAt
+    user {
+      id
+      email
+      firstname
+      lastname
+      service {
+        name
+      }
+      poste {
+        name
+      }
+      profilePicPath
+    }
+  }
+}
+    `;
+
+export function useMessagesQuery(options: Omit<Urql.UseQueryArgs<MessagesQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<MessagesQuery>({ query: MessagesDocument, ...options });
+};
 export const PosteByIdDocument = gql`
     query posteById($id: Int!) {
   posteById(id: $id) {
@@ -698,10 +811,26 @@ export function useServicesQuery(options: Omit<Urql.UseQueryArgs<ServicesQueryVa
 export const UserByIdDocument = gql`
     query userById($id: Int!) {
   userById(id: $id) {
-    ...User
+    id
+    email
+    firstname
+    lastname
+    accepted
+    admin
+    profilePicPath
+    createdAt
+    updatedAt
+    service {
+      id
+      name
+    }
+    poste {
+      id
+      name
+    }
   }
 }
-    ${UserFragmentDoc}`;
+    `;
 
 export function useUserByIdQuery(options: Omit<Urql.UseQueryArgs<UserByIdQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<UserByIdQuery>({ query: UserByIdDocument, ...options });

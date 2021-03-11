@@ -31,7 +31,7 @@ export const SearchField: React.FC<SearchFieldProps> = ({
   return (
     <FormControl boxSize="100%" isInvalid={!!error}>
       <InputGroup boxSize="100%">
-        <Input {...field} {...props} id={field.name} boxSize="100%"></Input>
+        <Input {...field} {...props} id={field.name} boxSize="100%" borderWidth={2} borderColor="teal.600"></Input>
         <InputRightElement h="100%" w="4.1rem" mr={1}>
           <Button size="xs" type="submit" colorScheme="teal" isLoading={isLoading}>
             search

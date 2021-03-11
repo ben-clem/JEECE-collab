@@ -1,7 +1,7 @@
 import argon2 from "argon2";
 import jwt from "jsonwebtoken";
 import { Arg, Ctx, Int, Mutation, Query, Resolver } from "type-graphql";
-import { getConnection } from "typeorm";
+import { getConnection, getRepository } from "typeorm";
 import { __prod__, __secret__ } from "../constants";
 import { decodeToken } from "../decodedToken";
 import { User } from "../entities/User";
@@ -151,12 +151,30 @@ export class UserResolver {
     return user;
   }
 
+  // @Query(() => User, { nullable: true })
+  // userById(
+  //   @Arg("id", (type) => Int) id: number
+  // ): Promise<User | undefined> {
+  //   return User.findOne({ id });
+  // }
+
   @Query(() => User, { nullable: true })
-  userById(
+  async userById(
     @Arg("id", (type) => Int) id: number
   ): Promise<User | undefined> {
-    return User.findOne({ id });
+    try {
+      const user = await getRepository(User)
+        .createQueryBuilder("user")
+        .leftJoinAndSelect("user.service", "service")
+        .leftJoinAndSelect("user.poste", "poste")
+        .where("user.id = :id", { id })
+        .getOneOrFail();
+      return user;
+    } catch (err) {
+      return err.toString();
+    }
   }
+
 
   @Mutation(() => Boolean)
   logout(@Ctx() { res }: MyContext) {

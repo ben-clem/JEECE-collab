@@ -1,0 +1,5 @@
+mutation addMessage($message: String!, $convUuid: String!, $userId: Int!) {
+  addMessage(message: $message, convUuid: $convUuid, userId: $userId) {
+    uuid
+  }
+}

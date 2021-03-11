@@ -12,7 +12,7 @@ import {
   useColorMode,
   VStack,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   useMeQuery,
   usePosteByIdQuery,
@@ -23,9 +23,42 @@ import { isServer } from "../utils/isServer";
 
 export const MeInfo = (props: FlexProps) => {
   const { colorMode } = useColorMode();
+
+  const [serviceId, setServiceId] = useState<number | null>(null);
+  const [posteId, setPosteId] = useState<number | null>(null);
+
   const [{ data: meData, fetching: meFetching }] = useMeQuery({
     pause: isServer(), // pause this request anytime this page is rendered server-side (the server doesn't have access to the userToken cookie)
   });
+
+  const [
+    { data: serviceByIdData, fetching: serviceByIdFetching },
+  ] = useServiceByIdQuery({
+    variables: {
+      id: serviceId as number,
+    },
+    pause: false, // this request can be done server-side
+  });
+
+  const [
+    { data: posteByIdData, fetching: posteByIdFetching },
+  ] = usePosteByIdQuery({
+    variables: {
+      id: posteId as number,
+    },
+    pause: false, // this request can be done server-side
+  });
+
+  useEffect(() => {
+    if (meData?.me) {
+      if (meData.me.serviceId) {
+        setServiceId(meData.me.serviceId);
+      }
+      if (meData.me.posteId) {
+        setPosteId(meData.me.posteId);
+      }
+    }
+  }, [meFetching]);
 
   let body = null;
 
@@ -33,23 +66,6 @@ export const MeInfo = (props: FlexProps) => {
   if (meFetching) {
     // logged in:
   } else if (meData?.me) {
-    const [
-      { data: serviceByIdData, fetching: serviceByIdFetching },
-    ] = useServiceByIdQuery({
-      variables: {
-        id: meData.me.serviceId as number,
-      },
-      pause: false, // this request can be done server-side
-    });
-    const [
-      { data: posteByIdData, fetching: posteByIdFetching },
-    ] = usePosteByIdQuery({
-      variables: {
-        id: meData.me.posteId as number,
-      },
-      pause: false, // this request can be done server-side
-    });
-
     body = (
       <Grid
         boxSize="100%"

@@ -1,8 +1,10 @@
 import { ApolloServer } from "apollo-server-express";
+import cookieParser from "cookie-parser";
+import cors from "cors";
 import express from "express";
 import "reflect-metadata";
 import { buildSchema } from "type-graphql";
-import { createConnection } from "typeorm";
+import { createConnection, getManager } from "typeorm";
 import { Conversation } from "./entities/Conversation";
 import { ConvToUser } from "./entities/ConvToUser";
 import { Document } from "./entities/Document";
@@ -10,15 +12,13 @@ import { Message } from "./entities/Message";
 import { Poste } from "./entities/Poste";
 import { Service } from "./entities/Service";
 import { User } from "./entities/User";
-import { HelloResolver } from "./resolvers/Hello";
-import { ServiceResolver } from "./resolvers/Service";
-import { getManager } from "typeorm";
-import { PosteResolver } from "./resolvers/Poste";
-import { UserResolver } from "./resolvers/User";
-import cors from "cors";
-import cookieParser from "cookie-parser";
 import { ConversationResolver } from "./resolvers/Conversation";
 import { ConvToUserResolver } from "./resolvers/ConvToUser";
+import { HelloResolver } from "./resolvers/Hello";
+import { MessageResolver } from "./resolvers/Message";
+import { PosteResolver } from "./resolvers/Poste";
+import { ServiceResolver } from "./resolvers/Service";
+import { UserResolver } from "./resolvers/User";
 
 const main = async () => {
   const conn = await createConnection({
@@ -36,6 +36,7 @@ const main = async () => {
       Poste,
       Service,
       User,
+      Message,
     ],
   });
   const em = getManager();
@@ -46,7 +47,15 @@ const main = async () => {
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [HelloResolver, ServiceResolver, PosteResolver, UserResolver, ConversationResolver, ConvToUserResolver],
+      resolvers: [
+        HelloResolver,
+        ServiceResolver,
+        PosteResolver,
+        UserResolver,
+        ConversationResolver,
+        ConvToUserResolver,
+        MessageResolver,
+      ],
       validate: false,
     }),
     context: ({ req, res }) => ({ em, req, res }),

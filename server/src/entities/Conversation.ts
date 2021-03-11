@@ -33,6 +33,7 @@ export class Conversation extends BaseEntity {
   })
   convToUsers!: ConvToUser[];
 
+  @Field((type) => [Message])
   @OneToMany(() => Message, (message) => message.conversation, {
     nullable: true,
     cascade: false,

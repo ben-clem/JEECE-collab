@@ -57,8 +57,8 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
         </Box>
         <Button
           h={8}
-          onClick={() => {
-            logout();
+          onClick={async () => {
+            await logout();
           }}
           isLoading={logoutFetching}
         >
@@ -102,7 +102,7 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
               mr={2}
               pr={2}
               borderRight="1px"
-              borderColor="rgba(0, 0, 0,.3)"
+              borderColor={theme.colors.placeholder[colorMode]}
             >
               {body}
             </Box>

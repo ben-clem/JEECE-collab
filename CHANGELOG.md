@@ -11,9 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### To fix
 
-- bug when switching to logout, login, register (might be because of where to call hooks)
+- need to reload the page after logging in or registering
 
-# Added
+### Added
 
 - Home page with user info display
 - Search bar to search users by firstname, lastname, service name or poste name
@@ -22,6 +22,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Conversation resolver hooks
 - Going to a matching conversation if it exists (/conversation/[uuid])
 - Creating the convo if it doesn't exist then redirecting
+- Messages display in convo
+
+### Fixed
+
+- bug when switching to logout, login, register (might be because of where hooks are called)
 
 ## [v0.0.3](https://github.com/benzinho75/JEECE-collab/compare/v0.0.2...v0.0.3) - 2021-03-04
 

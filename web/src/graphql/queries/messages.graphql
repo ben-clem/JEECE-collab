@@ -1,0 +1,21 @@
+query messages($convUuid: String!) {
+  messages(convUuid: $convUuid) {
+    uuid
+    content
+    createdAt
+    updatedAt
+    user {
+      id
+      email
+      firstname
+      lastname
+      service {
+        name
+      }
+      poste {
+        name
+      }
+      profilePicPath
+    }
+  }
+}

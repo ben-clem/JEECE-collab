@@ -11,7 +11,8 @@ import {
   useColorMode,
   VStack,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import { userInfo } from "node:os";
+import React, { useEffect, useState } from "react";
 import {
   usePosteByIdQuery,
   useServiceByIdQuery,
@@ -25,46 +26,20 @@ type UserInfoProps = {
 
 export const UserInfo = (props: UserInfoProps) => {
   const { colorMode } = useColorMode();
-  const [serviceId, setServiceId] = useState(0);
-  const [posteId, setPosteId] = useState(0);
 
-  const [{ data: userData, fetching: userFetching }] = useUserByIdQuery({
+  const [{ data, fetching }] = useUserByIdQuery({
     variables: {
       id: props.id,
     },
     pause: false, // this request can be done server-side
   });
 
-  const [
-    { data: serviceByIdData, fetching: serviceByIdFetching },
-  ] = useServiceByIdQuery({
-    variables: {
-      id: serviceId,
-    },
-    pause: false, // this request can be done server-side
-  });
-
-  const [
-    { data: posteByIdData, fetching: posteByIdFetching },
-  ] = usePosteByIdQuery({
-    variables: {
-      id: posteId,
-    },
-    pause: false, // this request can be done server-side
-  });
-
   let body = null;
 
-  if (userFetching) {
+  if (fetching) {
     // fetching: waiting
-  } else if (userData?.userById) {
+  } else if (data?.userById) {
     // logged in:
-    if (userData.userById.serviceId && serviceId === 0) {
-      setServiceId(userData.userById.serviceId);
-    }
-    if (userData.userById.posteId && posteId === 0) {
-      setPosteId(userData.userById.posteId);
-    }
 
     body = (
       <Grid
@@ -80,33 +55,19 @@ export const UserInfo = (props: UserInfoProps) => {
         <GridItem colSpan={7} rowSpan={1}>
           <HStack boxSize="100%" ml={2}>
             <Box>
-              {userData.userById.firstname} {userData.userById.lastname}
+              {data.userById.firstname} {data.userById.lastname}
             </Box>
           </HStack>
         </GridItem>
         <GridItem colSpan={7} rowSpan={1}>
           <HStack boxSize="100%" ml={2}>
-            <Box>{userData.userById.email}</Box>
+            <Box>{data.userById.email}</Box>
           </HStack>
         </GridItem>
         <GridItem colSpan={4} rowSpan={2}>
           <VStack boxSize="100%" ml={2} align="left" justify="center">
-            <Box>
-              Service :{" "}
-              {serviceByIdFetching ? (
-                <Spinner size="xs" />
-              ) : (
-                serviceByIdData?.serviceById?.name
-              )}
-            </Box>
-            <Box>
-              Poste :{" "}
-              {posteByIdFetching ? (
-                <Spinner size="xs" />
-              ) : (
-                posteByIdData?.posteById?.name
-              )}
-            </Box>
+            <Box>Service : {data.userById.service.name}</Box>
+            <Box>Poste : {data.userById.poste.name}</Box>
           </VStack>
         </GridItem>
         <GridItem colSpan={4} rowSpan={2}>
@@ -115,24 +76,24 @@ export const UserInfo = (props: UserInfoProps) => {
               <Text>Accepted ?</Text>
               <Text
                 color={
-                  userData.userById.accepted
+                  data.userById.accepted
                     ? theme.colors.teal[500]
                     : theme.colors.red[500]
                 }
               >
-                {userData.userById.accepted.toString()}
+                {data.userById.accepted.toString()}
               </Text>
             </HStack>
             <HStack align="right" justify="right">
               <Text>Admin ?</Text>
               <Text
                 color={
-                  userData.userById.admin
+                  data.userById.admin
                     ? theme.colors.teal[500]
                     : theme.colors.gray[500]
                 }
               >
-                {userData.userById.admin.toString()}
+                {data.userById.admin.toString()}
               </Text>
             </HStack>
           </VStack>

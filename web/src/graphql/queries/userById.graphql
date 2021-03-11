@@ -1,5 +1,21 @@
 query userById($id: Int!) {
   userById(id: $id) {
-    ...User
+    id
+    email
+    firstname
+    lastname
+    accepted
+    admin
+    profilePicPath
+    createdAt
+    updatedAt
+    service {
+      id
+      name
+    }
+    poste {
+      id
+      name
+    }
   }
 }

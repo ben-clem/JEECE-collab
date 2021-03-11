@@ -42,16 +42,18 @@ const Register: React.FC<registerProps> = ({}) => {
     }
   );
   let servicesOptions = null;
+
+  const [{ data: postesData, fetching: postesFetching }] = usePostesQuery({
+    pause: false, // this request can be executed server-side
+  });
+  let postesOptions = null;
+
   // data is loading
   if (servicesFetching) {
     return <div></div>;
   } else {
     servicesOptions = servicesData?.services;
 
-    const [{ data: postesData, fetching: postesFetching }] = usePostesQuery({
-      pause: false, // this request can be executed server-side
-    });
-    let postesOptions = null;
     // data is loading
     if (postesFetching) {
       return <div></div>;
@@ -140,16 +142,18 @@ const Register: React.FC<registerProps> = ({}) => {
                     <SelectField
                       name="serviceId"
                       placeholder="Veuillez sélectionner votre service"
-                      label="Service"
+                      label="Service *"
                       options={servicesOptions}
+                      required
                     />
                   </Box>
                   <Box mt={4}>
                     <SelectField
                       name="posteId"
                       placeholder="Veuillez sélectionner votre poste"
-                      label="Poste"
+                      label="Poste *"
                       options={postesOptions}
+                      required
                     />
                   </Box>
 

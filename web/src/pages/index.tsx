@@ -57,7 +57,7 @@ const Index: React.FC<IndexProps> = ({}) => {
     createConversationWithUserIds,
   ] = useCreateConversationWithUserIdsMutation();
 
-  const [meResult] = useMeQuery({
+  const [meResult, reexecuteMeQuery] = useMeQuery({
     pause: isServer(), // pause this request anytime this page is rendered server-side (the server doesn't have access to the userToken cookie)
   });
   const [usersResult] = useUsersByFnOrLnOrSnOrPnLikeWordsInStringQuery({
@@ -100,7 +100,6 @@ const Index: React.FC<IndexProps> = ({}) => {
         });
 
         setIsSwitching(false);
-        
       } else {
         // creating the inexisting convo
         console.log("no convo, creating one");
@@ -156,6 +155,7 @@ const Index: React.FC<IndexProps> = ({}) => {
                   (user) => {
                     return (
                       <WrapItem
+                        key={user.id}
                         bg={theme.colors.transparent[colorMode]}
                         borderRadius="lg"
                       >
@@ -180,7 +180,6 @@ const Index: React.FC<IndexProps> = ({}) => {
                 )}
               </Wrap>
             </ModalBody>
-
             <ModalFooter />
           </ModalContent>
         </Modal>
@@ -263,6 +262,7 @@ const Index: React.FC<IndexProps> = ({}) => {
 
     // not logged in:
   } else {
+    
     body = (
       <Center maxW="75vw" mx="auto" mt="35vh">
         <Heading as="h1" size="xl">
