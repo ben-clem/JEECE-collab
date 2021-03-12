@@ -175,7 +175,7 @@ const ConversationPage = ({}) => {
       <>
         <Center maxW="90vw">
           <Grid
-            h="90vh"
+            minH="90vh"
             w="80vw"
             mt={5}
             templateRows="repeat(10, 1fr)"
@@ -189,7 +189,7 @@ const ConversationPage = ({}) => {
               bg={theme.colors.transparent[colorMode]}
             >
               {messages.length === 0 ? (
-                <Center boxSize="90%" m="auto">
+                <Center minH="90%" m="auto">
                   <Text
                     fontSize="md"
                     color={theme.colors.contentTrans[colorMode]}
@@ -198,9 +198,9 @@ const ConversationPage = ({}) => {
                   </Text>
                 </Center>
               ) : (
-                messages.map((message) => {
+                messages.slice(0).reverse().map((message) => {
                   return (
-                    <Box w="100%" p={3} color={theme.colors.content[colorMode]}>
+                    <Box key={message.uuid} w="100%" p={3} color={theme.colors.content[colorMode]}>
                       <HStack>
                         <Avatar size="xs" />
                         <Text
@@ -226,6 +226,7 @@ const ConversationPage = ({}) => {
               )}
             </GridItem>
             <GridItem
+            maxH="8vh"
               borderRadius="xl"
               colSpan={1}
               rowSpan={1}

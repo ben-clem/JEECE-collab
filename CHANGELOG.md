@@ -14,7 +14,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### To fix
 
 - need to reload the page after logging in or registering
-- messages in reverse order
 
 ### Added
 
@@ -31,6 +30,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - bug when switching to logout, login, register (might be because of where hooks are called)
+- messages in reverse order
+- convo window not growing when many messages
 
 ## [v0.0.3](https://github.com/benzinho75/JEECE-collab/compare/v0.0.2...v0.0.3) - 2021-03-04
 
