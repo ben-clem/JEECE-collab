@@ -24,6 +24,9 @@ export const createUrqlClient = (ssrExchange: any) => ({
         ConvResponse: (data) => data._id as string,
         Conversation: (data) => data.uuid as string,
         ConvToUser: (data) => data.convToUserId as string,
+        Message: (data) => data.uuid as string,
+        Service: (data) => data.id as string,
+        Poste: (data) => data.id as string,
       },
       updates: {
         Mutation: {

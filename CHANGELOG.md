@@ -9,11 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### To add
 
-- sockets
+- scrolling to bottom when new message gets added
 
 ### To fix
 
 - need to reload the page after logging in or registering
+- socket bug when sending the same message again
+- space at the bottom when many messages
 
 ### Added
 
@@ -26,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Creating the convo if it doesn't exist then redirecting
 - Messages display in convo
 - Adding message
+- Real-time with socket.io
 
 ### Fixed
 

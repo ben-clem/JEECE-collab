@@ -1,5 +1,21 @@
 mutation addMessage($message: String!, $convUuid: String!, $userId: Int!) {
   addMessage(message: $message, convUuid: $convUuid, userId: $userId) {
     uuid
+    content
+    createdAt
+    updatedAt
+    user {
+      id
+      email
+      firstname
+      lastname
+      service {
+        name
+      }
+      poste {
+        name
+      }
+      profilePicPath
+    }
   }
 }

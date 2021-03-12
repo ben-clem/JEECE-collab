@@ -20,6 +20,8 @@ import { PosteResolver } from "./resolvers/Poste";
 import { ServiceResolver } from "./resolvers/Service";
 import { UserResolver } from "./resolvers/User";
 
+const EVENT = "new-chat-message"; // Name of the event
+
 const main = async () => {
   const conn = await createConnection({
     type: "postgres",
@@ -42,6 +44,14 @@ const main = async () => {
   const em = getManager();
 
   const app = express();
+  const http = require("http").Server(app);
+  const io = require("socket.io")(http, {
+    cors: {
+      origin: "http://localhost:3000",
+      methods: ["GET", "POST"],
+    },
+  });
+
   app.use(cors({ origin: "http://localhost:3000", credentials: true }));
   app.use(cookieParser());
 
@@ -66,7 +76,23 @@ const main = async () => {
     cors: false, // we are not setting cors for the Apollo Server (/graphql route) but rather globally with the cors module
   });
 
-  app.listen(4000, () => {
+  io.on("connection", (socket: any) => {
+    // Join a conversation
+    const { convUuid } = socket.handshake.query;
+    socket.join(convUuid);
+
+    // Listen for new messages
+    socket.on(EVENT, (data: any) => {
+      io.in(convUuid).emit(EVENT, data);
+    });
+
+    // Leave the room if the user closes the socket
+    socket.on("disconnect", () => {
+      socket.leave(convUuid);
+    });
+  });
+
+  http.listen(4000, () => {
     console.log("server started on localhost:4000");
   });
 };

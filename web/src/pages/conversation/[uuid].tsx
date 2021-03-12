@@ -3,42 +3,35 @@ import {
   AlertDescription,
   AlertIcon,
   AlertTitle,
+  Avatar,
   Box,
   Button,
   Center,
   CloseButton,
   Grid,
   GridItem,
-  Text,
+  HStack,
   Input,
   InputGroup,
   InputRightElement,
   Spinner,
+  Text,
   useColorMode,
-  Avatar,
-  HStack,
-  FormControl,
 } from "@chakra-ui/react";
-import { Form, Formik, FormikProps, useField } from "formik";
+import { Form, Formik, useField } from "formik";
 import { withUrqlClient } from "next-urql";
+import { useRouter } from "next/router";
 import React, { InputHTMLAttributes, useEffect, useState } from "react";
 import { MyContainer } from "../../components/Container";
 import { NavBar } from "../../components/NavBar";
-import { SearchField } from "../../components/SearchField";
 import {
-  useAddMessageMutation,
-  useMessagesQuery,
-  Conversation,
-  Message,
-  User,
-  Service,
-  Poste,
+  useConversationByUuidQuery,
   useMeQuery,
 } from "../../graphql/generated";
 import theme from "../../theme";
 import { createUrqlClient } from "../../utils/createUrqlClient";
 import { isServer } from "../../utils/isServer";
-import { useGetConversationFromUrl } from "../../utils/useGetConversationFromUrl";
+import useChat from "../../utils/useChat";
 
 const ConversationPage = ({}) => {
   const { colorMode } = useColorMode();
@@ -49,62 +42,31 @@ const ConversationPage = ({}) => {
   });
 
   // getting the conv uuid
-  const [convUuid, setConvUuid] = useState<string>("");
-  const [getConversationResult] = useGetConversationFromUrl();
-  useEffect(() => {
-    if (getConversationResult.data?.conversationByUuid.conv?.uuid) {
-      setConvUuid(getConversationResult.data?.conversationByUuid.conv?.uuid);
-    }
-  }, [getConversationResult]);
+  const router = useRouter();
+  const convUuid = router.query.uuid as string;
+
+  // getting the conv
+  const [getConversationResult] = useConversationByUuidQuery({
+    variables: {
+      uuid: convUuid,
+    },
+  });
 
   // getting the messages
-  const [messages, setMessages] = useState<
-    Array<
-      { __typename?: "Message" } & Pick<
-        Message,
-        "uuid" | "content" | "createdAt" | "updatedAt"
-      > & {
-          user: { __typename?: "User" } & Pick<
-            User,
-            "id" | "email" | "firstname" | "lastname" | "profilePicPath"
-          > & {
-              service: { __typename?: "Service" } & Pick<Service, "name">;
-              poste: { __typename?: "Poste" } & Pick<Poste, "name">;
-            };
-        }
-    >
-  >([]);
-  const [messagesResult] = useMessagesQuery({
-    variables: {
-      convUuid,
-    },
-    pause: false, // this query can be done server-side
-  });
-  useEffect(() => {
-    if (messagesResult.data?.messages) {
-      setMessages(messagesResult.data?.messages);
-    }
-  }, [messagesResult]);
+  const { messages, sendMessage } = useChat(convUuid);
 
   const [newMessage, setNewMessage] = useState<string>("");
   const [submitting, setSubmitting] = useState<boolean>(false);
-  const [, addMessage] = useAddMessageMutation();
+
   useEffect(() => {
-    console.log(newMessage);
     if (
       submitting &&
       newMessage &&
       newMessage !== "" &&
       meResult.data?.me?.id !== undefined
     ) {
-      const addingMessage = async () => {
-        await addMessage({
-          convUuid,
-          message: newMessage,
-          userId: meResult.data?.me?.id as number,
-        });
-      };
-      addingMessage();
+      // sending + adding
+      sendMessage(newMessage, meResult.data?.me?.id as number);
       setSubmitting(false);
     }
   }, [newMessage, submitting]);
@@ -124,6 +86,7 @@ const ConversationPage = ({}) => {
           borderColor="teal.600"
           id="newMessage"
           placeholder="message"
+          autoFocus
         ></Input>
         <InputRightElement h="100%" width="5.1rem" mr={1}>
           <Button size="md" w="5rem" type="submit" colorScheme="teal">
@@ -198,9 +161,14 @@ const ConversationPage = ({}) => {
                   </Text>
                 </Center>
               ) : (
-                messages.slice(0).reverse().map((message) => {
+                messages.map((message) => {
                   return (
-                    <Box key={message.uuid} w="100%" p={3} color={theme.colors.content[colorMode]}>
+                    <Box
+                      key={message.uuid}
+                      w="100%"
+                      p={3}
+                      color={theme.colors.content[colorMode]}
+                    >
                       <HStack>
                         <Avatar size="xs" />
                         <Text
@@ -226,7 +194,7 @@ const ConversationPage = ({}) => {
               )}
             </GridItem>
             <GridItem
-            maxH="8vh"
+              maxH="8vh"
               borderRadius="xl"
               colSpan={1}
               rowSpan={1}
@@ -236,10 +204,10 @@ const ConversationPage = ({}) => {
                 initialValues={{
                   newMessage: "",
                 }}
-                onSubmit={(values, {resetForm}) => {
+                onSubmit={(values, { resetForm }) => {
                   setNewMessage(values.newMessage);
                   setSubmitting(true);
-                  resetForm({})
+                  resetForm({});
                 }}
               >
                 <Form style={{ width: "100%", height: "100%", margin: "auto" }}>

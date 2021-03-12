@@ -266,7 +266,18 @@ export type AddMessageMutation = (
   { __typename?: 'Mutation' }
   & { addMessage: (
     { __typename?: 'Message' }
-    & Pick<Message, 'uuid'>
+    & Pick<Message, 'uuid' | 'content' | 'createdAt' | 'updatedAt'>
+    & { user: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'email' | 'firstname' | 'lastname' | 'profilePicPath'>
+      & { service: (
+        { __typename?: 'Service' }
+        & Pick<Service, 'name'>
+      ), poste: (
+        { __typename?: 'Poste' }
+        & Pick<Poste, 'name'>
+      ) }
+    ) }
   ) }
 );
 
@@ -558,6 +569,22 @@ export const AddMessageDocument = gql`
     mutation addMessage($message: String!, $convUuid: String!, $userId: Int!) {
   addMessage(message: $message, convUuid: $convUuid, userId: $userId) {
     uuid
+    content
+    createdAt
+    updatedAt
+    user {
+      id
+      email
+      firstname
+      lastname
+      service {
+        name
+      }
+      poste {
+        name
+      }
+      profilePicPath
+    }
   }
 }
     `;
