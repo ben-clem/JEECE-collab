@@ -17,12 +17,14 @@ import {
   useColorMode,
   Avatar,
   HStack,
+  FormControl,
 } from "@chakra-ui/react";
-import { Form, Formik } from "formik";
+import { Form, Formik, FormikProps, useField } from "formik";
 import { withUrqlClient } from "next-urql";
-import React, { useEffect, useState } from "react";
+import React, { InputHTMLAttributes, useEffect, useState } from "react";
 import { MyContainer } from "../../components/Container";
 import { NavBar } from "../../components/NavBar";
+import { SearchField } from "../../components/SearchField";
 import {
   useAddMessageMutation,
   useMessagesQuery,
@@ -31,14 +33,20 @@ import {
   User,
   Service,
   Poste,
+  useMeQuery,
 } from "../../graphql/generated";
 import theme from "../../theme";
 import { createUrqlClient } from "../../utils/createUrqlClient";
+import { isServer } from "../../utils/isServer";
 import { useGetConversationFromUrl } from "../../utils/useGetConversationFromUrl";
 
 const ConversationPage = ({}) => {
   const { colorMode } = useColorMode();
   const moment = require("moment");
+
+  const [meResult, reexecuteMeQuery] = useMeQuery({
+    pause: isServer(), // pause this request anytime this page is rendered server-side (the server doesn't have access to the userToken cookie)
+  });
 
   // getting the conv uuid
   const [convUuid, setConvUuid] = useState<string>("");
@@ -78,16 +86,53 @@ const ConversationPage = ({}) => {
     }
   }, [messagesResult]);
 
-  const [newMessage, setNewMessage] = useState<string>();
-
+  const [newMessage, setNewMessage] = useState<string>("");
+  const [submitting, setSubmitting] = useState<boolean>(false);
   const [, addMessage] = useAddMessageMutation();
+  useEffect(() => {
+    console.log(newMessage);
+    if (
+      submitting &&
+      newMessage &&
+      newMessage !== "" &&
+      meResult.data?.me?.id !== undefined
+    ) {
+      const addingMessage = async () => {
+        await addMessage({
+          convUuid,
+          message: newMessage,
+          userId: meResult.data?.me?.id as number,
+        });
+      };
+      addingMessage();
+      setSubmitting(false);
+    }
+  }, [newMessage, submitting]);
 
-  // console.log("fetching");
-  // console.log(fetching);
-  // console.log("error");
-  // console.log(error);
-  // console.log("data");
-  // console.log(data);
+  type newMessageProps = InputHTMLAttributes<HTMLInputElement> & {
+    name: string;
+  };
+
+  const NewMessageField: React.FC<newMessageProps> = ({ ...props }) => {
+    const [field] = useField(props.name);
+    return (
+      <InputGroup w="99.1%" h="85%">
+        <Input
+          {...field}
+          boxSize="100%"
+          borderWidth={2}
+          borderColor="teal.600"
+          id="newMessage"
+          placeholder="message"
+        ></Input>
+        <InputRightElement h="100%" width="5.1rem" mr={1}>
+          <Button size="md" w="5rem" type="submit" colorScheme="teal">
+            send
+          </Button>
+        </InputRightElement>
+      </InputGroup>
+    );
+  };
 
   let body = null;
 
@@ -143,27 +188,42 @@ const ConversationPage = ({}) => {
               rowSpan={9}
               bg={theme.colors.transparent[colorMode]}
             >
-              {messages.map((message) => {
-                return (
-                  <Box w="100%" p={3} color={theme.colors.content[colorMode]}>
-                    <HStack>
-                      <Avatar size="xs" />
-                      <Text
-                        fontSize="md"
-                        borderBottom="1px"
-                        borderColor="teal.700"
-                      >
-                        {message.user.firstname} {message.user.firstname}
-                      </Text>
-                      <Text as="i" fontSize="sm" color={theme.colors.contentTrans[colorMode]}>
-                        {moment(message.createdAt).fromNow()}
-                      </Text>
-                    </HStack>
+              {messages.length === 0 ? (
+                <Center boxSize="90%" m="auto">
+                  <Text
+                    fontSize="md"
+                    color={theme.colors.contentTrans[colorMode]}
+                  >
+                    Send the first message...
+                  </Text>
+                </Center>
+              ) : (
+                messages.map((message) => {
+                  return (
+                    <Box w="100%" p={3} color={theme.colors.content[colorMode]}>
+                      <HStack>
+                        <Avatar size="xs" />
+                        <Text
+                          fontSize="md"
+                          borderBottom="1px"
+                          borderColor="teal.700"
+                        >
+                          {message.user.firstname} {message.user.firstname}
+                        </Text>
+                        <Text
+                          as="i"
+                          fontSize="sm"
+                          color={theme.colors.contentTrans[colorMode]}
+                        >
+                          {moment(message.createdAt).fromNow()}
+                        </Text>
+                      </HStack>
 
-                    <Text fontSize="md">{message.content}</Text>
-                  </Box>
-                );
-              })}
+                      <Text fontSize="md">{message.content}</Text>
+                    </Box>
+                  );
+                })
+              )}
             </GridItem>
             <GridItem
               borderRadius="xl"
@@ -173,31 +233,17 @@ const ConversationPage = ({}) => {
             >
               <Formik
                 initialValues={{
-                  message: "",
+                  newMessage: "",
                 }}
-                onSubmit={(values) => {
-                  setNewMessage(values.message);
+                onSubmit={(values, {resetForm}) => {
+                  setNewMessage(values.newMessage);
+                  setSubmitting(true);
+                  resetForm({})
                 }}
               >
                 <Form style={{ width: "100%", height: "100%", margin: "auto" }}>
                   <Center boxSize="100%">
-                    <InputGroup w="99.1%" h="85%">
-                      <Input
-                        boxSize="100%"
-                        borderWidth={2}
-                        borderColor="teal.600"
-                      ></Input>
-                      <InputRightElement h="100%" width="5.1rem" mr={1}>
-                        <Button
-                          size="md"
-                          w="5rem"
-                          type="submit"
-                          colorScheme="teal"
-                        >
-                          send
-                        </Button>
-                      </InputRightElement>
-                    </InputGroup>
+                    <NewMessageField name="newMessage" type="text" />
                   </Center>
                 </Form>
               </Formik>

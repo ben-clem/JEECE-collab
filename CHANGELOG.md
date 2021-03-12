@@ -9,9 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### To add
 
+- sockets
+
 ### To fix
 
 - need to reload the page after logging in or registering
+- messages in reverse order
 
 ### Added
 
@@ -23,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Going to a matching conversation if it exists (/conversation/[uuid])
 - Creating the convo if it doesn't exist then redirecting
 - Messages display in convo
+- Adding message
 
 ### Fixed
 
