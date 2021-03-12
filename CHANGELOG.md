@@ -5,16 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/benzinho75/JEECE-collab/compare/v0.0.3...HEAD)
+## [Unreleased](https://github.com/benzinho75/JEECE-collab/compare/v0.0.4...HEAD)
 
 ### To add
 
-- scrolling to bottom when new message gets added
-
 ### To fix
 
-- need to reload the page after logging in or registering
-- space at the bottom when many messages
+- need to reload the page after logging in or registering and conversations sometimes not loading messages on first try (cache pb ?)
+
+## [v0.0.4](https://github.com/benzinho75/JEECE-collab/compare/v0.0.3...v0.0.4) - 2021-03-12
 
 ### Added
 
@@ -28,7 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Messages display in convo
 - Adding message
 - Real-time with socket.io
-- messages times are updated live every minute
+- scrolling to bottom when new message gets added
 
 ### Fixed
 
@@ -36,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - messages in reverse order
 - convo window not growing when many messages
 - socket bug when sending the same message again (was actually a pb with loading the existing messages)
+- space at the bottom when many messages
 
 ## [v0.0.3](https://github.com/benzinho75/JEECE-collab/compare/v0.0.2...v0.0.3) - 2021-03-04
 

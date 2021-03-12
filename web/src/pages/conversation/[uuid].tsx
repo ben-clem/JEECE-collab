@@ -8,6 +8,7 @@ import {
   Button,
   Center,
   CloseButton,
+  Flex,
   Grid,
   GridItem,
   HStack,
@@ -17,6 +18,7 @@ import {
   Spinner,
   Text,
   useColorMode,
+  VStack,
 } from "@chakra-ui/react";
 import { Form, Formik, useField } from "formik";
 import { withUrqlClient } from "next-urql";
@@ -44,11 +46,10 @@ const ConversationPage = ({}) => {
   const moment = require("moment");
   const [now, setNow] = useState<Date>(new Date());
   const [autoFocus, setAutoFocus] = useState<boolean>(true);
-  setInterval(() => {
-    setAutoFocus(false);
-    setNow(new Date());
-  }, 1000 * 60);
-  
+  // setInterval(() => {
+  //   setAutoFocus(false);
+  //   setNow(new Date());
+  // }, 1000 * 60);
 
   const [meResult, reexecuteMeQuery] = useMeQuery({
     pause: isServer(), // pause this request anytime this page is rendered server-side (the server doesn't have access to the userToken cookie)
@@ -154,26 +155,18 @@ const ConversationPage = ({}) => {
     body = (
       <>
         <Center maxW="90vw">
-          <Grid
-            minH="90vh"
-            H="auto"
-            w="80vw"
-            mt={5}
-            templateRows="repeat(10, 1fr)"
-            templateColumns="repeat(1, 1fr)"
-            gap={3}
-          >
-            <GridItem
+          <VStack w="80vw" my={5}>
+            <Box
+              w="90vw"
+              minH="75vh"
+              mb={3}
               borderRadius="xl"
-              colSpan={1}
-              rowSpan={9}
               bg={theme.colors.transparent[colorMode]}
             >
-              {console.log()}
-              {console.log(messages)}
               {messages.length === 0 ? (
                 <Center minH="90%" m="auto">
                   <Text
+                    mt="30vh"
                     fontSize="md"
                     color={theme.colors.contentTrans[colorMode]}
                   >
@@ -183,41 +176,76 @@ const ConversationPage = ({}) => {
               ) : (
                 messages.map((message) => {
                   return (
-                    <Box
-                      key={message.uuid}
-                      w="100%"
-                      p={3}
-                      color={theme.colors.content[colorMode]}
-                    >
-                      <HStack>
-                        <Avatar size="xs" />
-                        <Text
-                          fontSize="md"
-                          borderBottom="1px"
-                          borderColor="teal.700"
+                    <>
+                      {message.user.id !== meResult.data?.me?.id ? (
+                        <Box
+                          key={message.uuid}
+                          w="100%"
+                          p={3}
+                          color={theme.colors.content[colorMode]}
                         >
-                          {message.user.firstname} {message.user.firstname}
-                        </Text>
-                        <Text
-                          as="i"
-                          fontSize="sm"
-                          color={theme.colors.contentTrans[colorMode]}
-                        >
-                          {moment(message.createdAt).from(now)}
-                        </Text>
-                      </HStack>
+                          <HStack>
+                            <Avatar size="xs" />
+                            <Text
+                              fontSize="md"
+                              borderBottom="1px"
+                              borderColor="teal.700"
+                            >
+                              {message.user.firstname} {message.user.firstname}
+                            </Text>
+                            <Text
+                              as="i"
+                              fontSize="sm"
+                              color={theme.colors.contentTrans[colorMode]}
+                            >
+                              {moment(message.createdAt).from(now)}
+                            </Text>
+                          </HStack>
 
-                      <Text fontSize="md">{message.content}</Text>
-                    </Box>
+                          <Text fontSize="md" mt={1}>
+                            {message.content}
+                          </Text>
+                        </Box>
+                      ) : (
+                        <Box
+                          key={message.uuid}
+                          w="100%"
+                          p={3}
+                          color={theme.colors.content[colorMode]}
+                        >
+                          <HStack justify="right">
+                            <Text
+                              as="i"
+                              fontSize="sm"
+                              color={theme.colors.contentTrans[colorMode]}
+                            >
+                              {moment(message.createdAt).from(now)}
+                            </Text>
+                            <Text
+                              fontSize="md"
+                              borderBottom="1px"
+                              borderColor="teal.700"
+                            >
+                              {message.user.firstname} {message.user.firstname}
+                            </Text>
+                            <Avatar size="xs" />
+                          </HStack>
+
+                          <Text textAlign="end" fontSize="md" mt={1}>
+                            {message.content}
+                          </Text>
+                        </Box>
+                      )}
+                    </>
                   );
                 })
               )}
-            </GridItem>
-            <GridItem
-              maxH="8vh"
+            </Box>
+            <Box
+              w="90vw"
+              h="4rem"
+              mb={0}
               borderRadius="xl"
-              colSpan={1}
-              rowSpan={1}
               bg={theme.colors.transparent[colorMode]}
             >
               <Formik
@@ -236,8 +264,8 @@ const ConversationPage = ({}) => {
                   </Center>
                 </Form>
               </Formik>
-            </GridItem>
-          </Grid>
+            </Box>
+          </VStack>
         </Center>
       </>
     );
