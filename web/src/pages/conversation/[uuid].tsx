@@ -21,7 +21,13 @@ import {
 import { Form, Formik, useField } from "formik";
 import { withUrqlClient } from "next-urql";
 import { useRouter } from "next/router";
-import React, { InputHTMLAttributes, useEffect, useState } from "react";
+import React, {
+  InputHTMLAttributes,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { MyContainer } from "../../components/Container";
 import { NavBar } from "../../components/NavBar";
 import {
@@ -36,6 +42,13 @@ import useChat from "../../utils/useChat";
 const ConversationPage = ({}) => {
   const { colorMode } = useColorMode();
   const moment = require("moment");
+  const [now, setNow] = useState<Date>(new Date());
+  const [autoFocus, setAutoFocus] = useState<boolean>(true);
+  setInterval(() => {
+    setAutoFocus(false);
+    setNow(new Date());
+  }, 1000 * 60);
+  
 
   const [meResult, reexecuteMeQuery] = useMeQuery({
     pause: isServer(), // pause this request anytime this page is rendered server-side (the server doesn't have access to the userToken cookie)
@@ -66,7 +79,10 @@ const ConversationPage = ({}) => {
       meResult.data?.me?.id !== undefined
     ) {
       // sending + adding
-      sendMessage(newMessage, meResult.data?.me?.id as number);
+      const sending = async () => {
+        await sendMessage(newMessage, meResult.data?.me?.id as number);
+      };
+      sending();
       setSubmitting(false);
     }
   }, [newMessage, submitting]);
@@ -85,8 +101,9 @@ const ConversationPage = ({}) => {
           borderWidth={2}
           borderColor="teal.600"
           id="newMessage"
+          autoComplete="off"
           placeholder="message"
-          autoFocus
+          autoFocus={autoFocus}
         ></Input>
         <InputRightElement h="100%" width="5.1rem" mr={1}>
           <Button size="md" w="5rem" type="submit" colorScheme="teal">
@@ -139,6 +156,7 @@ const ConversationPage = ({}) => {
         <Center maxW="90vw">
           <Grid
             minH="90vh"
+            H="auto"
             w="80vw"
             mt={5}
             templateRows="repeat(10, 1fr)"
@@ -151,6 +169,8 @@ const ConversationPage = ({}) => {
               rowSpan={9}
               bg={theme.colors.transparent[colorMode]}
             >
+              {console.log()}
+              {console.log(messages)}
               {messages.length === 0 ? (
                 <Center minH="90%" m="auto">
                   <Text
@@ -183,7 +203,7 @@ const ConversationPage = ({}) => {
                           fontSize="sm"
                           color={theme.colors.contentTrans[colorMode]}
                         >
-                          {moment(message.createdAt).fromNow()}
+                          {moment(message.createdAt).from(now)}
                         </Text>
                       </HStack>
 
