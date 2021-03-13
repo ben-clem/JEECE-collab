@@ -20,6 +20,7 @@ const theme = extendTheme({
     contentTrans: { light: "blackAlpha.700", dark: "whiteAlpha.700" },
     transparent: { light: "blackAlpha.100", dark: "whiteAlpha.50" },
     placeholder: { light: "blackAlpha.300", dark: "whiteAlpha.300" },
+    tealTrans: { light: "rgb(0, 125, 125, 0.07)", dark: "rgb(0, 255, 255, 0.05)" },
   },
   fonts,
   breakpoints,

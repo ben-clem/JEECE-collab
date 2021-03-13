@@ -22,6 +22,7 @@ export const createUrqlClient = (ssrExchange: any) => ({
     cacheExchange({
       keys: {
         ConvResponse: (data) => data._id as string,
+        ConvsResponse: (data) => null,
         Conversation: (data) => data.uuid as string,
         ConvToUser: (data) => data.convToUserId as string,
         Message: (data) => data.uuid as string,

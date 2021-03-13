@@ -1,5 +1,6 @@
 import { ChatIcon } from "@chakra-ui/icons";
 import {
+  Box,
   Button,
   Center,
   Grid,
@@ -14,10 +15,14 @@ import {
   ModalHeader,
   ModalOverlay,
   useColorMode,
+  Text,
   useDisclosure,
   VStack,
   Wrap,
   WrapItem,
+  Flex,
+  LinkBox,
+  LinkOverlay,
 } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import { withUrqlClient } from "next-urql";
@@ -27,8 +32,13 @@ import { MyContainer } from "../components/Container";
 import { MeInfo } from "../components/MeInfo";
 import { NavBar } from "../components/NavBar";
 import { SearchField } from "../components/SearchField";
-import { UserInfo } from "../components/UserInfo";
+import { UserInfoBar } from "../components/UserInfoBar";
+import { UserInfoCard } from "../components/UserInfoCard";
 import {
+  Conversation,
+  ConvToUser,
+  Maybe,
+  useConversationsByUserIdQuery,
   useConversationWithUserIdsQuery,
   useCreateConversationWithUserIdsMutation,
   useMeQuery,
@@ -57,9 +67,16 @@ const Index: React.FC<IndexProps> = ({}) => {
     createConversationWithUserIds,
   ] = useCreateConversationWithUserIdsMutation();
 
+  const [myId, setMyId] = useState<number>(0);
   const [meResult, reexecuteMeQuery] = useMeQuery({
     pause: isServer(), // pause this request anytime this page is rendered server-side (the server doesn't have access to the userToken cookie)
   });
+  useEffect(() => {
+    if (meResult.data?.me?.id) {
+      setMyId(meResult.data?.me?.id);
+    }
+  }, [meResult]);
+
   const [usersResult] = useUsersByFnOrLnOrSnOrPnLikeWordsInStringQuery({
     variables: {
       string,
@@ -116,6 +133,35 @@ const Index: React.FC<IndexProps> = ({}) => {
     }
   }, [isSwitching, conversationResult]);
 
+  const [convs, setConvs] = useState<
+    Maybe<
+      Array<
+        { __typename?: "Conversation" } & Pick<
+          Conversation,
+          "uuid" | "createdAt" | "updatedAt"
+        > & {
+            convToUsers: Array<
+              { __typename?: "ConvToUser" } & Pick<
+                ConvToUser,
+                "userId" | "active"
+              >
+            >;
+          }
+      >
+    >
+  >([]);
+  const [convsResult] = useConversationsByUserIdQuery({
+    variables: {
+      id: myId,
+    },
+    pause: false, // this query can be done server-side
+  });
+  useEffect(() => {
+    if (convsResult.data?.conversationsByUserId.convs) {
+      setConvs(convsResult.data?.conversationsByUserId.convs);
+    }
+  }, [convsResult]);
+
   let body = null;
   let modal = null;
 
@@ -160,7 +206,7 @@ const Index: React.FC<IndexProps> = ({}) => {
                         borderRadius="lg"
                       >
                         <VStack w="22rem" h="13rem" spacing={0}>
-                          <UserInfo id={user.id} />
+                          <UserInfoCard id={user.id} />
                           <Button
                             w="100%"
                             onClick={() => {
@@ -243,12 +289,50 @@ const Index: React.FC<IndexProps> = ({}) => {
             >
               <MeInfo />
             </GridItem>
+            {/* Conversations */}
             <GridItem
               borderRadius="xl"
               colSpan={1}
               rowSpan={11}
               bg={theme.colors.transparent[colorMode]}
-            ></GridItem>
+            >
+              {/* router.push({
+            pathname: "/conversation/[uuid]",
+            query: {
+              uuid: conv.uuid,
+            },
+          }); */}
+
+              <VStack spacing={2}>
+                {console.log(convs)}
+                {convs
+                  ? convs.map((conv) => {
+                      return (
+                        <Flex
+                          w="98%"
+                          h="3rem"
+                          align="center"
+                          justify="left"
+                          mt={2}
+                          borderRadius="lg"
+                          bg={theme.colors.tealTrans[colorMode]}
+                          key={conv.uuid}
+                        >
+                          <LinkBox>
+                            <LinkOverlay href={`/conversation/${conv.uuid}`}>
+                              {conv.convToUsers[0].userId === myId ? (
+                                <UserInfoBar id={conv.convToUsers[1].userId} />
+                              ) : (
+                                <UserInfoBar id={conv.convToUsers[0].userId} />
+                              )}
+                            </LinkOverlay>
+                          </LinkBox>
+                        </Flex>
+                      );
+                    })
+                  : null}
+              </VStack>
+            </GridItem>
             <GridItem
               borderRadius="xl"
               colSpan={1}
@@ -262,7 +346,6 @@ const Index: React.FC<IndexProps> = ({}) => {
 
     // not logged in:
   } else {
-    
     body = (
       <Center maxW="75vw" mx="auto" mt="35vh">
         <Heading as="h1" size="xl">

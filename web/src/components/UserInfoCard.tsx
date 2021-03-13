@@ -6,25 +6,19 @@ import {
   GridItem,
   Heading,
   HStack,
-  Spinner,
   Text,
   useColorMode,
   VStack,
 } from "@chakra-ui/react";
-import { userInfo } from "node:os";
-import React, { useEffect, useState } from "react";
-import {
-  usePosteByIdQuery,
-  useServiceByIdQuery,
-  useUserByIdQuery,
-} from "../graphql/generated";
+import React from "react";
+import { useUserByIdQuery } from "../graphql/generated";
 import theme from "../theme";
 
-type UserInfoProps = {
+type UserInfoCardProps = {
   id: number;
 };
 
-export const UserInfo = (props: UserInfoProps) => {
+export const UserInfoCard = (props: UserInfoCardProps) => {
   const { colorMode } = useColorMode();
 
   const [{ data, fetching }] = useUserByIdQuery({

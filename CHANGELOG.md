@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - need to reload the page after logging in or registering and conversations sometimes not loading messages on first try (cache pb ?)
 
+### Added
+
+- displaying existing convos of the user
+
 ## [v0.0.4](https://github.com/benzinho75/JEECE-collab/compare/v0.0.3...v0.0.4) - 2021-03-12
 
 ### Added
