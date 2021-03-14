@@ -64,6 +64,7 @@ const ConversationPage = ({}) => {
     variables: {
       uuid: convUuid,
     },
+    pause: false, // can be done server-side
   });
 
   // getting the messages

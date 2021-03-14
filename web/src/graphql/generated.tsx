@@ -33,6 +33,7 @@ export type Query = {
   me?: Maybe<User>;
   userById?: Maybe<User>;
   usersByFnOrLnOrSnOrPnLikeWordsInString?: Maybe<Array<User>>;
+  usersPending?: Maybe<Array<User>>;
 };
 
 
@@ -122,7 +123,7 @@ export type User = {
   email: Scalars['String'];
   firstname: Scalars['String'];
   lastname: Scalars['String'];
-  accepted: Scalars['Boolean'];
+  accepted?: Maybe<Scalars['Boolean']>;
   admin: Scalars['Boolean'];
   profilePicPath?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
@@ -175,6 +176,7 @@ export type Mutation = {
   register: UserResponse;
   login: UserResponse;
   logout: Scalars['Boolean'];
+  updateUserAccepted: User;
 };
 
 
@@ -236,6 +238,12 @@ export type MutationRegisterArgs = {
 export type MutationLoginArgs = {
   password: Scalars['String'];
   email: Scalars['String'];
+};
+
+
+export type MutationUpdateUserAcceptedArgs = {
+  accepted: Scalars['Boolean'];
+  id: Scalars['Int'];
 };
 
 export type UserResponse = {
@@ -352,6 +360,20 @@ export type RegisterMutation = (
       { __typename?: 'User' }
       & UserFragment
     )> }
+  ) }
+);
+
+export type UpdateUserAcceptedMutationVariables = Exact<{
+  id: Scalars['Int'];
+  accepted: Scalars['Boolean'];
+}>;
+
+
+export type UpdateUserAcceptedMutation = (
+  { __typename?: 'Mutation' }
+  & { updateUserAccepted: (
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'email' | 'firstname' | 'lastname' | 'accepted' | 'admin' | 'profilePicPath' | 'createdAt' | 'updatedAt'>
   ) }
 );
 
@@ -550,6 +572,24 @@ export type UsersByFnOrLnOrSnOrPnLikeWordsInStringQuery = (
   )>> }
 );
 
+export type UsersPendingQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type UsersPendingQuery = (
+  { __typename?: 'Query' }
+  & { usersPending?: Maybe<Array<(
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'email' | 'firstname' | 'lastname' | 'accepted' | 'admin' | 'profilePicPath' | 'createdAt' | 'updatedAt'>
+    & { service: (
+      { __typename?: 'Service' }
+      & Pick<Service, 'id' | 'name'>
+    ), poste: (
+      { __typename?: 'Poste' }
+      & Pick<Poste, 'id' | 'name'>
+    ) }
+  )>> }
+);
+
 export const UserFragmentDoc = gql`
     fragment User on User {
   id
@@ -661,6 +701,25 @@ export const RegisterDocument = gql`
 
 export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
+};
+export const UpdateUserAcceptedDocument = gql`
+    mutation updateUserAccepted($id: Int!, $accepted: Boolean!) {
+  updateUserAccepted(id: $id, accepted: $accepted) {
+    id
+    email
+    firstname
+    lastname
+    accepted
+    admin
+    profilePicPath
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+export function useUpdateUserAcceptedMutation() {
+  return Urql.useMutation<UpdateUserAcceptedMutation, UpdateUserAcceptedMutationVariables>(UpdateUserAcceptedDocument);
 };
 export const ConversationByUuidDocument = gql`
     query conversationByUuid($uuid: String!) {
@@ -872,4 +931,31 @@ export const UsersByFnOrLnOrSnOrPnLikeWordsInStringDocument = gql`
 
 export function useUsersByFnOrLnOrSnOrPnLikeWordsInStringQuery(options: Omit<Urql.UseQueryArgs<UsersByFnOrLnOrSnOrPnLikeWordsInStringQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<UsersByFnOrLnOrSnOrPnLikeWordsInStringQuery>({ query: UsersByFnOrLnOrSnOrPnLikeWordsInStringDocument, ...options });
+};
+export const UsersPendingDocument = gql`
+    query usersPending {
+  usersPending {
+    id
+    email
+    firstname
+    lastname
+    accepted
+    admin
+    profilePicPath
+    createdAt
+    updatedAt
+    service {
+      id
+      name
+    }
+    poste {
+      id
+      name
+    }
+  }
+}
+    `;
+
+export function useUsersPendingQuery(options: Omit<Urql.UseQueryArgs<UsersPendingQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<UsersPendingQuery>({ query: UsersPendingDocument, ...options });
 };

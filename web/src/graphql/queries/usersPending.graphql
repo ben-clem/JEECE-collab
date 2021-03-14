@@ -1,0 +1,21 @@
+query usersPending {
+  usersPending {
+    id
+    email
+    firstname
+    lastname
+    accepted
+    admin
+    profilePicPath
+    createdAt
+    updatedAt
+    service {
+      id
+      name
+    }
+    poste {
+      id
+      name
+    }
+  }
+}

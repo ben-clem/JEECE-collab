@@ -23,7 +23,7 @@ export class User extends BaseEntity {
   id!: number;
 
   @Field()
-  @Column({unique: true, nullable: false})
+  @Column({ unique: true, nullable: false })
   email!: string;
 
   @Column()
@@ -37,8 +37,8 @@ export class User extends BaseEntity {
   @Column()
   lastname!: string;
 
-  @Field()
-  @Column({ default: false })
+  @Field({ nullable: true })
+  @Column({ nullable: true, default: null })
   accepted!: boolean;
 
   @Field()

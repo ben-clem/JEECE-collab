@@ -23,14 +23,17 @@ import {
   Flex,
   LinkBox,
   LinkOverlay,
+  Stack,
 } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import { withUrqlClient } from "next-urql";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { MyContainer } from "../components/Container";
+import { DocumentsUploader } from "../components/DocumentsUploader";
 import { MeInfo } from "../components/MeInfo";
 import { NavBar } from "../components/NavBar";
+import { NewUsersManager } from "../components/NewUsersManager";
 import { SearchField } from "../components/SearchField";
 import { UserInfoBar } from "../components/UserInfoBar";
 import { UserInfoCard } from "../components/UserInfoCard";
@@ -240,14 +243,67 @@ const Index: React.FC<IndexProps> = ({}) => {
     // admin:
     if (meResult.data?.me?.admin) {
       body = (
-        <Center maxW="75vw" mx="auto" mt="35vh">
-          <Heading as="h1" size="xl">
-            admin
+        <>
+          <Heading as="h1" size="xl" mt={5}>
+            Admin panel
           </Heading>
-        </Center>
+          <Center maxW="95vw">
+            <Grid
+              h="80vh"
+              w="95vw"
+              mt={6}
+              templateRows="repeat(1, 1fr)"
+              templateColumns="repeat(2, 1fr)"
+              gap={3}
+            >
+              <GridItem
+                borderRadius="xl"
+                colSpan={1}
+                rowSpan={1}
+                align="center"
+                bg={theme.colors.transparent[colorMode]}
+              >
+                <DocumentsUploader />
+              </GridItem>
+              <GridItem
+                borderRadius="xl"
+                colSpan={1}
+                rowSpan={1}
+                align="center"
+                bg={theme.colors.transparent[colorMode]}
+              >
+                <NewUsersManager />
+              </GridItem>
+            </Grid>
+          </Center>
+        </>
+      );
+    } else if (meResult.data?.me?.accepted === null) {
+      // not accepted yet
+      body = (
+        <>
+          <Heading as="h2" size="md" mt="30vh">
+            You have not been accepted yet.
+          </Heading>{" "}
+          <Heading as="h2" size="sm" mt={5}>
+            Please wait while our administrators are reviewing your account.
+          </Heading>
+        </>
+      );
+    } else if (!meResult.data?.me?.accepted) {
+      // normal user (refused)
+      body = (
+        <>
+          <Heading as="h2" size="md" mt="30vh">
+            Your account creation has been refused.
+          </Heading>{" "}
+          <Heading as="h2" size="sm" mt={5}>
+            Please contact our administrators if you think this is a mistake.
+          </Heading>
+        </>
       );
 
-      // normal user
+      // normal user (accepted)
     } else {
       body = (
         <Center maxW="95vw">
@@ -294,51 +350,76 @@ const Index: React.FC<IndexProps> = ({}) => {
               borderRadius="xl"
               colSpan={1}
               rowSpan={11}
+              align="center"
               bg={theme.colors.transparent[colorMode]}
             >
-              {/* router.push({
-            pathname: "/conversation/[uuid]",
-            query: {
-              uuid: conv.uuid,
-            },
-          }); */}
-
-              <VStack spacing={2}>
-                {console.log(convs)}
-                {convs
-                  ? convs.map((conv) => {
-                      return (
-                        <Flex
-                          w="98%"
-                          h="3rem"
-                          align="center"
-                          justify="left"
-                          mt={2}
-                          borderRadius="lg"
-                          bg={theme.colors.tealTrans[colorMode]}
-                          key={conv.uuid}
-                        >
-                          <LinkBox>
-                            <LinkOverlay href={`/conversation/${conv.uuid}`}>
-                              {conv.convToUsers[0].userId === myId ? (
-                                <UserInfoBar id={conv.convToUsers[1].userId} />
-                              ) : (
-                                <UserInfoBar id={conv.convToUsers[0].userId} />
-                              )}
-                            </LinkOverlay>
-                          </LinkBox>
-                        </Flex>
-                      );
-                    })
-                  : null}
-              </VStack>
+              <Heading as="h2" size="md" mt={2}>
+                Mes conversations
+              </Heading>
+              {convs?.length === 0 ? (
+                <Center blockSize="35%">
+                  <Stack spacing={0}>
+                    <Text
+                      fontSize="sm"
+                      color={theme.colors.contentTrans[colorMode]}
+                    >
+                      Aucune conversation pour le moment...
+                    </Text>
+                    <Text
+                      fontSize="sm"
+                      color={theme.colors.contentTrans[colorMode]}
+                    >
+                      Commencez en une nouvelle avec la barre de recherche.
+                    </Text>
+                  </Stack>
+                </Center>
+              ) : (
+                <VStack spacing={2}>
+                  {console.log(convs)}
+                  {convs
+                    ? convs.map((conv) => {
+                        return (
+                          <Flex
+                            w="98%"
+                            h="3rem"
+                            align="center"
+                            justify="left"
+                            mt={2}
+                            borderRadius="lg"
+                            bg={theme.colors.tealTrans[colorMode]}
+                            key={conv.uuid}
+                          >
+                            <LinkBox>
+                              <LinkOverlay href={`/conversation/${conv.uuid}`}>
+                                {conv.convToUsers[0].userId === myId ? (
+                                  <UserInfoBar
+                                    id={conv.convToUsers[1].userId}
+                                  />
+                                ) : (
+                                  <UserInfoBar
+                                    id={conv.convToUsers[0].userId}
+                                  />
+                                )}
+                              </LinkOverlay>
+                            </LinkBox>
+                          </Flex>
+                        );
+                      })
+                    : null}
+                </VStack>
+              )}
             </GridItem>
             <GridItem
               borderRadius="xl"
               colSpan={1}
               rowSpan={8}
+              align="center"
               bg={theme.colors.transparent[colorMode]}
-            ></GridItem>
+            >
+              <Heading as="h2" size="md" mt={2}>
+                Mes documents
+              </Heading>
+            </GridItem>
           </Grid>
         </Center>
       );

@@ -1,0 +1,13 @@
+mutation updateUserAccepted($id: Int!, $accepted: Boolean!) {
+  updateUserAccepted(id: $id, accepted: $accepted) {
+    id
+    email
+    firstname
+    lastname
+    accepted
+    admin
+    profilePicPath
+    createdAt
+    updatedAt
+  }
+}

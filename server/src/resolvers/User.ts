@@ -151,13 +151,6 @@ export class UserResolver {
     return user;
   }
 
-  // @Query(() => User, { nullable: true })
-  // userById(
-  //   @Arg("id", (type) => Int) id: number
-  // ): Promise<User | undefined> {
-  //   return User.findOne({ id });
-  // }
-
   @Query(() => User, { nullable: true })
   async userById(
     @Arg("id", (type) => Int) id: number
@@ -174,7 +167,6 @@ export class UserResolver {
       return err.toString();
     }
   }
-
 
   @Mutation(() => Boolean)
   logout(@Ctx() { res }: MyContext) {
@@ -226,5 +218,32 @@ export class UserResolver {
     }) as User[];
 
     return users;
+  }
+
+  @Query(() => [User], { nullable: true })
+  async usersPending(): Promise<User[] | undefined> {
+    return await getConnection()
+      .getRepository(User)
+      .createQueryBuilder("user")
+      .leftJoinAndSelect("user.service", "service")
+      .leftJoinAndSelect("user.poste", "poste")
+      .where("user.accepted IS NULL")
+      .getMany();
+  }
+
+  @Mutation(() => User)
+  async updateUserAccepted(
+    @Arg("id", (type) => Int) id: number,
+    @Arg("accepted") accepted: boolean
+  ): Promise<User | null> {
+    const user = await User.findOne({ id });
+    if (!user) {
+      return null;
+    } else {
+      user.accepted = accepted;
+      user.updatedAt = new Date();
+      await User.update(id, user);
+    }
+    return user;
   }
 }
