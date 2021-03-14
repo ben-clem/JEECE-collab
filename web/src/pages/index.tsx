@@ -1,4 +1,4 @@
-import { ChatIcon } from "@chakra-ui/icons";
+import { ChatIcon, CheckIcon, CloseIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -24,6 +24,8 @@ import {
   LinkBox,
   LinkOverlay,
   Stack,
+  IconButton,
+  Spacer,
 } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import { withUrqlClient } from "next-urql";
@@ -46,6 +48,7 @@ import {
   useCreateConversationWithUserIdsMutation,
   useMeQuery,
   useUsersByFnOrLnOrSnOrPnLikeWordsInStringQuery,
+  useUpdateConvToUserMutation,
 } from "../graphql/generated";
 import theme from "../theme";
 import { createUrqlClient } from "../utils/createUrqlClient";
@@ -164,6 +167,38 @@ const Index: React.FC<IndexProps> = ({}) => {
       setConvs(convsResult.data?.conversationsByUserId.convs);
     }
   }, [convsResult]);
+
+  // turning conv inactive on click
+  const [deletingConv, setDeletingConv] = useState<boolean>(false);
+  const [convToDelete, setConvToDelete] = useState<string>("");
+  const [, updateConvToUser] = useUpdateConvToUserMutation();
+  useEffect(() => {
+    if (deletingConv && convToDelete !== "") {
+      const updatingConvToUser = async () => {
+        await updateConvToUser({
+          convUuid: convToDelete,
+          userId: myId,
+          active: false,
+        });
+      };
+      updatingConvToUser();
+
+      if (convs) {
+        setConvs(
+          convs?.filter(
+            (conv) =>
+              (conv.convToUsers[0].userId === myId &&
+                conv.convToUsers[0].active) ||
+              (conv.convToUsers[1].userId === myId &&
+                conv.convToUsers[1].active)
+          )
+        );
+      }
+
+      setDeletingConv(false);
+      setConvToDelete("");
+    }
+  }, [deletingConv]);
 
   let body = null;
   let modal = null;
@@ -375,35 +410,54 @@ const Index: React.FC<IndexProps> = ({}) => {
                 </Center>
               ) : (
                 <VStack spacing={2}>
-                  {console.log(convs)}
                   {convs
                     ? convs.map((conv) => {
-                        return (
-                          <Flex
-                            w="98%"
-                            h="3rem"
-                            align="center"
-                            justify="left"
-                            mt={2}
-                            borderRadius="lg"
-                            bg={theme.colors.tealTrans[colorMode]}
-                            key={conv.uuid}
-                          >
-                            <LinkBox>
-                              <LinkOverlay href={`/conversation/${conv.uuid}`}>
-                                {conv.convToUsers[0].userId === myId ? (
-                                  <UserInfoBar
-                                    id={conv.convToUsers[1].userId}
-                                  />
-                                ) : (
-                                  <UserInfoBar
-                                    id={conv.convToUsers[0].userId}
-                                  />
-                                )}
-                              </LinkOverlay>
-                            </LinkBox>
-                          </Flex>
-                        );
+                        if (
+                          (conv.convToUsers[0].userId === myId &&
+                            conv.convToUsers[0].active) ||
+                          (conv.convToUsers[1].userId === myId &&
+                            conv.convToUsers[1].active)
+                        ) {
+                          return (
+                            <Flex
+                              w="98%"
+                              h="3rem"
+                              align="center"
+                              justify="space-between"
+                              mt={2}
+                              borderRadius="lg"
+                              bg={theme.colors.tealTrans[colorMode]}
+                              key={conv.uuid}
+                            >
+                              <LinkBox>
+                                <LinkOverlay
+                                  href={`/conversation/${conv.uuid}`}
+                                >
+                                  {conv.convToUsers[0].userId === myId ? (
+                                    <UserInfoBar
+                                      id={conv.convToUsers[1].userId}
+                                    />
+                                  ) : (
+                                    <UserInfoBar
+                                      id={conv.convToUsers[0].userId}
+                                    />
+                                  )}
+                                </LinkOverlay>
+                              </LinkBox>
+                              <IconButton
+                                size="xs"
+                                mr={2}
+                                colorScheme="red"
+                                aria-label="close"
+                                icon={<CloseIcon />}
+                                onClick={() => {
+                                  setDeletingConv(true);
+                                  setConvToDelete(conv.uuid);
+                                }}
+                              />
+                            </Flex>
+                          );
+                        }
                       })
                     : null}
                 </VStack>

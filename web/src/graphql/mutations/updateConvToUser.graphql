@@ -1,0 +1,7 @@
+mutation updateConvToUser(
+  $convUuid: String!
+  $userId: Int!
+  $active: Boolean!
+) {
+  updateConvToUser(convUuid: $convUuid, userId: $userId, active: $active)
+}

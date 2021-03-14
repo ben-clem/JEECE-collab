@@ -166,6 +166,7 @@ export type ConvsResponse = {
 export type Mutation = {
   __typename?: 'Mutation';
   createConversationWithUserIds: ConvResponse;
+  updateConvToUser: Scalars['String'];
   addMessage: Message;
   createPoste: Poste;
   updatePoste: Poste;
@@ -183,6 +184,13 @@ export type Mutation = {
 export type MutationCreateConversationWithUserIdsArgs = {
   id2: Scalars['Int'];
   id1: Scalars['Int'];
+};
+
+
+export type MutationUpdateConvToUserArgs = {
+  active: Scalars['Boolean'];
+  userId: Scalars['Int'];
+  convUuid: Scalars['String'];
 };
 
 
@@ -361,6 +369,18 @@ export type RegisterMutation = (
       & UserFragment
     )> }
   ) }
+);
+
+export type UpdateConvToUserMutationVariables = Exact<{
+  convUuid: Scalars['String'];
+  userId: Scalars['Int'];
+  active: Scalars['Boolean'];
+}>;
+
+
+export type UpdateConvToUserMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'updateConvToUser'>
 );
 
 export type UpdateUserAcceptedMutationVariables = Exact<{
@@ -701,6 +721,15 @@ export const RegisterDocument = gql`
 
 export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
+};
+export const UpdateConvToUserDocument = gql`
+    mutation updateConvToUser($convUuid: String!, $userId: Int!, $active: Boolean!) {
+  updateConvToUser(convUuid: $convUuid, userId: $userId, active: $active)
+}
+    `;
+
+export function useUpdateConvToUserMutation() {
+  return Urql.useMutation<UpdateConvToUserMutation, UpdateConvToUserMutationVariables>(UpdateConvToUserDocument);
 };
 export const UpdateUserAcceptedDocument = gql`
     mutation updateUserAccepted($id: Int!, $accepted: Boolean!) {

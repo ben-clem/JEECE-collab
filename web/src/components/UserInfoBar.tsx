@@ -38,7 +38,7 @@ export const UserInfoBar = (props: UserInfoBarProps) => {
     body = (
       <HStack ml={2}>
         <Avatar size="xs" />
-        <Text>
+        <Text fontSize="lg">
           {data.userById.firstname} {data.userById.lastname}
         </Text>
         <Text as="i" fontSize="md" color={theme.colors.contentTrans[colorMode]}>

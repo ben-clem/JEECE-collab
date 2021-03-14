@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Admin panel
 - accepting / refusing new users
 - users can't access website while they're not accepted or if they are refused
+- setting convs to inactive
 
 ## [v0.0.4](https://github.com/benzinho75/JEECE-collab/compare/v0.0.3...v0.0.4) - 2021-03-12
 
