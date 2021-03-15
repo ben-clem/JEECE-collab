@@ -79,7 +79,7 @@ const main = async () => {
     cors: false, // we are not setting cors for the Apollo Server (/graphql route) but rather globally with the cors module
   });
 
-  const uploadDocuments = multer({ dest: "uploads/documents/" });
+  const uploadDocuments = multer({ dest: "dist/uploads/documents/" });
   app.post(
     "/api/documents",
     uploadDocuments.single("documents"),
@@ -91,7 +91,10 @@ const main = async () => {
   app.get("/api/documents", function (req, res) {
     // http://localhost:4000/api/documents?path=8b0ac21814cc24e0da0ed6f5587326bb&name=CV%20Benoi%CC%82t%20Clemenceau%20v2.5%20FR.pdf
     if (req.query.path && req.query.name) {
-      res.download(__dirname.slice(0, -5) + "/uploads/documents/" + req.query.path as string, req.query.name as string);
+      res.download(
+        (__dirname + "/" + req.query.path) as string,
+        req.query.name as string
+      );
     }
   });
 

@@ -503,37 +503,47 @@ const Index: React.FC<IndexProps> = ({}) => {
               <Wrap m={3} spacing={3} justify="center">
                 {documents.map((document) => {
                   return (
-                    <WrapItem
-                      minW="10rem"
-                      maxW="12rem"
-                      p={2}
-                      border="1px"
-                      borderRadius="md"
-                    >
-                      <VStack minW="100%" maxW="100%" spacing={1}>
-                        <Text minW="100%" maxW="100%" isTruncated>
-                          {document.name}
-                        </Text>
-                        <AttachmentIcon boxSize="3em" />
-                        <HStack boxSize="100%" align="end" justify="space-between">
-                          <Text as="i" fontSize="md">
-                            {moment(document.createdAt).fromNow()}
-                          </Text>
-                          <IconButton
-                          size="sm"
-                            aria-label="see doc"
-                            icon={
-                              <ExternalLinkIcon
-                                boxSize="1.5em"
-                                color={theme.colors.teal[500]}
+                    <LinkBox>
+                      <LinkOverlay
+                        href={`http://localhost:4000/api/documents?path=${document.filePath}&name=${document.name}`}
+                      >
+                        <WrapItem
+                          minW="10rem"
+                          maxW="12rem"
+                          p={2}
+                          border="1px"
+                          borderRadius="md"
+                        >
+                          <VStack minW="100%" maxW="100%" spacing={1}>
+                            <Text minW="100%" maxW="100%" isTruncated>
+                              {document.name}
+                            </Text>
+                            <AttachmentIcon boxSize="3em" />
+                            <HStack
+                              boxSize="100%"
+                              align="end"
+                              justify="space-between"
+                            >
+                              <Text as="i" fontSize="md">
+                                {moment(document.createdAt).fromNow()}
+                              </Text>
+                              <IconButton
+                                size="sm"
+                                aria-label="see doc"
+                                icon={
+                                  <ExternalLinkIcon
+                                    boxSize="1.5em"
+                                    color={theme.colors.teal[500]}
+                                  />
+                                }
                               />
-                            }
-                          />
-                        </HStack>
-                      </VStack>
-                    </WrapItem>
+                            </HStack>
+                          </VStack>
+                        </WrapItem>
+                      </LinkOverlay>
+                    </LinkBox>
                   );
-                })}{" "}
+                })}
               </Wrap>
             </GridItem>
           </Grid>
