@@ -40,6 +40,7 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { MyContainer } from "../components/Container";
 import { DocumentsUploader } from "../components/DocumentsUploader";
+import { FileUploader } from "../components/FileUploader";
 import { MeInfo } from "../components/MeInfo";
 import { NavBar } from "../components/NavBar";
 import { NewUsersManager } from "../components/NewUsersManager";
@@ -510,6 +511,7 @@ const Index: React.FC<IndexProps> = ({}) => {
                 </VStack>
               )}
             </GridItem>
+
             <GridItem
               borderRadius="xl"
               colSpan={1}

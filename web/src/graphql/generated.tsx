@@ -193,6 +193,7 @@ export type Mutation = {
   login: UserResponse;
   logout: Scalars['Boolean'];
   updateUserAccepted: User;
+  addProfilePic: Scalars['String'];
   addDocument: Document;
 };
 
@@ -271,6 +272,12 @@ export type MutationUpdateUserAcceptedArgs = {
 };
 
 
+export type MutationAddProfilePicArgs = {
+  path: Scalars['String'];
+  id: Scalars['Int'];
+};
+
+
 export type MutationAddDocumentArgs = {
   postesIds?: Maybe<Array<Scalars['Int']>>;
   servicesIds?: Maybe<Array<Scalars['Int']>>;
@@ -335,6 +342,17 @@ export type AddMessageMutation = (
       ) }
     ) }
   ) }
+);
+
+export type AddProfilePicMutationVariables = Exact<{
+  id: Scalars['Int'];
+  path: Scalars['String'];
+}>;
+
+
+export type AddProfilePicMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'addProfilePic'>
 );
 
 export type CreateConversationWithUserIdsMutationVariables = Exact<{
@@ -724,6 +742,15 @@ export const AddMessageDocument = gql`
 
 export function useAddMessageMutation() {
   return Urql.useMutation<AddMessageMutation, AddMessageMutationVariables>(AddMessageDocument);
+};
+export const AddProfilePicDocument = gql`
+    mutation addProfilePic($id: Int!, $path: String!) {
+  addProfilePic(id: $id, path: $path)
+}
+    `;
+
+export function useAddProfilePicMutation() {
+  return Urql.useMutation<AddProfilePicMutation, AddProfilePicMutationVariables>(AddProfilePicDocument);
 };
 export const CreateConversationWithUserIdsDocument = gql`
     mutation createConversationWithUserIds($id1: Int!, $id2: Int!) {

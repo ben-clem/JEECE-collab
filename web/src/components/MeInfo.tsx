@@ -7,6 +7,8 @@ import {
   GridItem,
   Heading,
   HStack,
+  LinkBox,
+  LinkOverlay,
   Spinner,
   Text,
   useColorMode,
@@ -73,9 +75,13 @@ export const MeInfo = (props: FlexProps) => {
         templateRows="repeat(4, 1fr)"
       >
         <GridItem colSpan={1} rowSpan={2}>
-          <Center boxSize="100%">
-            <Avatar boxSize="4vw"></Avatar>
-          </Center>
+          <LinkBox>
+            <LinkOverlay href={`/profile-pic-upload/${meData.me.id}`}>
+              <Center boxSize="100%">
+                <Avatar boxSize="4vw" src={`http://localhost:4000/api/profilePics?path=${meData.me.profilePicPath}`}/>
+              </Center>
+            </LinkOverlay>
+          </LinkBox>
         </GridItem>
         <GridItem colSpan={7} rowSpan={1}>
           <HStack boxSize="100%" ml={2}>
@@ -120,7 +126,7 @@ export const MeInfo = (props: FlexProps) => {
                     : theme.colors.red[500]
                 }
               >
-                {meData.me.accepted.toString()}
+                {meData.me.accepted ? meData.me.accepted.toString() : null}
               </Text>
             </HStack>
             <HStack align="right" justify="right">

@@ -4,7 +4,7 @@ import "filepond/dist/filepond.min.css";
 import { useRouter } from "next/router";
 import React, { useEffect, useReducer, useState } from "react";
 import { FilePond, registerPlugin } from "react-filepond";
-import { useAddDocumentMutation } from "../graphql/generated";
+import { useAddDocumentMutation, useAddProfilePicMutation } from "../graphql/generated";
 
 interface FileUploaderProps {
   fileTypes: string[];
@@ -12,18 +12,19 @@ interface FileUploaderProps {
   url: string;
   services?: boolean[];
   postes?: boolean[];
+  id?: number;
+  boxSize?: string;
 }
 
 export const FileUploader = (props: FileUploaderProps) => {
   registerPlugin(FilePondPluginFileValidateType);
-  const router = useRouter();
-  const [, forceUpdate] = useReducer(x => x + 1, 0);
 
   const [savingInDb, setSavingInDb] = useState<boolean>(false);
   const [serverId, setServerId] = useState<string>("");
   const [filename, setFilename] = useState<string>("");
 
   const [, addDocument] = useAddDocumentMutation();
+  const [, addProfilePic] = useAddProfilePicMutation();
 
   useEffect(() => {
     if (savingInDb && serverId !== "" && filename !== "") {
@@ -57,16 +58,15 @@ export const FileUploader = (props: FileUploaderProps) => {
         addingDoc();
       }
 
-      // if (props.name === "profilePics") {
-      //   const addingProfilePic = async () => {
-      //   await addProfilePic({
-      //     userId:
-      //     path: fileInfo.serverId,
-      //     name: fileInfo.filename,
-      //   });
-      // };
-      // addingProfilePic();
-      // }
+      if (props.name === "profilePics" && props.id !== undefined) {
+        const addingProfilePic = async () => {
+        await addProfilePic({
+          id: props.id as number,
+          path: serverId,
+        });
+      };
+      addingProfilePic();
+      }
 
      
       setSavingInDb(false);
@@ -78,7 +78,7 @@ export const FileUploader = (props: FileUploaderProps) => {
   }, [savingInDb, serverId, filename]);
 
   return (
-    <Box m={3} mt={5}>
+    <Box boxSize={props.boxSize ? props.boxSize : "auto"} m={3} mt={5}>
       <FilePond
         allowMultiple={false}
         maxFiles={1}

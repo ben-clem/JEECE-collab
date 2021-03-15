@@ -186,7 +186,10 @@ const ConversationPage = ({}) => {
                           color={theme.colors.content[colorMode]}
                         >
                           <HStack>
-                            <Avatar size="xs" />
+                            <Avatar
+                              size="xs"
+                              src={`http://localhost:4000/api/profilePics?path=${message.user.profilePicPath}`}
+                            />
                             <Text
                               fontSize="md"
                               borderBottom="1px"
@@ -229,7 +232,10 @@ const ConversationPage = ({}) => {
                             >
                               {message.user.firstname} {message.user.firstname}
                             </Text>
-                            <Avatar size="xs" />
+                            <Avatar
+                              size="xs"
+                              src={`http://localhost:4000/api/profilePics?path=${message.user.profilePicPath}`}
+                            />
                           </HStack>
 
                           <Text textAlign="end" fontSize="md" mt={1}>

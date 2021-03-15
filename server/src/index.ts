@@ -83,18 +83,36 @@ const main = async () => {
   app.post(
     "/api/documents",
     uploadDocuments.single("documents"),
-    function (req, res, next) {
+    function (req, res) {
       res.send(req.file.path);
     }
   );
 
   app.get("/api/documents", function (req, res) {
-    // http://localhost:4000/api/documents?path=8b0ac21814cc24e0da0ed6f5587326bb&name=CV%20Benoi%CC%82t%20Clemenceau%20v2.5%20FR.pdf
+    // http://localhost:4000/api/documents?path=dist/uploads/documents/8b0ac21814cc24e0da0ed6f5587326bb&name=CV%20Benoi%CC%82t%20Clemenceau%20v2.5%20FR.pdf
     if (req.query.path && req.query.name) {
       res.download(
-        (__dirname + "/" + req.query.path) as string,
+        (__dirname.slice(0, -5) + "/" + req.query.path) as string,
         req.query.name as string
       );
+    }
+  });
+
+  const uploadProfilePics = multer({ dest: "dist/uploads/profilePics/" });
+  app.post(
+    "/api/profilePics",
+    uploadProfilePics.single("profilePics"),
+    function (req, res) {
+      res.send(req.file.path);
+    }
+  );
+
+  app.use(express.static('dist/uploads'))
+
+  app.get("/api/profilePics", function (req, res) {
+    // http://localhost:4000/api/profilePics?path=dist/uploads/profilePics/fe5e2a08c1a3987ef642f4e257d6523a
+    if (req.query.path) {
+     res.sendFile(__dirname.slice(0, -5) + "/" + req.query.path)
     }
   });
 

@@ -43,7 +43,7 @@ export const UserInfoCard = (props: UserInfoCardProps) => {
       >
         <GridItem colSpan={1} rowSpan={2}>
           <Center boxSize="100%">
-            <Avatar boxSize="4vw"></Avatar>
+            <Avatar boxSize="4vw" src={`http://localhost:4000/api/profilePics?path=${data.userById.profilePicPath}`} />
           </Center>
         </GridItem>
         <GridItem colSpan={7} rowSpan={1}>
@@ -75,7 +75,9 @@ export const UserInfoCard = (props: UserInfoCardProps) => {
                     : theme.colors.red[500]
                 }
               >
-                {data.userById.accepted.toString()}
+                {data.userById.accepted
+                  ? data.userById.accepted.toString()
+                  : null}
               </Text>
             </HStack>
             <HStack align="right" justify="right">

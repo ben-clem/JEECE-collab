@@ -37,7 +37,7 @@ export const UserInfoBar = (props: UserInfoBarProps) => {
     // got user:
     body = (
       <HStack ml={2}>
-        <Avatar size="xs" />
+        <Avatar size="xs" src={`http://localhost:4000/api/profilePics?path=${data.userById.profilePicPath}`}/>
         <Text fontSize="lg">
           {data.userById.firstname} {data.userById.lastname}
         </Text>

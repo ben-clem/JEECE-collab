@@ -246,4 +246,22 @@ export class UserResolver {
     }
     return user;
   }
+
+  @Mutation(() => String)
+  async addProfilePic(
+    @Arg("id", (type) => Int) id: number,
+    @Arg("path", (type) => String) path: string
+  ): Promise<String> {
+    try {
+      const res = await getConnection()
+        .createQueryBuilder()
+        .update(User)
+        .set({ profilePicPath: path })
+        .where("id = :id", { id })
+        .execute();
+      return "good";
+    } catch (err) {
+      return err;
+    }
+  }
 }

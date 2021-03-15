@@ -1,0 +1,3 @@
+mutation addProfilePic($id: Int!, $path: String!) {
+  addProfilePic(id: $id, path: $path)
+}

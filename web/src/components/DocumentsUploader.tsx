@@ -1,7 +1,6 @@
 import {
   Box,
   Checkbox,
-  Flex,
   Heading,
   HStack,
   Spacer,
@@ -402,7 +401,6 @@ export const DocumentsUploader: React.FC<DocumentsUploaderProps> = ({}) => {
         fileTypes={["application/pdf"]}
         name="documents"
         url="http://localhost:4000/api/documents"
-        
         services={checkedServices}
         postes={checkedPostes}
       />
