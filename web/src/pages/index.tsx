@@ -1,4 +1,10 @@
-import { ChatIcon, CheckIcon, CloseIcon } from "@chakra-ui/icons";
+import {
+  AttachmentIcon,
+  ChatIcon,
+  CheckIcon,
+  CloseIcon,
+  ExternalLinkIcon,
+} from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -49,6 +55,8 @@ import {
   useMeQuery,
   useUsersByFnOrLnOrSnOrPnLikeWordsInStringQuery,
   useUpdateConvToUserMutation,
+  useDocumentsByUserIdQuery,
+  Document,
 } from "../graphql/generated";
 import theme from "../theme";
 import { createUrqlClient } from "../utils/createUrqlClient";
@@ -59,6 +67,7 @@ interface IndexProps {}
 const Index: React.FC<IndexProps> = ({}) => {
   const router = useRouter();
   const { colorMode } = useColorMode();
+  const moment = require("moment");
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [string, setString] = useState("");
@@ -199,6 +208,24 @@ const Index: React.FC<IndexProps> = ({}) => {
       setConvToDelete("");
     }
   }, [deletingConv]);
+
+  const [documents, setDocuments] = useState<Document[]>([]);
+  const [documentsResult] = useDocumentsByUserIdQuery({
+    variables: {
+      id: myId,
+    },
+    pause: false, // this query can be done server-side
+  });
+  useEffect(() => {
+    if (
+      !documentsResult.fetching &&
+      !documentsResult.error &&
+      documentsResult.data &&
+      documentsResult.data.documentsByUserId.length !== 0
+    ) {
+      setDocuments(documentsResult.data.documentsByUserId);
+    }
+  }, [documentsResult]);
 
   let body = null;
   let modal = null;
@@ -473,7 +500,41 @@ const Index: React.FC<IndexProps> = ({}) => {
               <Heading as="h2" size="md" mt={2}>
                 Mes documents
               </Heading>
-               {/* useDocumentsByUserIdQuery */}
+              <Wrap m={3} spacing={3} justify="center">
+                {documents.map((document) => {
+                  return (
+                    <WrapItem
+                      minW="10rem"
+                      maxW="12rem"
+                      p={2}
+                      border="1px"
+                      borderRadius="md"
+                    >
+                      <VStack minW="100%" maxW="100%" spacing={1}>
+                        <Text minW="100%" maxW="100%" isTruncated>
+                          {document.name}
+                        </Text>
+                        <AttachmentIcon boxSize="3em" />
+                        <HStack boxSize="100%" align="end" justify="space-between">
+                          <Text as="i" fontSize="md">
+                            {moment(document.createdAt).fromNow()}
+                          </Text>
+                          <IconButton
+                          size="sm"
+                            aria-label="see doc"
+                            icon={
+                              <ExternalLinkIcon
+                                boxSize="1.5em"
+                                color={theme.colors.teal[500]}
+                              />
+                            }
+                          />
+                        </HStack>
+                      </VStack>
+                    </WrapItem>
+                  );
+                })}{" "}
+              </Wrap>
             </GridItem>
           </Grid>
         </Center>

@@ -28,7 +28,7 @@ You can find the project instructions there: [instructions.pdf](instructions.pdf
 
 1. Fonctionnalités profils utilisateurs
     - Module d’authentification/inscription :white_check_mark:
-    - Page d’accueil : manque documents et sorting
+    - Page d’accueil : manque photos de profil, documents et sorting
     - Barre de recherche et nouvelles conversations : manque photos de profil
     - Conversations :white_check_mark:
 
