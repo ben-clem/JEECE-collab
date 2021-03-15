@@ -32,6 +32,7 @@ import {
   Stack,
   IconButton,
   Spacer,
+  Select,
 } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import { withUrqlClient } from "next-urql";
@@ -223,9 +224,28 @@ const Index: React.FC<IndexProps> = ({}) => {
       documentsResult.data &&
       documentsResult.data.documentsByUserId.length !== 0
     ) {
-      setDocuments(documentsResult.data.documentsByUserId);
+      setDocuments(
+        documentsResult.data.documentsByUserId
+          .slice()
+          .sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt))
+      );
     }
   }, [documentsResult]);
+
+  const [sortingDocs, setSortingDocs] = useState<string>("date");
+  useEffect(() => {
+    if (sortingDocs === "date") {
+      setDocuments(
+        documents
+          .slice()
+          .sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt))
+      );
+    } else if (sortingDocs === "alphabetically") {
+      setDocuments(
+        documents.slice().sort((a, b) => (a.name > b.name ? 1 : -1))
+      );
+    }
+  }, [sortingDocs]);
 
   let body = null;
   let modal = null;
@@ -500,10 +520,24 @@ const Index: React.FC<IndexProps> = ({}) => {
               <Heading as="h2" size="md" mt={2}>
                 Mes documents
               </Heading>
+              <HStack mx={5} spacing={1} align="center">
+                <Text fontSize="sm">sort:</Text>
+                <Select
+                  mt={2}
+                  w="9rem"
+                  size="sm"
+                  onChange={(e) => {
+                    setSortingDocs(e.target.value);
+                  }}
+                >
+                  <option value="date">date</option>
+                  <option value="alphabetically">alphabetically</option>
+                </Select>
+              </HStack>
               <Wrap m={3} spacing={3} justify="center">
                 {documents.map((document) => {
                   return (
-                    <LinkBox>
+                    <LinkBox key={document.id}>
                       <LinkOverlay
                         href={`http://localhost:4000/api/documents?path=${document.filePath}&name=${document.name}`}
                       >

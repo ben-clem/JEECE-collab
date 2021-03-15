@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - documents GET route
 - displaying documents
 - downloading docs
+- sorting docs
 
 ## [v0.0.4](https://github.com/benzinho75/JEECE-collab/compare/v0.0.3...v0.0.4) - 2021-03-12
 
