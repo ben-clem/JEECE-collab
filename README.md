@@ -24,6 +24,20 @@ You can find the project instructions there: [instructions.pdf](instructions.pdf
   - TypeScript
   - urql: GraphQL client
 
+## Progression
+
+1. Fonctionnalités profils utilisateurs
+    - Module d’authentification/inscription :white_check_mark:
+    - Page d’accueil : manque documents et sorting
+    - Barre de recherche et nouvelles conversations : manque photos de profil
+    - Conversations :white_check_mark:
+
+2. Fonctionnalités back-office (soft) :white_check_mark:
+    - Module d’authentification/inscription :white_check_mark:
+    - Fonctionnalités communes :white_check_mark:
+    - Dépôts de documents (pdf) :white_check_mark:
+    - Acceptation/refus de nouvel utilisateur :white_check_mark:
+
 ## Install
 
 ## Usage
