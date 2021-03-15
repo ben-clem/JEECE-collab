@@ -67,7 +67,7 @@ const main = async () => {
         ConversationResolver,
         ConvToUserResolver,
         MessageResolver,
-        DocumentResolver
+        DocumentResolver,
       ],
       validate: false,
     }),
@@ -80,8 +80,19 @@ const main = async () => {
   });
 
   const uploadDocuments = multer({ dest: "uploads/documents/" });
-  app.post("/api/documents", uploadDocuments.single("documents"), function (req, res, next) {
-    res.send(req.file.path);
+  app.post(
+    "/api/documents",
+    uploadDocuments.single("documents"),
+    function (req, res, next) {
+      res.send(req.file.path);
+    }
+  );
+
+  app.get("/api/documents", function (req, res) {
+    // http://localhost:4000/api/documents?path=8b0ac21814cc24e0da0ed6f5587326bb&name=CV%20Benoi%CC%82t%20Clemenceau%20v2.5%20FR.pdf
+    if (req.query.path && req.query.name) {
+      res.download(__dirname.slice(0, -5) + "/uploads/documents/" + req.query.path as string, req.query.name as string);
+    }
   });
 
   io.on("connection", (socket: any) => {
