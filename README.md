@@ -24,7 +24,7 @@ You can find the project instructions there: [instructions.pdf](instructions.pdf
   - TypeScript
   - urql: GraphQL client
 
-## Progression
+## Progression
 
 1. Fonctionnalités profils utilisateurs
     - Module d’authentification/inscription :white_check_mark:
