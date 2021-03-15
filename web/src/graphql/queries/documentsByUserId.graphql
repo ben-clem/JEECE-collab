@@ -1,0 +1,9 @@
+query documentsByUserId($id: Int!) {
+  documentsByUserId(id: $id) {
+    id
+    filePath
+    name
+    createdAt
+    updatedAt
+  }
+}

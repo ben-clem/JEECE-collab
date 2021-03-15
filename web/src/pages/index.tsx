@@ -473,7 +473,7 @@ const Index: React.FC<IndexProps> = ({}) => {
               <Heading as="h2" size="md" mt={2}>
                 Mes documents
               </Heading>
-              
+               {/* useDocumentsByUserIdQuery */}
             </GridItem>
           </Grid>
         </Center>

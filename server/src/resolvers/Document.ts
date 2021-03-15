@@ -1,8 +1,9 @@
 import { Service } from "../entities/Service";
 import { Arg, Ctx, Int, Mutation, Query, Resolver } from "type-graphql";
-import { getConnection } from "typeorm";
+import { createQueryBuilder, getConnection, getRepository } from "typeorm";
 import { Document } from "../entities/Document";
 import { Poste } from "../entities/Poste";
+import { User } from "../entities/User";
 
 @Resolver()
 export class DocumentResolver {
@@ -42,7 +43,27 @@ export class DocumentResolver {
         postes,
       });
       return await Document.save(document);
-      
+    } catch (err) {
+      return err;
+    }
+  }
+
+  @Query(() => [Document])
+  async documentsByUserId(
+    @Arg("id", (type) => Int) id: number
+  ): Promise<Document[]> {
+    try {
+
+      return await getRepository(Document)
+        .createQueryBuilder("document")
+        .leftJoin("document.services", "service")
+        .leftJoin("document.postes", "poste")
+        .leftJoin("service.users", "user1")
+        .leftJoin("poste.users", "user2")
+        .where("user1.id = :id", { id })
+        .orWhere("user2.id = :id", { id })
+        .getMany();
+        
     } catch (err) {
       return err;
     }

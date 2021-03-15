@@ -34,6 +34,7 @@ export type Query = {
   userById?: Maybe<User>;
   usersByFnOrLnOrSnOrPnLikeWordsInString?: Maybe<Array<User>>;
   usersPending?: Maybe<Array<User>>;
+  documentsByUserId: Array<Document>;
 };
 
 
@@ -85,6 +86,11 @@ export type QueryUserByIdArgs = {
 
 export type QueryUsersByFnOrLnOrSnOrPnLikeWordsInStringArgs = {
   string: Scalars['String'];
+};
+
+
+export type QueryDocumentsByUserIdArgs = {
+  id: Scalars['Int'];
 };
 
 export type Conversation = {
@@ -161,6 +167,15 @@ export type ConvsResponse = {
   __typename?: 'ConvsResponse';
   error?: Maybe<Scalars['String']>;
   convs?: Maybe<Array<Conversation>>;
+};
+
+export type Document = {
+  __typename?: 'Document';
+  id: Scalars['Float'];
+  filePath: Scalars['String'];
+  name: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
 };
 
 export type Mutation = {
@@ -273,15 +288,6 @@ export type FieldError = {
   __typename?: 'FieldError';
   field: Scalars['String'];
   message: Scalars['String'];
-};
-
-export type Document = {
-  __typename?: 'Document';
-  id: Scalars['Float'];
-  filePath: Scalars['String'];
-  name: Scalars['String'];
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
 };
 
 export type UserFragment = (
@@ -508,6 +514,19 @@ export type ConversationsByUserIdQuery = (
       )> }
     )>> }
   ) }
+);
+
+export type DocumentsByUserIdQueryVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type DocumentsByUserIdQuery = (
+  { __typename?: 'Query' }
+  & { documentsByUserId: Array<(
+    { __typename?: 'Document' }
+    & Pick<Document, 'id' | 'filePath' | 'name' | 'createdAt' | 'updatedAt'>
+  )> }
 );
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
@@ -882,6 +901,21 @@ export const ConversationsByUserIdDocument = gql`
 
 export function useConversationsByUserIdQuery(options: Omit<Urql.UseQueryArgs<ConversationsByUserIdQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<ConversationsByUserIdQuery>({ query: ConversationsByUserIdDocument, ...options });
+};
+export const DocumentsByUserIdDocument = gql`
+    query documentsByUserId($id: Int!) {
+  documentsByUserId(id: $id) {
+    id
+    filePath
+    name
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+export function useDocumentsByUserIdQuery(options: Omit<Urql.UseQueryArgs<DocumentsByUserIdQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<DocumentsByUserIdQuery>({ query: DocumentsByUserIdDocument, ...options });
 };
 export const MeDocument = gql`
     query me {
