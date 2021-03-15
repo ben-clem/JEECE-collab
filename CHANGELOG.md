@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - accepting / refusing new users
 - users can't access website while they're not accepted or if they are refused
 - setting convs to inactive
+- Uploading files using FilePond (admin uploads document for selected services & postes, file is stored in server filesystem. Path, name and services / postes are stored in postgres)
 
 ## [v0.0.4](https://github.com/benzinho75/JEECE-collab/compare/v0.0.3...v0.0.4) - 2021-03-12
 

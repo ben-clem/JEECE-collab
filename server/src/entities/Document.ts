@@ -1,4 +1,6 @@
+import { Field, ObjectType } from "type-graphql";
 import {
+  BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
@@ -10,33 +12,39 @@ import {
 import { Poste } from "./Poste";
 import { Service } from "./Service";
 
+@ObjectType()
 @Entity()
-export class Document {
+export class Document extends BaseEntity {
+  @Field()
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column("bytea")
-  file: object;
+  @Field()
+  @Column()
+  filePath: string;
 
+  @Field()
   @Column()
   name: string;
 
+  @Field()
   @CreateDateColumn()
   createdAt: Date;
 
+  @Field()
   @UpdateDateColumn()
   updatedAt: Date;
 
   @ManyToMany(() => Poste, (poste) => poste.documents, {
     nullable: true,
-    cascade: ["update", "soft-remove"],
+    cascade: true
   })
   @JoinTable()
   postes: Poste[];
 
   @ManyToMany(() => Service, (service) => service.documents, {
     nullable: true,
-    cascade: ["update", "soft-remove"],
+    cascade: true
   })
   @JoinTable()
   services: Service[];

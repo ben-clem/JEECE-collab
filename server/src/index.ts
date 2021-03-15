@@ -19,8 +19,10 @@ import { MessageResolver } from "./resolvers/Message";
 import { PosteResolver } from "./resolvers/Poste";
 import { ServiceResolver } from "./resolvers/Service";
 import { UserResolver } from "./resolvers/User";
+import multer from "multer";
+import { DocumentResolver } from "./resolvers/Document";
 
-const EVENT = "new-chat-message"; // Name of the event
+const EVENT = "new-chat-message";
 
 const main = async () => {
   const conn = await createConnection({
@@ -65,6 +67,7 @@ const main = async () => {
         ConversationResolver,
         ConvToUserResolver,
         MessageResolver,
+        DocumentResolver
       ],
       validate: false,
     }),
@@ -74,6 +77,11 @@ const main = async () => {
   apolloServer.applyMiddleware({
     app,
     cors: false, // we are not setting cors for the Apollo Server (/graphql route) but rather globally with the cors module
+  });
+
+  const uploadDocuments = multer({ dest: "uploads/documents/" });
+  app.post("/api/documents", uploadDocuments.single("documents"), function (req, res, next) {
+    res.send(req.file.path);
   });
 
   io.on("connection", (socket: any) => {

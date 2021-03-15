@@ -1690,6 +1690,13 @@
   dependencies:
     "@types/react" "^16"
 
+"@types/react-filepond@^7.1.0":
+  version "7.1.0"
+  resolved "https://registry.yarnpkg.com/@types/react-filepond/-/react-filepond-7.1.0.tgz#d7462dc88124f4e308466c8ca578e6ed706b2b72"
+  integrity sha512-oBsC4qbOdofxPJlVQTkh3enRAItgE26ieq3Cygc7tLmE5D4Z8//20y2pIE2mHW9LDIRcBvLg3wQ+zXM3E1XtBw==
+  dependencies:
+    react-filepond "*"
+
 "@types/react@^16", "@types/react@^16.9.46":
   version "16.14.4"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-16.14.4.tgz#365f6a1e117d1eec960ba792c7e1e91ecad38e6f"
@@ -3069,6 +3076,16 @@ figures@^3.0.0:
   integrity sha512-yaduQFRKLXYOGgEn6AZau90j3ggSOyiqXU0F9JZfeXYhNa+Jk4X+s45A2zg5jns87GAFa34BBm2kXw4XpNcbdg==
   dependencies:
     escape-string-regexp "^1.0.5"
+
+filepond-plugin-file-validate-type@^1.2.5:
+  version "1.2.5"
+  resolved "https://registry.yarnpkg.com/filepond-plugin-file-validate-type/-/filepond-plugin-file-validate-type-1.2.5.tgz#b3588088d2b0d5dbdf706d068c0ecdf28140a8e3"
+  integrity sha512-SsdYD6N+PDnetrPrBHfl13ZC9jRv5BuGdai5cORfANhuE/N32OwU/IclCNQ4qlpIa88hzqBg9dj6IINkiW+4HA==
+
+filepond@^4.25.3:
+  version "4.25.3"
+  resolved "https://registry.yarnpkg.com/filepond/-/filepond-4.25.3.tgz#7a6a793a9ffd2539fbbd1383d4864359f23bded4"
+  integrity sha512-xuY0a94jLs1je7ef5qjJJoOBnxvKk3dUo8inLfRk0aieaVqY37Xhkzx/ZYG1Tl70kuC6Yl5Ug9AJ6D4OaYvrxg==
 
 fill-range@^7.0.1:
   version "7.0.1"
@@ -4894,7 +4911,7 @@ react-fast-compare@^2.0.1:
   resolved "https://registry.yarnpkg.com/react-fast-compare/-/react-fast-compare-2.0.4.tgz#e84b4d455b0fec113e0402c329352715196f81f9"
   integrity sha512-suNP+J1VU1MWFKcyt7RtjiSWUjvidmQSlqu+eHslq+342xCbGTYmC0mEhPCOHxlW0CywylOC1u2DFAT+bv4dBw==
 
-react-filepond@^7.1.1:
+react-filepond@*, react-filepond@^7.1.1:
   version "7.1.1"
   resolved "https://registry.yarnpkg.com/react-filepond/-/react-filepond-7.1.1.tgz#467aa45051da5dbbca03a2ce58d2aacbbcfbb0e9"
   integrity sha512-6Szyi3zY4AEiSlE5rztJov/xIDB107Sv31MctDoSutdLinMqmbMej6kJ2MtSGzAhsP2+h8cDDr51mdHNXt97Yw==

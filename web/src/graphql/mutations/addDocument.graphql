@@ -1,0 +1,19 @@
+mutation addDocument(
+  $path: String!
+  $name: String!
+  $servicesIds: [Int!]
+  $postesIds: [Int!]
+) {
+  addDocument(
+    path: $path
+    name: $name
+    servicesIds: $servicesIds
+    postesIds: $postesIds
+  ) {
+    id
+    filePath
+    name
+    createdAt
+    updatedAt
+  }
+}

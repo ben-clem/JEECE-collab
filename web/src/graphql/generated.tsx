@@ -178,6 +178,7 @@ export type Mutation = {
   login: UserResponse;
   logout: Scalars['Boolean'];
   updateUserAccepted: User;
+  addDocument: Document;
 };
 
 
@@ -254,6 +255,14 @@ export type MutationUpdateUserAcceptedArgs = {
   id: Scalars['Int'];
 };
 
+
+export type MutationAddDocumentArgs = {
+  postesIds?: Maybe<Array<Scalars['Int']>>;
+  servicesIds?: Maybe<Array<Scalars['Int']>>;
+  name: Scalars['String'];
+  path: Scalars['String'];
+};
+
 export type UserResponse = {
   __typename?: 'UserResponse';
   errors?: Maybe<Array<FieldError>>;
@@ -266,9 +275,34 @@ export type FieldError = {
   message: Scalars['String'];
 };
 
+export type Document = {
+  __typename?: 'Document';
+  id: Scalars['Float'];
+  filePath: Scalars['String'];
+  name: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+};
+
 export type UserFragment = (
   { __typename?: 'User' }
   & Pick<User, 'id' | 'email' | 'firstname' | 'lastname' | 'accepted' | 'admin' | 'profilePicPath' | 'createdAt' | 'updatedAt' | 'serviceId' | 'posteId'>
+);
+
+export type AddDocumentMutationVariables = Exact<{
+  path: Scalars['String'];
+  name: Scalars['String'];
+  servicesIds?: Maybe<Array<Scalars['Int']> | Scalars['Int']>;
+  postesIds?: Maybe<Array<Scalars['Int']> | Scalars['Int']>;
+}>;
+
+
+export type AddDocumentMutation = (
+  { __typename?: 'Mutation' }
+  & { addDocument: (
+    { __typename?: 'Document' }
+    & Pick<Document, 'id' | 'filePath' | 'name' | 'createdAt' | 'updatedAt'>
+  ) }
 );
 
 export type AddMessageMutationVariables = Exact<{
@@ -625,6 +659,26 @@ export const UserFragmentDoc = gql`
   posteId
 }
     `;
+export const AddDocumentDocument = gql`
+    mutation addDocument($path: String!, $name: String!, $servicesIds: [Int!], $postesIds: [Int!]) {
+  addDocument(
+    path: $path
+    name: $name
+    servicesIds: $servicesIds
+    postesIds: $postesIds
+  ) {
+    id
+    filePath
+    name
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+export function useAddDocumentMutation() {
+  return Urql.useMutation<AddDocumentMutation, AddDocumentMutationVariables>(AddDocumentDocument);
+};
 export const AddMessageDocument = gql`
     mutation addMessage($message: String!, $convUuid: String!, $userId: Int!) {
   addMessage(message: $message, convUuid: $convUuid, userId: $userId) {
