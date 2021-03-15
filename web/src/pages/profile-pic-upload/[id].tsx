@@ -2,7 +2,7 @@ import { Box, Spacer } from "@chakra-ui/layout";
 import { useColorMode, Text } from "@chakra-ui/react";
 import { withUrqlClient } from "next-urql";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import { MyContainer } from "../../components/Container";
 import { FileUploader } from "../../components/FileUploader";
 import { MeInfo } from "../../components/MeInfo";
@@ -15,6 +15,11 @@ interface ProfilePicUploadProps {}
 const ProfilePicUpload: React.FC<ProfilePicUploadProps> = ({}) => {
   const { colorMode } = useColorMode();
   const router = useRouter();
+
+  const [update, setUpdate] = useState<number>(0);
+  const updateParent = () => {
+    setUpdate(update + 1);
+  };
 
   const [id, setId] = useState<number>(0);
   useEffect(() => {
@@ -33,7 +38,7 @@ const ProfilePicUpload: React.FC<ProfilePicUploadProps> = ({}) => {
           bg={theme.colors.transparent[colorMode]}
           borderRadius="lg"
         >
-          <MeInfo />
+          <MeInfo update={update} />
         </Box>
         <Spacer />
         <Text>Upload new profile picture:</Text>
@@ -43,6 +48,7 @@ const ProfilePicUpload: React.FC<ProfilePicUploadProps> = ({}) => {
           url="http://localhost:4000/api/profilePics"
           id={id}
           boxSize="50%"
+          updateParent={updateParent}
         />
         <Spacer />
         <Spacer />

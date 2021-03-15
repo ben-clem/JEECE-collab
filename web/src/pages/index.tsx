@@ -88,6 +88,16 @@ const Index: React.FC<IndexProps> = ({}) => {
   const [meResult, reexecuteMeQuery] = useMeQuery({
     pause: isServer(), // pause this request anytime this page is rendered server-side (the server doesn't have access to the userToken cookie)
   });
+
+  const [retried, setRetried] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!meResult.data?.me && !retried) {
+      reexecuteMeQuery({ requestPolicy: "network-only" });
+      setRetried(true);
+    }
+  });
+
   useEffect(() => {
     if (meResult.data?.me?.id) {
       setMyId(meResult.data?.me?.id);
@@ -319,10 +329,15 @@ const Index: React.FC<IndexProps> = ({}) => {
     }
   }
 
+  console.log("meResult.data?.me");
+  console.log(meResult.data?.me);
+
   // fetching: waiting
   if (meResult.fetching) {
+    console.log("fetching user");
     // logged in:
   } else if (meResult.data?.me) {
+    console.log("logged in");
     // admin:
     if (meResult.data?.me?.admin) {
       body = (

@@ -177,10 +177,9 @@ const ConversationPage = ({}) => {
               ) : (
                 messages.map((message) => {
                   return (
-                    <>
+                    <div key={message.uuid} >
                       {message.user.id !== meResult.data?.me?.id ? (
                         <Box
-                          key={message.uuid}
                           w="100%"
                           p={3}
                           color={theme.colors.content[colorMode]}
@@ -212,12 +211,11 @@ const ConversationPage = ({}) => {
                         </Box>
                       ) : (
                         <Box
-                          key={message.uuid}
                           w="100%"
                           p={3}
                           color={theme.colors.content[colorMode]}
                         >
-                          <HStack justify="right">
+                          <HStack justify="flex-end">
                             <Text
                               as="i"
                               fontSize="sm"
@@ -243,7 +241,7 @@ const ConversationPage = ({}) => {
                           </Text>
                         </Box>
                       )}
-                    </>
+                    </div>
                   );
                 })
               )}

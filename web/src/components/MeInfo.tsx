@@ -23,15 +23,26 @@ import {
 import theme from "../theme";
 import { isServer } from "../utils/isServer";
 
-export const MeInfo = (props: FlexProps) => {
-  const { colorMode } = useColorMode();
+interface MeInfoProps {
+  update?: number;
+}
+
+export const MeInfo = (props: MeInfoProps) => {
+
+  const [{ data: meData, fetching: meFetching }, reexecuteMeQuery] = useMeQuery(
+    {
+      pause: isServer(), // pause this request anytime this page is rendered server-side (the server doesn't have access to the userToken cookie)
+    }
+  );
+
+  useEffect(() => {
+    if (props.update) {
+      reexecuteMeQuery({ requestPolicy: 'network-only' });
+    }
+  }, [props.update]);
 
   const [serviceId, setServiceId] = useState<number | null>(null);
   const [posteId, setPosteId] = useState<number | null>(null);
-
-  const [{ data: meData, fetching: meFetching }] = useMeQuery({
-    pause: isServer(), // pause this request anytime this page is rendered server-side (the server doesn't have access to the userToken cookie)
-  });
 
   const [
     { data: serviceByIdData, fetching: serviceByIdFetching },
@@ -78,7 +89,10 @@ export const MeInfo = (props: FlexProps) => {
           <LinkBox>
             <LinkOverlay href={`/profile-pic-upload/${meData.me.id}`}>
               <Center boxSize="100%">
-                <Avatar boxSize="4vw" src={`http://localhost:4000/api/profilePics?path=${meData.me.profilePicPath}`}/>
+                <Avatar
+                  boxSize="4vw"
+                  src={`http://localhost:4000/api/profilePics?path=${meData.me.profilePicPath}`}
+                />
               </Center>
             </LinkOverlay>
           </LinkBox>

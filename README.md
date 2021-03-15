@@ -12,35 +12,73 @@ You can find the project instructions there: [instructions.pdf](instructions.pdf
 
 ## Tech Stack
 
-- server
+### Server
   - Node.js
   - TypeScript
-  - PostgreSQL: relational DB
+  - PostgreSQL: relational DB ([schema](db.png))
   - TypeORM: Object-Relational Mapping (server to DB)
   - Express
   - GraphQL w/ type-graphql & Apollo Server for API queries (client to server)
-- web
+
+### Web
   - React w/ Next.js & Chakra UI
   - TypeScript
   - urql: GraphQL client
 
-## Progression
-
-1. Fonctionnalités profils utilisateurs
-    - Module d’authentification/inscription :white_check_mark:
-    - Page d’accueil : manque photos de profil, documents et sorting
-    - Barre de recherche et nouvelles conversations : manque photos de profil
-    - Conversations :white_check_mark:
-
-2. Fonctionnalités back-office (soft) :white_check_mark:
-    - Module d’authentification/inscription :white_check_mark:
-    - Fonctionnalités communes :white_check_mark:
-    - Dépôts de documents (pdf) :white_check_mark:
-    - Acceptation/refus de nouvel utilisateur :white_check_mark:
-
 ## Install
 
+1. Clone project
+
+```
+git clone https://github.com/benzinho75/JEECE-collab
+```
+
+2. Install dependencies
+
+```
+cd server
+yarn install
+
+cd ../web
+yarn install
+```
+
+3. Install PostgreSQL if you haven't
+
+https://www.postgresql.org/download/<br>
+Also set up a (postgres, postgres) user and create the JEECE-collab database.
+
 ## Usage
+
+1. Start server
+
+```
+cd server
+yarn watch
+```
+```
+yarn dev
+```
+
+2. Start web
+
+```
+cd ../web
+yarn dev
+```
+
+## Progression
+
+1. Fonctionnalités profils utilisateurs :white_check_mark:
+   - Module d’authentification/inscription :white_check_mark:
+   - Page d’accueil :white_check_mark:
+   - Barre de recherche et nouvelles conversations :white_check_mark:
+   - Conversations :white_check_mark:
+2. Fonctionnalités back-office (soft) :white_check_mark:
+   - Module d’authentification/inscription :white_check_mark:
+   - Fonctionnalités communes :white_check_mark:
+   - Dépôts de documents (pdf) :white_check_mark:
+   - Acceptation/refus de nouvel utilisateur :white_check_mark:
 
 ## Sources
 

@@ -5,13 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/benzinho75/JEECE-collab/compare/v0.0.4...HEAD)
-
-### To add
+## [Unreleased](https://github.com/benzinho75/JEECE-collab/compare/v1.0.0...HEAD)
 
 ### To fix
 
-- need to reload the page after logging in or registering and conversations sometimes not loading messages on first try (cache pb ?)
+- conversations sometimes not loading messages on first try (cache pb ?)
+
+## [v1.0.0](https://github.com/benzinho75/JEECE-collab/compare/v0.0.4...v1.0.0) - 2021-03-15
 
 ### Added
 
@@ -26,6 +26,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - downloading docs
 - sorting docs
 - Profile picture upload (storing in server fs + path in db) and display
+
+### Fixed
+
+- messages display bug in Chrome
+- need to reload the page after logging in or registering
 
 ## [v0.0.4](https://github.com/benzinho75/JEECE-collab/compare/v0.0.3...v0.0.4) - 2021-03-12
 

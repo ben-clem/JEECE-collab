@@ -4,7 +4,10 @@ import "filepond/dist/filepond.min.css";
 import { useRouter } from "next/router";
 import React, { useEffect, useReducer, useState } from "react";
 import { FilePond, registerPlugin } from "react-filepond";
-import { useAddDocumentMutation, useAddProfilePicMutation } from "../graphql/generated";
+import {
+  useAddDocumentMutation,
+  useAddProfilePicMutation,
+} from "../graphql/generated";
 
 interface FileUploaderProps {
   fileTypes: string[];
@@ -14,6 +17,7 @@ interface FileUploaderProps {
   postes?: boolean[];
   id?: number;
   boxSize?: string;
+  updateParent?: () => void;
 }
 
 export const FileUploader = (props: FileUploaderProps) => {
@@ -60,20 +64,17 @@ export const FileUploader = (props: FileUploaderProps) => {
 
       if (props.name === "profilePics" && props.id !== undefined) {
         const addingProfilePic = async () => {
-        await addProfilePic({
-          id: props.id as number,
-          path: serverId,
-        });
-      };
-      addingProfilePic();
+          await addProfilePic({
+            id: props.id as number,
+            path: serverId,
+          });
+        };
+        addingProfilePic();
       }
 
-     
       setSavingInDb(false);
       setServerId("");
       setFilename("");
-
-      
     }
   }, [savingInDb, serverId, filename]);
 
@@ -97,6 +98,9 @@ export const FileUploader = (props: FileUploaderProps) => {
           setServerId(file.serverId);
           setFilename(file.filename);
           file.abortLoad();
+          if (props.updateParent) {
+            props.updateParent();
+          }
         }}
       />
     </Box>
