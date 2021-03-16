@@ -70,6 +70,8 @@ const ConversationPage = ({}) => {
   // getting the messages
   const { messages, sendMessage } = useChat(convUuid);
 
+  
+
   const [newMessage, setNewMessage] = useState<string>("");
   const [submitting, setSubmitting] = useState<boolean>(false);
 
@@ -194,7 +196,7 @@ const ConversationPage = ({}) => {
                               borderBottom="1px"
                               borderColor="teal.700"
                             >
-                              {message.user.firstname} {message.user.firstname}
+                              {message.user.firstname} {message.user.lastname}
                             </Text>
                             <Text
                               as="i"
@@ -228,7 +230,7 @@ const ConversationPage = ({}) => {
                               borderBottom="1px"
                               borderColor="teal.700"
                             >
-                              {message.user.firstname} {message.user.firstname}
+                              {message.user.firstname} {message.user.lastname}
                             </Text>
                             <Avatar
                               size="xs"

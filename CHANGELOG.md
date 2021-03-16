@@ -7,7 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased](https://github.com/benzinho75/JEECE-collab/compare/v1.0.0...HEAD)
 
+### To add
+
+- conversations sorting (by date or alphabetically) => need to join User on ConvToUser for firstname sorting
+
 ### To fix
+
+- white screen when loading convo
+- messages first appearing left before going to the right place
+
+# Fixed
 
 - conversations sometimes not loading messages on first try (cache pb ?)
 

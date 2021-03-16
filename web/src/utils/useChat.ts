@@ -31,7 +31,7 @@ const useChat = (convUuid: string) => {
     >
   >([]);
 
-  const [messagesResult] = useMessagesQuery({
+  const [messagesResult, reexecuteMessagesQuery] = useMessagesQuery({
     variables: {
       convUuid,
     },
@@ -42,6 +42,14 @@ const useChat = (convUuid: string) => {
       setMessages(messagesResult.data?.messages);
     }
   }, []);
+
+  const [retried, setRetried] = useState<boolean>(false);
+  useEffect(() => {
+    if (!messagesResult.data?.messages && !retried) {
+      reexecuteMessagesQuery({ requestPolicy: "network-only" });
+      setRetried(true);
+    }
+  });
 
   const socketRef = useRef<typeof Socket>();
 
