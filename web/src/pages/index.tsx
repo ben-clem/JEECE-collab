@@ -1,18 +1,20 @@
 import {
   AttachmentIcon,
   ChatIcon,
-  CheckIcon,
   CloseIcon,
   ExternalLinkIcon,
 } from "@chakra-ui/icons";
 import {
-  Box,
   Button,
   Center,
+  Flex,
   Grid,
   GridItem,
   Heading,
   HStack,
+  IconButton,
+  LinkBox,
+  LinkOverlay,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -20,19 +22,14 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  useColorMode,
+  Select,
+  Stack,
   Text,
+  useColorMode,
   useDisclosure,
   VStack,
   Wrap,
   WrapItem,
-  Flex,
-  LinkBox,
-  LinkOverlay,
-  Stack,
-  IconButton,
-  Spacer,
-  Select,
 } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import { withUrqlClient } from "next-urql";
@@ -40,7 +37,6 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { MyContainer } from "../components/Container";
 import { DocumentsUploader } from "../components/DocumentsUploader";
-import { FileUploader } from "../components/FileUploader";
 import { MeInfo } from "../components/MeInfo";
 import { NavBar } from "../components/NavBar";
 import { NewUsersManager } from "../components/NewUsersManager";
@@ -50,15 +46,16 @@ import { UserInfoCard } from "../components/UserInfoCard";
 import {
   Conversation,
   ConvToUser,
+  Document,
   Maybe,
   useConversationsByUserIdQuery,
   useConversationWithUserIdsQuery,
   useCreateConversationWithUserIdsMutation,
-  useMeQuery,
-  useUsersByFnOrLnOrSnOrPnLikeWordsInStringQuery,
-  useUpdateConvToUserMutation,
   useDocumentsByUserIdQuery,
-  Document,
+  useMeQuery,
+  User,
+  useUpdateConvToUserMutation,
+  useUsersByFnOrLnOrSnOrPnLikeWordsInStringQuery,
 } from "../graphql/generated";
 import theme from "../theme";
 import { createUrqlClient } from "../utils/createUrqlClient";
@@ -130,12 +127,7 @@ const Index: React.FC<IndexProps> = ({}) => {
 
   useEffect(() => {
     if (isSwitching && !conversationResult.fetching) {
-      console.log("entering");
-      console.log(conversationResult);
-
       if (conversationResult.data?.conversationWithUserIds.conv) {
-        console.log("found convo:");
-        console.log(conversationResult.data);
         router.push({
           pathname: "/conversation/[uuid]",
           query: {
@@ -146,7 +138,6 @@ const Index: React.FC<IndexProps> = ({}) => {
         setIsSwitching(false);
       } else {
         // creating the inexisting convo
-        console.log("no convo, creating one");
 
         const creatingConvo = async () => {
           await createConversationWithUserIds({
@@ -168,10 +159,12 @@ const Index: React.FC<IndexProps> = ({}) => {
           "uuid" | "createdAt" | "updatedAt"
         > & {
             convToUsers: Array<
-              { __typename?: "ConvToUser" } & Pick<
-                ConvToUser,
-                "userId" | "active"
-              >
+              { __typename?: "ConvToUser" } & Pick<ConvToUser, "active"> & {
+                  user: { __typename?: "User" } & Pick<
+                    User,
+                    "id" | "email" | "firstname" | "lastname"
+                  >;
+                }
             >;
           }
       >
@@ -185,7 +178,11 @@ const Index: React.FC<IndexProps> = ({}) => {
   });
   useEffect(() => {
     if (convsResult.data?.conversationsByUserId.convs) {
-      setConvs(convsResult.data?.conversationsByUserId.convs);
+      setConvs(
+        convsResult.data?.conversationsByUserId.convs
+          .slice()
+          .sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))
+      );
     }
   }, [convsResult]);
 
@@ -206,13 +203,16 @@ const Index: React.FC<IndexProps> = ({}) => {
 
       if (convs) {
         setConvs(
-          convs?.filter(
-            (conv) =>
-              (conv.convToUsers[0].userId === myId &&
-                conv.convToUsers[0].active) ||
-              (conv.convToUsers[1].userId === myId &&
-                conv.convToUsers[1].active)
-          )
+          convs
+            ?.filter(
+              (conv) =>
+                (conv.convToUsers[0].user.id === myId &&
+                  conv.convToUsers[0].active) ||
+                (conv.convToUsers[1].user.id === myId &&
+                  conv.convToUsers[1].active)
+            )
+            .slice()
+            .sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))
         );
       }
 
@@ -257,6 +257,33 @@ const Index: React.FC<IndexProps> = ({}) => {
       );
     }
   }, [sortingDocs]);
+
+  const [sortingConvs, setSortingConvs] = useState<string>("date");
+  useEffect(() => {
+    if (sortingConvs === "date" && convs !== null) {
+      setConvs(
+        convs
+          .slice()
+          .sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))
+      );
+    } else if (sortingConvs === "alphabetically" && convs !== null) {
+      setConvs(
+        convs
+          .slice()
+          .sort((a, b) =>
+            myId === a.convToUsers[0].user.id
+              ? a.convToUsers[1].user.firstname >
+                b.convToUsers[1].user.firstname
+                ? 1
+                : -1
+              : a.convToUsers[0].user.firstname >
+                b.convToUsers[0].user.firstname
+              ? 1
+              : -1
+          )
+      );
+    }
+  }, [sortingConvs]);
 
   let body = null;
   let modal = null;
@@ -329,15 +356,10 @@ const Index: React.FC<IndexProps> = ({}) => {
     }
   }
 
-  console.log("meResult.data?.me");
-  console.log(meResult.data?.me);
-
   // fetching: waiting
   if (meResult.fetching) {
-    console.log("fetching user");
     // logged in:
   } else if (meResult.data?.me) {
-    console.log("logged in");
     // admin:
     if (meResult.data?.me?.admin) {
       body = (
@@ -472,58 +494,74 @@ const Index: React.FC<IndexProps> = ({}) => {
                   </Stack>
                 </Center>
               ) : (
-                <VStack spacing={2}>
-                  {convs
-                    ? convs.map((conv) => {
-                        if (
-                          (conv.convToUsers[0].userId === myId &&
-                            conv.convToUsers[0].active) ||
-                          (conv.convToUsers[1].userId === myId &&
-                            conv.convToUsers[1].active)
-                        ) {
-                          return (
-                            <Flex
-                              w="98%"
-                              h="3rem"
-                              align="center"
-                              justify="space-between"
-                              mt={2}
-                              borderRadius="lg"
-                              bg={theme.colors.tealTrans[colorMode]}
-                              key={conv.uuid}
-                            >
-                              <LinkBox>
-                                <LinkOverlay
-                                  href={`/conversation/${conv.uuid}`}
-                                >
-                                  {conv.convToUsers[0].userId === myId ? (
-                                    <UserInfoBar
-                                      id={conv.convToUsers[1].userId}
-                                    />
-                                  ) : (
-                                    <UserInfoBar
-                                      id={conv.convToUsers[0].userId}
-                                    />
-                                  )}
-                                </LinkOverlay>
-                              </LinkBox>
-                              <IconButton
-                                size="xs"
-                                mr={2}
-                                colorScheme="red"
-                                aria-label="close"
-                                icon={<CloseIcon />}
-                                onClick={() => {
-                                  setDeletingConv(true);
-                                  setConvToDelete(conv.uuid);
-                                }}
-                              />
-                            </Flex>
-                          );
-                        }
-                      })
-                    : null}
-                </VStack>
+                <>
+                  <HStack mx={5} spacing={1} align="center">
+                    <Text fontSize="sm">sort:</Text>
+                    <Select
+                      mt={2}
+                      w="9rem"
+                      size="sm"
+                      onChange={(e) => {
+                        setSortingConvs(e.target.value);
+                      }}
+                    >
+                      <option value="date">date</option>
+                      <option value="alphabetically">alphabetically</option>
+                    </Select>
+                  </HStack>
+                  <VStack spacing={2}>
+                    {convs
+                      ? convs.map((conv) => {
+                          if (
+                            (conv.convToUsers[0].user.id === myId &&
+                              conv.convToUsers[0].active) ||
+                            (conv.convToUsers[1].user.id === myId &&
+                              conv.convToUsers[1].active)
+                          ) {
+                            return (
+                              <Flex
+                                w="98%"
+                                h="3rem"
+                                align="center"
+                                justify="space-between"
+                                mt={2}
+                                borderRadius="lg"
+                                bg={theme.colors.tealTrans[colorMode]}
+                                key={conv.uuid}
+                              >
+                                <LinkBox>
+                                  <LinkOverlay
+                                    href={`/conversation/${conv.uuid}`}
+                                  >
+                                    {conv.convToUsers[0].user.id === myId ? (
+                                      <UserInfoBar
+                                        id={conv.convToUsers[1].user.id}
+                                      />
+                                    ) : (
+                                      <UserInfoBar
+                                        id={conv.convToUsers[0].user.id}
+                                      />
+                                    )}
+                                  </LinkOverlay>
+                                </LinkBox>
+                                <IconButton
+                                  size="xs"
+                                  mr={2}
+                                  colorScheme="red"
+                                  aria-label="close"
+                                  icon={<CloseIcon />}
+                                  onClick={() => {
+                                    setDeletingConv(true);
+                                    setConvToDelete(conv.uuid);
+                                  }}
+                                />
+                              </Flex>
+                            );
+                          }
+                        })
+                      : null}
+                  </VStack>
+                </>
               )}
             </GridItem>
 

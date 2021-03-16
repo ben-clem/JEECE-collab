@@ -109,17 +109,6 @@ export type ConvToUser = {
   active: Scalars['Boolean'];
   conversationUuid: Scalars['String'];
   userId: Scalars['Float'];
-};
-
-export type Message = {
-  __typename?: 'Message';
-  uuid: Scalars['String'];
-  content: Scalars['String'];
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
-  conversationUuid: Scalars['String'];
-  conversation: Conversation;
-  userId: Scalars['Float'];
   user: User;
 };
 
@@ -154,6 +143,18 @@ export type Poste = {
   name: Scalars['String'];
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
+};
+
+export type Message = {
+  __typename?: 'Message';
+  uuid: Scalars['String'];
+  content: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  conversationUuid: Scalars['String'];
+  conversation: Conversation;
+  userId: Scalars['Float'];
+  user: User;
 };
 
 export type ConvResponse = {
@@ -528,7 +529,11 @@ export type ConversationsByUserIdQuery = (
       & Pick<Conversation, 'uuid' | 'createdAt' | 'updatedAt'>
       & { convToUsers: Array<(
         { __typename?: 'ConvToUser' }
-        & Pick<ConvToUser, 'userId' | 'active'>
+        & Pick<ConvToUser, 'active'>
+        & { user: (
+          { __typename?: 'User' }
+          & Pick<User, 'id' | 'email' | 'firstname' | 'lastname'>
+        ) }
       )> }
     )>> }
   ) }
@@ -918,8 +923,13 @@ export const ConversationsByUserIdDocument = gql`
       createdAt
       updatedAt
       convToUsers {
-        userId
         active
+        user {
+          id
+          email
+          firstname
+          lastname
+        }
       }
     }
   }

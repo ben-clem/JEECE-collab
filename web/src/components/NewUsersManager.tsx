@@ -75,7 +75,6 @@ export const NewUsersManager: React.FC<NewUsersManagerProps> = ({}) => {
 
   useEffect(() => {
     if (updating && id && value !== null) {
-      console.log(pendingUsers);
 
       const updatingUser = async () => {
         await updateUserAccepted({
@@ -93,7 +92,6 @@ export const NewUsersManager: React.FC<NewUsersManagerProps> = ({}) => {
       setId(null);
       setValue(null);
 
-      console.log(pendingUsers);
     }
   }, [updating]);
 
@@ -110,7 +108,6 @@ export const NewUsersManager: React.FC<NewUsersManagerProps> = ({}) => {
         </Center>
       ) : (
         <VStack spacing={2}>
-          {console.log(pendingUsers)}
           {pendingUsers
             ? pendingUsers.map((user) => {
                 return (

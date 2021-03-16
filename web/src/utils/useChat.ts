@@ -77,11 +77,6 @@ const useChat = (convUuid: string) => {
           }
       ) => {
         const { __typename, ...selectedFields } = message;
-        console.log("== got a new message, adding it ==")
-        console.log("messages:")
-        console.log(messages)
-        console.log("new message:")
-        console.log(selectedFields)
         setMessages((messages) => [...messages, selectedFields]);
       }
     );
@@ -110,10 +105,7 @@ const useChat = (convUuid: string) => {
         ...selectedEmitFields
       } = newMessageResult.data.addMessage;
       if (socketRef.current) {
-        console.log("== emiting message to server")
-        console.log(selectedEmitFields)
         socketRef.current.emit(EVENT, selectedEmitFields);
-        console.log("==")
       }
     }
   };

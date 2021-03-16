@@ -5,16 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/benzinho75/JEECE-collab/compare/v1.0.0...HEAD)
-
-### To add
-
-- conversations sorting (by date or alphabetically) => need to join User on ConvToUser for firstname sorting
+## [Unreleased](https://github.com/benzinho75/JEECE-collab/compare/v1.0.1...HEAD)
 
 ### To fix
 
 - white screen when loading convo
 - messages first appearing left before going to the right place
+- new messages sometimes saying "in a few seconds" instead of "a few seconds ago"
+- conversations updatedAt field not being updated on new messages
+
+## [v1.0.1](https://github.com/benzinho75/JEECE-collab/compare/v1.0.0...v1.0.1) - 2021-03-16
+
+### Added
+
+- conversations sorting (by date or alphabetically) => need to join User on ConvToUser for firstname sorting
 
 # Fixed
 

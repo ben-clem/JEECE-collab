@@ -36,6 +36,7 @@ export class ConversationResolver {
       const allConvos = await getRepository(Conversation)
         .createQueryBuilder("conversation")
         .leftJoinAndSelect("conversation.convToUsers", "convToUser")
+        .leftJoinAndSelect("convToUser.user", "user")
         .getMany();
 
       const userConvos = allConvos.filter((conv) => {

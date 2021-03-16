@@ -1,13 +1,18 @@
 query conversationsByUserId($id: Int!) {
   conversationsByUserId(id: $id) {
-    error
+     error
     convs {
       uuid
       createdAt
       updatedAt
       convToUsers {
-        userId
         active
+        user {
+          id
+          email
+          firstname
+          lastname
+        }
       }
     }
   }

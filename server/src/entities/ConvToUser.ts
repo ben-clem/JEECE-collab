@@ -33,6 +33,7 @@ export class ConvToUser extends BaseEntity {
   })
   conversation!: Conversation;
 
+  @Field()
   @ManyToOne(() => User, (user) => user.convToUsers, {
     cascade: false,
   })

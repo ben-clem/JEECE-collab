@@ -79,7 +79,6 @@ const Register: React.FC<registerProps> = ({}) => {
                   posteId: 0,
                 }}
                 onSubmit={async (values, { setErrors }) => {
-                  console.log(values);
                   setIsSubmitting(true);
                   if (values.password !== values.verifyPassword) {
                     setErrors(

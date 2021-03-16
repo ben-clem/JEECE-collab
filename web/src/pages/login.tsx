@@ -34,7 +34,6 @@ const Login: React.FC<loginProps> = ({}) => {
             onSubmit={async (values, { setErrors }) => {
               setIsSubmitting(true);
               const response = await login(values);
-              console.log(response);
               if (response.data?.login.errors?.length !== 0) {
                 if (response.data?.login.errors) {
                   setErrors(toErrorMap(response.data.login.errors)); // Formik hook to handle each field errors + utility function to map the errors from GraphQL
