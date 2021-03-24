@@ -24,7 +24,7 @@ const ProfilePicUpload: React.FC<ProfilePicUploadProps> = ({}) => {
   const [id, setId] = useState<number>(0);
   useEffect(() => {
     if (router.query.id) {
-      setId(parseInt(router.query.id[0], 10));
+      setId(parseInt(router.query.id as string, 10));
     }
   }, []);
 
