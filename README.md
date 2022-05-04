@@ -12,18 +12,20 @@ You can find the full project's requirements here (in French): [instructions.pdf
 
 ## Tech Stack
 
-### Server
-- Node.js
-- TypeScript
-- PostgreSQL: relational DB ([schema](db.png))
-- TypeORM: Object-Relational Mapping (server to DB)
-- Express
-- GraphQL w/ type-graphql & Apollo Server for API queries (client to server)
+## Server
 
-### Web
-- TypeScript
-- React w/ Next.js & Chakra UI
-- urql: GraphQL client
+- [Node.js](https://nodejs.org)
+- [TypeScript](https://www.typescriptlang.org/)
+- [PostgreSQL](https://www.postgresql.org/): relational DB (schema)
+- [TypeORM](https://typeorm.io/): Object-Relational Mapping (server to DB)
+- [Express](https://expressjs.com/)
+- [GraphQL](https://graphql.org/) w/ [type-graphql](https://typegraphql.com) & [Apollo Server](https://www.apollographql.com/docs/apollo-server) for API queries (client to server)
+
+## Web
+
+- [TypeScript](https://www.typescriptlang.org/)
+- [React](https://reactjs.org/) w/ [Next.js](https://nextjs.org/) & [Chakra UI](https://chakra-ui.com/)
+- [urql](https://formidable.com/open-source/urql/): GraphQL client
 
 ## Install
 
