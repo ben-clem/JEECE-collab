@@ -4,7 +4,7 @@
 
 The goal is to develop a web platform for collaborative work. It will allow employees of a company to communicate via instant messaging, and privileged accounts will be able to distribute documents to the desired departments.
 
-You can find the full project's requirements there (in French): [instructions.pdf](instructions.pdf)
+You can find the full project's requirements here (in French): [instructions.pdf](instructions.pdf)
 
 ## Changelog
 
