@@ -26,6 +26,9 @@ You can find the full project's requirements here (in French): [instructions.pdf
 - [TypeScript](https://www.typescriptlang.org/)
 - [React](https://reactjs.org/) w/ [Next.js](https://nextjs.org/) & [Chakra UI](https://chakra-ui.com/)
 - [urql](https://formidable.com/open-source/urql/): GraphQL client
+- [Socket.IO](https://socket.io/)
+- [Formik](https://formik.org/)
+- [FilePond](https://pqina.nl/filepond/)
 
 ## Install
 
