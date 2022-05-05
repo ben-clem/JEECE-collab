@@ -14,8 +14,8 @@ You can find the full project requirements here (in French): [instructions.pdf](
 
 ## Server
 
-- [Node.js](https://nodejs.org)
 - [TypeScript](https://www.typescriptlang.org/)
+- [Node.js](https://nodejs.org)
 - [PostgreSQL](https://www.postgresql.org/): relational DB (schema)
 - [TypeORM](https://typeorm.io/): Object-Relational Mapping (server to DB)
 - [Express](https://expressjs.com/)
